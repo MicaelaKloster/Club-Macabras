@@ -1,17 +1,32 @@
 import express from 'express';
 import cors from 'cors';
-import './config/db.js'; // ya se conecta automáticamente
+import dotenv from 'dotenv';
+import usuariosRoutes from './routes/usuarios.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import perfilRoutes from './routes/perfil.routes.js';
+
+
+// Configurar dotenv
+dotenv.config();
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// RUTAS
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/usuarios', usuariosRoutes);
+app.use('/api/v1/perfil', perfilRoutes);
+
+// Ruta de prueba
 app.get('/', (req, res) => {
   res.send('Club Macabras - API funcionando ✅');
 });
 
-const PORT = process.env.PORT || 3000;
+// Servidor
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
 });
