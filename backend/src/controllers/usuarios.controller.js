@@ -1,40 +1,52 @@
-import db from '../config/db.js';
 import bcrypt from 'bcrypt';
+import {
+  obtenerTodosLosUsuarios,
+  buscarUsuarioPorEmail,
+  insertarUsuario
+} from '../services/usuarios.service.js';
 
-// Crear un nuevo usuario
+// Controlador para registrar un nuevo usuario
 export const registrarUsuario = async (req, res) => {
   try {
+    // Extrae los datos enviados en el cuerpo de la petición
     const { nombre, email, contraseña, provincia, ciudad } = req.body;
 
-    // Validar campos básicos
+    // Verifica que todos los campos obligatorios estén presentes
     if (!nombre || !email || !contraseña || !provincia || !ciudad) {
-      console.error('❌ Campos incompletos en el registro');
       return res.status(400).json({ error: 'Faltan datos obligatorios' });
     }
 
-    // Verificar si ya existe un usuario con ese email
-    const [existente] = await db.promise().query('SELECT id FROM usuarios WHERE email = ?', [email]);
-
+    // Busca si ya existe un usuario registrado con el mismo email
+    const existente = await buscarUsuarioPorEmail(email);
     if (existente.length > 0) {
-      console.warn(`⚠️ Ya existe un usuario con el email: ${email}`);
       return res.status(409).json({ error: 'El correo ya está registrado' });
     }
 
-    // Encriptar la contraseña
+    // Genera un salt y hashea la contraseña antes de guardarla
     const salt = await bcrypt.genSalt(10);
     const contraseñaHasheada = await bcrypt.hash(contraseña, salt);
 
-    // Insertar nuevo usuario
-    await db.promise().query(
-      'INSERT INTO usuarios (nombre, email, contraseña, provincia, ciudad, rol, estado) VALUES (?, ?, ?, ?, ?, "usuario", 1)',
-      [nombre, email, contraseñaHasheada, provincia, ciudad]
-    );
+    // Inserta el nuevo usuario en la base de datos
+    await insertarUsuario({ nombre, email, contraseña: contraseñaHasheada, provincia, ciudad });
 
+    // Muestra en consola que el usuario fue registrado correctamente
     console.log(`✅ Usuario registrado: ${email}`);
+    // Responde con éxito al cliente
     res.status(201).json({ mensaje: 'Usuario registrado con éxito' });
 
   } catch (error) {
+    // Maneja cualquier error inesperado y responde con error de servidor
     console.error('❌ Error al registrar usuario:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+export const listarUsuarios = async (req, res) => {
+  try {
+    const usuarios = await obtenerTodosLosUsuarios();
+    res.status(200).json(usuarios);
+  } catch (error) {
+    console.error('❌ Error al obtener usuarios:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
