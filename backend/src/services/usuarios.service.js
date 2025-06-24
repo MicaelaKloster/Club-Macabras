@@ -1,4 +1,4 @@
-import db from '..config/db.js';
+import db from '../config/db.js';
 
 // Obtiene todos los usuarios de la base de datos
 export const obtenerTodosLosUsuarios = async () => {

@@ -4,10 +4,7 @@ import db from '../config/db.js';
 export const buscarUsuarioPorEmailConTodo = async (email) => {
     // Realiza una consulta SQL para obtener los datos del usuario y su provincia/ciudad
     const [rows] = await db.promise().query(
-        `SELECT u.*, p.provincia, p.ciudad
-         FROM usuarios u
-         LEFT JOIN provincias p ON u.provincia = p.id
-         WHERE u.email = ?`,
+        'SELECT * FROM usuarios WHERE email = ?',
         [email]
     );
     // Retorna el primer usuario encontrado (o undefined si no hay resultados)

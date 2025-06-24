@@ -7,3 +7,25 @@ export const obtenerPerfilPorId = async (usuarioId) => {
   );
   return rows;
 };
+
+export const actualizarPerfil = async (usuarioId, nombre, provincia, ciudad) => {
+  await db.promise().query(
+    'UPDATE usuarios SET nombre = ?, provincia = ?, ciudad = ? WHERE id = ?',
+    [nombre, provincia, ciudad, usuarioId]
+  );
+};
+
+export const actualizarContraseña = async (usuarioId, nuevaContraseñaHasheada) => {
+  await db.promise().query(
+    'UPDATE usuarios SET contraseña = ? WHERE id = ?',
+    [nuevaContraseñaHasheada, usuarioId]
+  );
+};
+
+export const obtenerContraseñaActual = async (usuarioId) => {
+  const [rows] = await db.promise().query(
+    'SELECT contraseña FROM usuarios WHERE id = ?',
+    [usuarioId]
+  );
+  return rows[0]?.contraseña;
+};

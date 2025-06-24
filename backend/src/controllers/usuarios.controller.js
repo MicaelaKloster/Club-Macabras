@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import {
   obtenerTodosLosUsuarios,
-  buscarUsuarioPorEmail,
+  buscarUsuariosPorEmail,
   insertarUsuario
 } from '../services/usuarios.service.js';
 
@@ -17,7 +17,7 @@ export const registrarUsuario = async (req, res) => {
     }
 
     // Busca si ya existe un usuario registrado con el mismo email
-    const existente = await buscarUsuarioPorEmail(email);
+    const existente = await buscarUsuariosPorEmail(email);
     if (existente.length > 0) {
       return res.status(409).json({ error: 'El correo ya está registrado' });
     }
