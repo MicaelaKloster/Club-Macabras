@@ -9,7 +9,7 @@ import {
 export const registrarUsuario = async (req, res) => {
   try {
     // Extrae los datos enviados en el cuerpo de la petición
-    const { nombre, email, contraseña, provincia, ciudad } = req.body;
+    const { nombre, email, contraseña, provincia, ciudad, rol } = req.body;
 
     // Verifica que todos los campos obligatorios estén presentes
     if (!nombre || !email || !contraseña || !provincia || !ciudad) {
@@ -21,16 +21,23 @@ export const registrarUsuario = async (req, res) => {
     if (existente.length > 0) {
       return res.status(409).json({ error: 'El correo ya está registrado' });
     }
+  
+    // Si intenta crear un admin, verificar que quien hace la petición sea admin
+    if (rol === 'admin') {
+      if (!req.usuario || req.usuario.rol !== 'admin') {
+        return res.status(403).json({ error: 'Solo un administrador puede crear otros administradores' });
+      }
+    }
 
     // Genera un salt y hashea la contraseña antes de guardarla
     const salt = await bcrypt.genSalt(10);
     const contraseñaHasheada = await bcrypt.hash(contraseña, salt);
 
     // Inserta el nuevo usuario en la base de datos
-    await insertarUsuario({ nombre, email, contraseña: contraseñaHasheada, provincia, ciudad });
+    await insertarUsuario({ nombre, email, contraseña: contraseñaHasheada, provincia, ciudad,  rol: rol || 'usuario' });
 
     // Muestra en consola que el usuario fue registrado correctamente
-    console.log(`✅ Usuario registrado: ${email}`);
+    console.log(`✅ Usuario registrado: ${email} - Rol: ${rol || 'usuario'}`);
     // Responde con éxito al cliente
     res.status(201).json({ mensaje: 'Usuario registrado con éxito' });
 

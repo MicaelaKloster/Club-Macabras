@@ -10,3 +10,12 @@ export const buscarUsuarioPorEmailConTodo = async (email) => {
     // Retorna el primer usuario encontrado (o undefined si no hay resultados)
     return rows[0];
 };
+
+// Función para actualizar la contraseña de un usuario por su ID
+// Esta función recibe el ID del usuario y la nueva contraseña hasheada
+export const actualizarContraseñaPorId = async (usuarioId, nuevaContraseñaHasheada) => {
+  await db.promise().query(
+    'UPDATE usuarios SET contraseña = ? WHERE id = ?',
+    [nuevaContraseñaHasheada, usuarioId]
+  );
+};

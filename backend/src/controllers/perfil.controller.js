@@ -3,7 +3,8 @@ import {
   actualizarPerfil,
   actualizarContraseña,
   obtenerContraseñaActual,
-  obtenerPerfilPorId 
+  obtenerPerfilPorId,
+  desactivarUsuario 
 } from '../services/perfil.service.js';
 
 export const obtenerPerfil = async (req, res) => {
@@ -47,6 +48,17 @@ export const editarPerfil = async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error al editar perfil:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+export const eliminarPerfil = async (req, res) => {
+  try {
+    const usuarioId = req.usuario.id;
+    await desactivarUsuario(usuarioId);
+    res.status(200).json({ mensaje: 'Cuenta desactivada correctamente' });
+  } catch (error) {
+    console.error('❌ Error al desactivar cuenta:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };

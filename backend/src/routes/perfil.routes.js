@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { verificarToken } from '../middlewares/auth.middleware.js';
-import { editarPerfil, obtenerPerfil } from '../controllers/perfil.controller.js';
+import { editarPerfil, obtenerPerfil, eliminarPerfil } from '../controllers/perfil.controller.js';
 import { validarEdicionPerfil } from '../validations/perfil.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
 
@@ -72,5 +72,27 @@ router.get('/', verificarToken, obtenerPerfil);
  *         description: Contraseña incorrecta
  */
 router.put('/', verificarToken, validarEdicionPerfil, validarCampos, editarPerfil);
+
+
+/**
+ * @swagger
+ * /perfil:
+ *   delete:
+ *     summary: Desactiva (elimina lógicamente) la cuenta del usuario autenticado
+ *     tags: [Perfil]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Cuenta desactivada correctamente
+ *       401:
+ *         description: Token no enviado
+ *       403:
+ *         description: Token inválido
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+router.delete('/', verificarToken, eliminarPerfil);
 
 export default router;

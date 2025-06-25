@@ -3,8 +3,19 @@ import { Router } from 'express';
 import { registrarUsuario, listarUsuarios } from '../controllers/usuarios.controller.js';
 import { validarRegistroUsuario } from '../validations/usuarios.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
+import { verificarToken } from '../middlewares/auth.middleware.js';
+import { permitirSoloRol } from '../middlewares/rol.middleware.js';
 
 const router = Router();
+
+// Middleware condicional: solo exige token si alguien intenta crear un admin
+const protegerSiEsAdmin = (req, res, next) => {
+  if (req.body.rol === 'admin') {
+    return verificarToken(req, res, next);
+  }
+  next();
+};
+
 /**
  * @swagger
  * tags:
@@ -18,22 +29,28 @@ const router = Router();
  * @swagger
  * /usuarios:
  *   get:
- *     summary: Obtener la lista de todos los usuarios
+ *     summary: Obtener la lista de todos los usuarios (solo admins)
  *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de usuarios
+ *       401:
+ *         description: Token no proporcionado o inválido
+ *       403:
+ *         description: Acceso denegado se requiere rol de administrador
  *       500:
  *         description: Error del servidor
  */
-router.get('/', listarUsuarios);
+router.get('/', verificarToken, permitirSoloRol('admin'), listarUsuarios);
 
 // POST /usuarios
 /**
  * @swagger
  * /usuarios:
  *   post:
- *     summary: Registra un nuevo usuario
+ *     summary: Registra un nuevo usuario o un administrador (solo admins pueden crear admins)
  *     tags: [Usuarios]
  *     requestBody:
  *       required: true
@@ -58,6 +75,10 @@ router.get('/', listarUsuarios);
  *                 type: string
  *               ciudad:
  *                 type: string
+ *               rol:
+ *                 type: string
+ *                 enum: [admin, usuario]
+ *                 description: Solo los admins autenticados pueden crear otros admins
  *     responses:
  *       201:
  *         description: Usuario registrado con éxito
@@ -68,6 +89,7 @@ router.get('/', listarUsuarios);
  */
 router.post(
   '/',
+  protegerSiEsAdmin,     // Middleware condicional para verificar token solo si se crea un admin
   validarRegistroUsuario, // Validaciones con express-validator
   validarCampos,          // Middleware para devolver errores
   registrarUsuario        // Controlador final

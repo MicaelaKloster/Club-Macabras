@@ -29,3 +29,10 @@ export const obtenerContraseñaActual = async (usuarioId) => {
   );
   return rows[0]?.contraseña;
 };
+
+export const desactivarUsuario = async (usuarioId) => {
+  await db.promise().query(
+    'UPDATE usuarios SET estado = 0 WHERE id = ?',
+    [usuarioId]
+  );
+};

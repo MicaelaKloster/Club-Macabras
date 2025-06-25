@@ -27,5 +27,10 @@ export const validarRegistroUsuario = [
   // Valida el campo 'ciudad'
   body('ciudad')
     .trim()
-    .notEmpty().withMessage('La ciudad es obligatoria')
+    .notEmpty().withMessage('La ciudad es obligatoria'),
+
+  // Valida el campo 'rol'
+  body('rol')
+    .optional()
+    .isIn(['admin', 'usuario']).withMessage('El rol solo puede ser "admin" o "usuario"')
 ];

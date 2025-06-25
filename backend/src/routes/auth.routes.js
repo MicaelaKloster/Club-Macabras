@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loginUsuario } from '../controllers/auth.controller.js';
+import { loginUsuario, recuperarPassword, restablecerPassword } from '../controllers/auth.controller.js';
 import rateLimit from 'express-rate-limit';
 import { validarLogin } from '../validations/auth.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
@@ -58,5 +58,59 @@ router.post('/login',
   validarCampos,      // Captura de errores
   loginUsuario        // Lógica de login
 );
+
+
+/**
+ * @swagger
+ * /auth/recuperar-password:
+ *   post:
+ *     summary: Enviar correo de recuperación de contraseña
+ *     tags: [Autenticación]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Correo enviado
+ *       404:
+ *         description: Email no encontrado
+ */
+router.post('/recuperar-password', recuperarPassword);
+
+/**
+ * @swagger
+ * /auth/restablecer-password:
+ *   post:
+ *     summary: Restablecer contraseña usando token
+ *     tags: [Autenticación]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - nuevaContraseña
+ *             properties:
+ *               token:
+ *                 type: string
+ *               nuevaContraseña:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Contraseña actualizada correctamente
+ *       400:
+ *         description: Token inválido o expirado
+ */
+router.post('/restablecer-password', restablecerPassword);
 
 export default router;
