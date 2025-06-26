@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffe6f0;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      border: 2px solid #f06292;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .button {
+      background-color: #f06292;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Recuperación de contraseña - Club Macabras 💼🧵</h2>
+    <p>Hola {{email}},</p>
+    <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+    <p>Hacé clic en el siguiente botón para continuar:</p>
+    <p><a href="{{link}}" class="button">Restablecer Contraseña</a></p>
+    <p>Si no solicitaste este cambio, ignorá este correo.</p>
+  </div>
+</body>
+</html>

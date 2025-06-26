@@ -4,6 +4,7 @@ import {
   buscarUsuariosPorEmail,
   insertarUsuario
 } from '../services/usuarios.service.js';
+import { enviarCorreoBienvenida } from '../utils/mailer.js';
 
 // Controlador para registrar un nuevo usuario
 export const registrarUsuario = async (req, res) => {
@@ -35,6 +36,9 @@ export const registrarUsuario = async (req, res) => {
 
     // Inserta el nuevo usuario en la base de datos
     await insertarUsuario({ nombre, email, contraseña: contraseñaHasheada, provincia, ciudad,  rol: rol || 'usuario' });
+   
+    // Envía un correo de bienvenida al nuevo usuario
+    await enviarCorreoBienvenida(email, nombre);
 
     // Muestra en consola que el usuario fue registrado correctamente
     console.log(`✅ Usuario registrado: ${email} - Rol: ${rol || 'usuario'}`);

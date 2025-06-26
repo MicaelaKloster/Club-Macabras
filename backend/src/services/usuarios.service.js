@@ -17,10 +17,10 @@ export const buscarUsuariosPorEmail = async (email) => {
 };
 
 // Inserta un nuevo usuario en la base de datos
-export const insertarUsuario = async ({nombre, email, contrasenia, provincia, ciudad, rol}) => {
+export const insertarUsuario = async ({nombre, email, contraseña, provincia, ciudad, rol}) => {
     // Ejecuta una consulta SQL para insertar un nuevo usuario con los datos proporcionados
     await db.promise().query(
-        'INSERT INTO usuarios (nombre, email, contrasenia, provincia, ciudad, rol, estado) VALUES (?, ?, ?, ?, ?, "usuario", 1)',
-        [nombre, email, contrasenia, provincia, ciudad, rol]
+        'INSERT INTO usuarios (nombre, email, contraseña, provincia, ciudad, rol, estado) VALUES (?, ?, ?, ?, ?, "usuario", 1)',
+        [nombre, email, contraseña, provincia, ciudad, rol]
     );
 };
