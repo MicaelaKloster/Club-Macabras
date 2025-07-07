@@ -7,6 +7,8 @@ import usuariosRoutes from './routes/usuarios.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import perfilRoutes from './routes/perfil.routes.js';
 import cursosRoutes from './routes/cursos.routes.js';
+import videosRoutes from './routes/videos.routes.js';
+import documentosRoutes from './routes/documentos.routes.js';
 
 
 // Configurar dotenv
@@ -26,6 +28,8 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/usuarios', usuariosRoutes);
 app.use('/api/v1/perfil', perfilRoutes);
 app.use('/api/v1/cursos', cursosRoutes);
+app.use('/api/v1/videos', videosRoutes);
+app.use('/api/v1/documentos', documentosRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
