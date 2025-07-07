@@ -1,4 +1,4 @@
-import { crearCurso, obtenerCursosPaginados } from "../services/cursos.service.js";
+import { crearCurso, obtenerCursosPaginados, obtenerMaterialesDelCurso } from "../services/cursos.service.js";
 
 export const crearNuevoCurso = async (req, res) => {
     try{
@@ -34,5 +34,23 @@ export const listarCursos = async (req, res) => {
     }catch (error) {
         console.error('❌ Error al listar cursos:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+export const listarMaterialesDelCurso = async (req, res) => {
+    try {
+        const cursoId = req.params.id;
+
+        const { videos, documentos } = await obtenerMaterialesDelCurso(cursoId);
+
+        res.status(200).json({
+            cursoId: cursoId,
+            videos,
+            documentos
+        });
+
+    }catch (error){
+        console.error('❌ Error al listar materiales:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

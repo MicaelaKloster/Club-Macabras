@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { crearNuevoCurso, listarCursos } from '../controllers/cursos.controller.js';
+import { crearNuevoCurso, listarCursos, listarMaterialesDelCurso } from '../controllers/cursos.controller.js';
 import { validarCreacionCurso } from '../validations/cursos.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
@@ -92,6 +92,38 @@ router.get(
   '/',
   verificarToken,
   listarCursos
+);
+
+/**
+ * @swagger
+ * /cursos/{id}/materiales:
+ *   get:
+ *     summary: Obtener todos los videos y documentos de un curso
+ *     tags: [Cursos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del curso
+ *     responses:
+ *       200:
+ *         description: Lista de materiales del curso
+ *       401:
+ *         description: Token no enviado o inválido
+ *       404:
+ *         description: Curso no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+
+router.get(
+  '/:id/materiales',
+  verificarToken,
+  listarMaterialesDelCurso
 );
 
 export default router;

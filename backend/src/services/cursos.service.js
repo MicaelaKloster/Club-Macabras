@@ -22,3 +22,20 @@ export const obtenerCursosPaginados = async (limite, offset) => {
         total: totalRows[0].total
     };
 };
+
+export const obtenerMaterialesDelCurso = async (cursoId) => {
+    const [videos] = await db.promise().query(
+        'SELECT id, titulo, url, es_gratuito FROM videos WHERE curso_id = ?',
+        [cursoId]
+    );
+
+    const [documentos] = await db.promise().query(
+        'SELECT id, titulo, url, tipo FROM documentos WHERE curso_id = ?',
+        [cursoId]
+    );
+
+    return {
+        videos,
+        documentos
+    };
+};
