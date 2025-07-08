@@ -9,6 +9,7 @@ import perfilRoutes from './routes/perfil.routes.js';
 import cursosRoutes from './routes/cursos.routes.js';
 import videosRoutes from './routes/videos.routes.js';
 import documentosRoutes from './routes/documentos.routes.js';
+import membresiasRoutes from './routes/membresias.routes.js';
 
 
 // Configurar dotenv
@@ -30,6 +31,7 @@ app.use('/api/v1/perfil', perfilRoutes);
 app.use('/api/v1/cursos', cursosRoutes);
 app.use('/api/v1/videos', videosRoutes);
 app.use('/api/v1/documentos', documentosRoutes);
+app.use('/api/v1/membresias', membresiasRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
