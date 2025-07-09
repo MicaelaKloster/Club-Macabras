@@ -4,6 +4,7 @@ import { validarCreacionCurso } from '../validations/cursos.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
 import { permitirSoloRol } from '../middlewares/rol.middleware.js';
+import { verificarMembresiaActiva } from '../middlewares/verificarMembresia.middleware.js';
 
 const router = Router();
 
@@ -123,6 +124,7 @@ router.get(
 router.get(
   '/:id/materiales',
   verificarToken,
+  verificarMembresiaActiva, // Sólo miembros activos ven los materiales
   listarMaterialesDelCurso
 );
 

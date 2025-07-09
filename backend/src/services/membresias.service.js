@@ -17,3 +17,14 @@ export const obtenerMembresiaActivaPorUsuario = async (usuarioId) => {
 
     return rows[0]; // Devuelve undefined si no hay membresía activa
 };
+
+export const desactivarMembresiasVencidas = async () => {
+    const [result] = await db.promise().query(
+        `UPDATE membresias
+        SET estado = 0
+        WHERE estado = 1
+        AND DATE_ADD(fecha_vencimiento, INTERVAL 10 DAY) < CURDATE()`
+    );
+
+    console.log(`🔄 Membresías desactivadas automáticamente: ${result.affectedRows}`);
+};

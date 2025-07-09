@@ -11,6 +11,8 @@ import videosRoutes from './routes/videos.routes.js';
 import documentosRoutes from './routes/documentos.routes.js';
 import membresiasRoutes from './routes/membresias.routes.js';
 
+import {ejecutarVerificacionDeMembresias} from './jobs/verificarMembresias.job.js';
+
 
 // Configurar dotenv
 dotenv.config();
@@ -42,4 +44,7 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
+  
+  // Ejecutar verificación de membresías al iniciar
+  ejecutarVerificacionDeMembresias();
 });
