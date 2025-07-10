@@ -10,6 +10,7 @@ import cursosRoutes from './routes/cursos.routes.js';
 import videosRoutes from './routes/videos.routes.js';
 import documentosRoutes from './routes/documentos.routes.js';
 import membresiasRoutes from './routes/membresias.routes.js';
+import temasForoRoutes from './routes/temasForo.routes.js';
 
 import {ejecutarVerificacionDeMembresias} from './jobs/verificarMembresias.job.js';
 
@@ -34,6 +35,7 @@ app.use('/api/v1/cursos', cursosRoutes);
 app.use('/api/v1/videos', videosRoutes);
 app.use('/api/v1/documentos', documentosRoutes);
 app.use('/api/v1/membresias', membresiasRoutes);
+app.use('/api/v1/temas-foro', temasForoRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
