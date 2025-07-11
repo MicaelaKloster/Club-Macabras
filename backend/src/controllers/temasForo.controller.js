@@ -1,4 +1,4 @@
-import {crearTemaForo, obtenerTodosLosTemas, obtenerTemasConRespuestas} from '../services/temasForos.service.js';
+import {crearTemaForo, obtenerTemasPaginados, obtenerTemasConRespuestas} from '../services/temasForos.service.js';
 
 export const crearNuevoTema = async (req, res) => {
     try{
@@ -16,15 +16,33 @@ export const crearNuevoTema = async (req, res) => {
     }
 };
 
-export const listarTemas = async (req, res) =>{
-    try{
-        const temas = await obtenerTodosLosTemas();
-        res.status(200).json(temas);
+// export const listarTemas = async (req, res) =>{
+//     try{
+//         const temas = await obtenerTodosLosTemas();
+//         res.status(200).json(temas);
 
-    }catch (error){
-        console.error('❌ Error al listar temas del foro: ', error);
-        res.status(500).json({ error: 'Error interno del servidor'});
-    }
+//     }catch (error){
+//         console.error('❌ Error al listar temas del foro: ', error);
+//         res.status(500).json({ error: 'Error interno del servidor'});
+//     }
+// };
+
+export const listarTemas = async (req, res) => {
+  try {
+    const { page = 1, limite = 10, desde, hasta } = req.query;
+
+    const temas = await obtenerTemasPaginados(page, limite, desde, hasta);
+
+    res.status(200).json({
+      pagina: parseInt(page),
+      cantidad: temas.length,
+      temas
+    });
+
+  } catch (error) {
+    console.error('❌ Error al listar temas del foro:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 };
 
 export const verTemaConRespuestas = async (req, res) => {

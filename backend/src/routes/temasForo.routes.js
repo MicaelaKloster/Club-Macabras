@@ -60,6 +60,29 @@ router.post(
  *   get:
  *     summary: Listar todos los temas del foro
  *     tags: [Foro]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Número de página (por defecto 1)
+ *       - in: query
+ *         name: limite
+ *         schema:
+ *           type: integer
+ *         description: Cantidad de resultados por página (por defecto 10)
+ *       - in: query
+ *         name: desde
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Fecha mínima (YYYY-MM-DD)
+ *       - in: query
+ *         name: hasta
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Fecha máxima (YYYY-MM-DD)
  *     responses:
  *       200:
  *         description: Lista de temas
