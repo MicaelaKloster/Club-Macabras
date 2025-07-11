@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { crearNuevoTema, listarTemas } from '../controllers/temasForo.controller.js';
+import { crearNuevoTema, listarTemas, verTemaConRespuestas } from '../controllers/temasForo.controller.js';
 import { validarNuevoTema } from '../validations/temasForo.validation.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
@@ -70,5 +70,28 @@ router.get(
   '/',
   listarTemas
 );
+
+/**
+ * @swagger
+ * /temas-foro/{id}:
+ *   get:
+ *     summary: Obtener un tema del foro con sus respuestas
+ *     tags: [Foro]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del tema
+ *     responses:
+ *       200:
+ *         description: Tema con sus respuestas
+ *       404:
+ *         description: Tema no encontrado
+ *       500:
+ *         description: Error del servidor
+ */
+router.get('/:id', verTemaConRespuestas);
 
 export default router;
