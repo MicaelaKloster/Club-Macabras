@@ -13,6 +13,7 @@ import membresiasRoutes from './routes/membresias.routes.js';
 import temasForoRoutes from './routes/temasForo.routes.js';
 import respuestasForoRoutes from './routes/respuestasForo.routes.js';
 import preguntasRoutes from './routes/preguntas.routes.js';
+import mensajesRoutes from './routes/mensajes.routes.js'
 
 import {ejecutarVerificacionDeMembresias} from './jobs/verificarMembresias.job.js';
 
@@ -40,6 +41,7 @@ app.use('/api/v1/membresias', membresiasRoutes);
 app.use('/api/v1/temas-foro', temasForoRoutes);
 app.use('/api/v1/temas-foro', respuestasForoRoutes);
 app.use('/api/v1/preguntas', preguntasRoutes);
+app.use('/api/v1/mensajes', mensajesRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
