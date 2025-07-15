@@ -33,7 +33,16 @@ export const loginUsuario = async (req, res) => {
     );
 
     console.log(`✅ Login exitoso para: ${email}`);
-    res.status(200).json({ mensaje: 'Login exitoso', token });
+    res.status(200).json({
+      mensaje: 'Login exitoso',
+      token,
+      usuario: {
+        id: usuario.id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol,
+      },
+    });
 
   } catch (error) {
     console.error('❌ Error en login:', error);

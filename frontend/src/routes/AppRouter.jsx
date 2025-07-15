@@ -1,30 +1,35 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from '../components/Header';
+import LayoutPublico from '../layouts/LayoutPublico';
+import LayoutPrivado from '../layouts/LayoutPrivado';
 
-import Login from '../pages/Login';
+import Login from '../pages/Login.jsx';
 import Registro from '../pages/Registro';
 import Cursos from '../pages/Cursos';
 import Foro from '../pages/Foro';
 import Trabajos from '../pages/Trabajos';
 import Home from '../pages/Home';
 
+import RutaPrivada from './RutaPrivada';
+
 const AppRouter = () => {
   return (
     <BrowserRouter>
-      <Header />
-      {/* Aquí van las rutas de la aplicación */}
       <Routes>
         {/* Rutas públicas */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/registro" element={<Registro />} />
+        <Route element={<LayoutPublico />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/registro" element={<Registro />} />
+        </Route>
 
-        {/* Rutas privadas (luego agregamos protección) */}
-        <Route path="/" element={<Home />} />
-        <Route path="/cursos" element={<Cursos />} />
-        <Route path="/foro" element={<Foro />} />
-        <Route path="/trabajos" element={<Trabajos />} />
+        {/* Rutas privadas */}
+        <Route element={<RutaPrivada><LayoutPrivado /></RutaPrivada>}>
+          <Route path="/" element={<Home />} />
+          <Route path="/cursos" element={<Cursos />} />
+          <Route path="/foro" element={<Foro />} />
+          <Route path="/trabajos" element={<Trabajos />} />
+        </Route>
 
-        {/* Página por defecto si la ruta no existe */}
+        {/* Página no encontrada */}
         <Route path="*" element={<h2>Página no encontrada</h2>} />
       </Routes>
     </BrowserRouter>
