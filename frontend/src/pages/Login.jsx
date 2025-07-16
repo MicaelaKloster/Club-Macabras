@@ -24,7 +24,7 @@ const Login = () => {
       login(data.usuario); // Guardamos en el contexto
       localStorage.setItem("token", data.token); // Guardamos token si querés
       console.log("Login exitoso", data.usuario);
-      navigate("/"); // Redireccionamos al home
+      navigate("/dashboard"); // Redireccionamos al home
     } catch (err) {
       setError(err.response?.data?.message || "Error al iniciar sesión");
     }
