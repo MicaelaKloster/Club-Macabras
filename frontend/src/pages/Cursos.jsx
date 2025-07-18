@@ -31,7 +31,10 @@ const Cursos = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {cursos.map((curso) => (
             <div key={curso.id} className="bg-white shadow rounded p-4 border border-pink-200">
-            <h3 className="text-xl font-bold text-pink-800">{curso.titulo}</h3>
+            {/* <h3 className="text-xl font-bold text-pink-800">{curso.titulo}</h3> */}
+            <a href={`/cursos/${curso.id}`} className="text-xl font-bold text-pink-800 hover:underline">
+                {curso.titulo}
+            </a>
             <p className="text-sm text-gray-600 mb-2">{curso.categoria}</p>
             <p className="text-gray-700">{curso.descripcion}</p>
             </div>

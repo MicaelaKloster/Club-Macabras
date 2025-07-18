@@ -5,6 +5,7 @@ import LayoutPrivado from '../layouts/LayoutPrivado';
 import Login from '../pages/Login';
 import Registro from '../pages/Registro';
 import Cursos from '../pages/Cursos';
+import CursoDetalle from '../pages/CursoDetalle';
 import Foro from '../pages/Foro';
 import Trabajos from '../pages/Trabajos';
 import Home from '../pages/Home';
@@ -27,6 +28,7 @@ const AppRouter = () => {
         <Route element={<RutaPrivada><LayoutPrivado /></RutaPrivada>}>
           <Route path="/dashboard" element={<Home />} />
           <Route path="/cursos" element={<Cursos />} />
+          <Route path="/cursos/:id" element={<CursoDetalle />} />
           <Route path="/foro" element={<Foro />} />
           <Route path="/trabajos" element={<Trabajos />} />
         </Route>
