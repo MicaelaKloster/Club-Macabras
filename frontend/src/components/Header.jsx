@@ -35,14 +35,14 @@ const Header = () => {
                     >
                         Foro
                     </NavLink>
-                    <NavLink
+                    {/* <NavLink
                         to="/trabajos"
                         className={({ isActive }) =>
                             isActive ? "text-pink-700 font-semibold" : "text-gray-700"
                         }
                     >
                         Trabajos
-                    </NavLink>
+                    </NavLink> */}
                 </nav>
             </div>
         </header>

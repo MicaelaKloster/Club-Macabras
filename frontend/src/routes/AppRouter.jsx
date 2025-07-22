@@ -10,6 +10,7 @@ import Foro from '../pages/Foro';
 import TemaDetalle from '../pages/TemaDetalle';
 import NuevoTema from '../pages/NuevoTema';
 import Trabajos from '../pages/Trabajos';
+import SubirTrabajo from '../pages/SubirTrabajo';
 import Home from '../pages/Home';
 import Bienvenida from '../pages/Bienvenida';
 
@@ -34,7 +35,9 @@ const AppRouter = () => {
           <Route path="/foro" element={<Foro />} />
           <Route path="/foro/:id" element={<TemaDetalle />} />
           <Route path="/foro/nuevo" element={<NuevoTema />} />
-          <Route path="/trabajos" element={<Trabajos />} />
+          {/* <Route path="/trabajos" element={<Trabajos />} /> */}
+          <Route path="/cursos/:cursoId/trabajos" element={<Trabajos />} />
+          <Route path="/cursos/:cursoId/trabajos/nuevo" element={<SubirTrabajo />} />
         </Route>
 
         {/* Página no encontrada */}

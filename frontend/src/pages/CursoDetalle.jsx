@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 
@@ -127,6 +127,13 @@ const CursoDetalle = () => {
           </li>
         ))}
       </ul>
+
+      <Link
+        to={`/cursos/${id}/trabajos`}
+        className="inline-block mt-4 text-sm text-pink-600 hover:underline"
+      >
+        Ver trabajos del curso
+      </Link>
     </div>
   );
 };
