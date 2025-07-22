@@ -16,17 +16,6 @@ export const crearNuevoTema = async (req, res) => {
     }
 };
 
-// export const listarTemas = async (req, res) =>{
-//     try{
-//         const temas = await obtenerTodosLosTemas();
-//         res.status(200).json(temas);
-
-//     }catch (error){
-//         console.error('❌ Error al listar temas del foro: ', error);
-//         res.status(500).json({ error: 'Error interno del servidor'});
-//     }
-// };
-
 export const listarTemas = async (req, res) => {
   try {
     const { page = 1, limite = 10, desde, hasta } = req.query;

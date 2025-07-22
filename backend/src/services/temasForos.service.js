@@ -7,17 +7,6 @@ export const crearTemaForo = async (usuarioId, tema, contenido) => {
     );
 };
 
-// export const obtenerTodosLosTemas = async () => {
-//     const [rows] = await db.promise().query(
-//         `SELECT t.id, t.tema, t.contenido, t.fecha, u.nombre
-//         FROM temas_foro t
-//         JOIN usuarios u ON t.usuario_id = u.id
-//         ORDER BY t.fecha DESC`
-//     );
-    
-//     return rows;
-// };
-
 export const obtenerTemasPaginados = async (page = 1, limite = 10, desde, hasta) => {
   const offset = (page - 1) * limite;
   const filtros = [];

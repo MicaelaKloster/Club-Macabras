@@ -7,6 +7,8 @@ import Registro from '../pages/Registro';
 import Cursos from '../pages/Cursos';
 import CursoDetalle from '../pages/CursoDetalle';
 import Foro from '../pages/Foro';
+import TemaDetalle from '../pages/TemaDetalle';
+import NuevoTema from '../pages/NuevoTema';
 import Trabajos from '../pages/Trabajos';
 import Home from '../pages/Home';
 import Bienvenida from '../pages/Bienvenida';
@@ -30,6 +32,8 @@ const AppRouter = () => {
           <Route path="/cursos" element={<Cursos />} />
           <Route path="/cursos/:id" element={<CursoDetalle />} />
           <Route path="/foro" element={<Foro />} />
+          <Route path="/foro/:id" element={<TemaDetalle />} />
+          <Route path="/foro/nuevo" element={<NuevoTema />} />
           <Route path="/trabajos" element={<Trabajos />} />
         </Route>
 
