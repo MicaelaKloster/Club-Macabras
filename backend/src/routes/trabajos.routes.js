@@ -3,6 +3,7 @@ import { crearTrabajo, listarTrabajosPorCurso } from '../controllers/trabajos.co
 import { validarTrabajo } from '../validations/trabajos.validation.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
+import { upload } from '../middlewares/upload.middleware.js';
 
 const router = Router();
 
@@ -48,6 +49,7 @@ const router = Router();
 router.post(
     '/',
     verificarToken,
+    upload.single('imagen'),
     validarTrabajo,
     validarCampos,
     crearTrabajo

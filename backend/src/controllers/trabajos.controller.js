@@ -3,7 +3,15 @@ import { subirTrabajo, obtenerTrabajosDeCurso } from "../services/trabajos.servi
 export const crearTrabajo = async (req, res) => {
     try{
         const usuarioId = req.usuario.id; // ID del usuario autenticado
-        const { curso_id, imagen_url, descripcion } = req.body; 
+        const { curso_id, descripcion } = req.body; 
+
+        // Si no hay archivo, error
+        if (!req.file) {
+          return res.status(400).json({ error: 'La imagen es obligatoria' });
+        }
+
+        // Ruta pública a la imagen
+        const imagen_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
 
         await subirTrabajo(usuarioId, curso_id, imagen_url, descripcion);
         console.log(`👜 Trabajo subido por usuario ${usuarioId} en curso ${curso_id}`);

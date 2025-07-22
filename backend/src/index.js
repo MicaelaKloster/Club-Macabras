@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './docs/swagger.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import usuariosRoutes from './routes/usuarios.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import perfilRoutes from './routes/perfil.routes.js';
@@ -29,6 +31,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Configurar ruta para archivos estáticos (uploads)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Documentación
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -46,6 +52,8 @@ app.use('/api/v1/preguntas', preguntasRoutes);
 app.use('/api/v1/mensajes', mensajesRoutes);
 app.use('/api/v1/trabajos', trabajosRoutes);
 app.use('/api/v1', likesRoutes);
+// Servir la carpeta uploads de forma pública
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Ruta de prueba
 app.get('/', (req, res) => {
