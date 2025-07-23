@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import LayoutPublico from '../layouts/LayoutPublico';
 import LayoutPrivado from '../layouts/LayoutPrivado';
 
@@ -13,10 +14,13 @@ import Trabajos from '../pages/Trabajos';
 import SubirTrabajo from '../pages/SubirTrabajo';
 import Home from '../pages/Home';
 import Bienvenida from '../pages/Bienvenida';
+import Perfil from '../pages/Perfil';
+import EditarPerfil from '../pages/EditarPerfil'
 
 import RutaPrivada from './RutaPrivada';
 
 const AppRouter = () => {
+  const { usuario } = useAuth();
   return (
     <BrowserRouter>
       <Routes>
@@ -38,6 +42,12 @@ const AppRouter = () => {
           {/* <Route path="/trabajos" element={<Trabajos />} /> */}
           <Route path="/cursos/:cursoId/trabajos" element={<Trabajos />} />
           <Route path="/cursos/:cursoId/trabajos/nuevo" element={<SubirTrabajo />} />
+          {usuario && (
+            <>
+              <Route path="/perfil" element={<Perfil />} />
+              <Route path="/perfil/editar" element={<EditarPerfil />} />
+            </>  
+          )}
         </Route>
 
         {/* Página no encontrada */}

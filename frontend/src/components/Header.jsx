@@ -35,14 +35,15 @@ const Header = () => {
                     >
                         Foro
                     </NavLink>
-                    {/* <NavLink
-                        to="/trabajos"
+                    <NavLink
+                        to="/perfil"
                         className={({ isActive }) =>
                             isActive ? "text-pink-700 font-semibold" : "text-gray-700"
                         }
                     >
-                        Trabajos
-                    </NavLink> */}
+                        Mi Perfil
+                    </NavLink>
+
                 </nav>
             </div>
         </header>

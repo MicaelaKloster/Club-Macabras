@@ -1,12 +1,8 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
+import db from '../config/db.js';
 
-dotenv.config();
-
-export const verificarToken = (req, res, next) => {
+export const verificarToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
-
-  // El token debe venir como: "Bearer eyJhbGci..."
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
@@ -15,8 +11,23 @@ export const verificarToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuario = decoded; // ahora tenés acceso a req.usuario en controladores
+
+    // Verifica que el usuario siga activo
+    const [rows] = await db.promise().query(
+      'SELECT id, nombre, email, rol, estado FROM usuarios WHERE id = ?',
+      [decoded.id]
+    );
+
+    const usuario = rows[0];
+
+    if (!usuario || usuario.estado !== 1) {
+      return res.status(403).json({ error: 'Usuario inactivo o no encontrado' });
+    }
+
+    // Se guarda el usuario completo en la request
+    req.usuario = usuario;
     next();
+
   } catch (error) {
     console.error('❌ Token inválido:', error);
     return res.status(403).json({ error: 'Token inválido o expirado' });
