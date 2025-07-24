@@ -16,6 +16,11 @@ import Home from '../pages/Home';
 import Bienvenida from '../pages/Bienvenida';
 import Perfil from '../pages/Perfil';
 import EditarPerfil from '../pages/EditarPerfil'
+import DashboardAdmin from '../pages/DashboardAdmin';
+import RutaAdmin from '../components/RutaAdmin';
+import AdminUsuarios from '../pages/admin/AdminUsuarios';
+import CursosAdmin from '../pages/admin/CursosAdmin';
+import NuevoCurso from '../pages/admin/NuevoCurso';
 
 import RutaPrivada from './RutaPrivada';
 
@@ -39,7 +44,6 @@ const AppRouter = () => {
           <Route path="/foro" element={<Foro />} />
           <Route path="/foro/:id" element={<TemaDetalle />} />
           <Route path="/foro/nuevo" element={<NuevoTema />} />
-          {/* <Route path="/trabajos" element={<Trabajos />} /> */}
           <Route path="/cursos/:cursoId/trabajos" element={<Trabajos />} />
           <Route path="/cursos/:cursoId/trabajos/nuevo" element={<SubirTrabajo />} />
           {usuario && (
@@ -48,7 +52,23 @@ const AppRouter = () => {
               <Route path="/perfil/editar" element={<EditarPerfil />} />
             </>  
           )}
-        </Route>
+          </Route>
+          <Route
+            path="/admin"
+            element={
+              <RutaAdmin>
+                <DashboardAdmin />
+              </RutaAdmin>
+            }
+          />
+          {/* Rutas de administración */}
+          {usuario?.rol === "admin" && (
+            <>
+              <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+              <Route path="/admin/cursos" element={<CursosAdmin />} />
+              <Route path="/admin/cursos/nuevo" element={<NuevoCurso />} />
+            </>
+          )}
 
         {/* Página no encontrada */}
         <Route path="*" element={<h2>Página no encontrada</h2>} />
