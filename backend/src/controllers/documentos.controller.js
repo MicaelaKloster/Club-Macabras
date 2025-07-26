@@ -1,4 +1,4 @@
-import { agregarDocumentoACurso } from "../services/documentos.service.js";
+import { agregarDocumentoACurso, obtenerDocumentosDeCurso } from "../services/documentos.service.js";
 
 export const crearNuevoDocumento = async (req, res) => {
     try{
@@ -13,4 +13,15 @@ export const crearNuevoDocumento = async (req, res) => {
         console.error('❌ Error al agregar documento:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
+};
+
+export const listarDocumentosPorCurso = async (req, res) => {
+  try {
+    const { cursoId } = req.params;
+    const documentos = await obtenerDocumentosDeCurso(cursoId);
+    res.status(200).json({ documentos });
+  } catch (error) {
+    console.error("❌ Error al obtener documentos:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
 };

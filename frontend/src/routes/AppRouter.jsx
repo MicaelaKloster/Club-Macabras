@@ -21,6 +21,9 @@ import RutaAdmin from '../components/RutaAdmin';
 import AdminUsuarios from '../pages/admin/AdminUsuarios';
 import CursosAdmin from '../pages/admin/CursosAdmin';
 import NuevoCurso from '../pages/admin/NuevoCurso';
+import AdminMateriales from '../pages/admin/AdminMateriales';
+import NuevoDocumento from '../pages/admin/NuevoDocumento';
+import NuevoVideo from '../pages/admin/NuevoVideo';
 
 import RutaPrivada from './RutaPrivada';
 
@@ -67,6 +70,9 @@ const AppRouter = () => {
               <Route path="/admin/usuarios" element={<AdminUsuarios />} />
               <Route path="/admin/cursos" element={<CursosAdmin />} />
               <Route path="/admin/cursos/nuevo" element={<NuevoCurso />} />
+              <Route path="/admin/materiales/:cursoId" element={<AdminMateriales />} />
+              <Route path="/admin/materiales/:cursoId/documento/nuevo" element={<NuevoDocumento />} />
+              <Route path="/admin/materiales/:cursoId/video/nuevo" element={<NuevoVideo />} />
             </>
           )}
 

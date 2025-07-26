@@ -6,3 +6,11 @@ export const agregarVideoCurso = async (cursoId, titulo, url, esGratuito) => {
         [cursoId, titulo, url, esGratuito]
     );
 };
+
+export const obtenerVideosPorCurso = async (cursoId) => {
+  const [rows] = await db.promise().query(
+    "SELECT id, titulo, url, es_gratuito FROM videos WHERE curso_id = ?",
+    [cursoId]
+  );
+  return rows;
+};

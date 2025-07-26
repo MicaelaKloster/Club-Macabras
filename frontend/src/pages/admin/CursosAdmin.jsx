@@ -35,6 +35,12 @@ const CursosAdmin = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-pink-800">Gestión de Cursos</h2>
+        <button
+            onClick={() => navigate(-1)}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded"
+        >
+            ← Volver
+        </button>
         <Link
           to="/admin/cursos/nuevo"
           className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700"

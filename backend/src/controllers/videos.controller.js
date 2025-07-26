@@ -1,4 +1,4 @@
-import { agregarVideoCurso } from "../services/videos.service.js";
+import { agregarVideoCurso, obtenerVideosPorCurso } from "../services/videos.service.js";
 
 export const crearNuevoVideo = async (req, res) => {
     try{
@@ -13,4 +13,15 @@ export const crearNuevoVideo = async (req, res) => {
         console.error('❌ Error al agregar video:', error);
         res.status(500).json({ error: 'Error interno del servidor al agregar el video' });
     }
+};
+
+export const listarVideosPorCurso = async (req, res) => {
+  try {
+    const { cursoId } = req.params;
+    const videos = await obtenerVideosPorCurso(cursoId);
+    res.status(200).json({ videos });
+  } catch (error) {
+    console.error("❌ Error al obtener videos:", error);
+    res.status(500).json({ error: "Error al obtener videos" });
+  }
 };

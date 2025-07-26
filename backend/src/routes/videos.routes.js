@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { crearNuevoVideo } from "../controllers/videos.controller.js";
+import { crearNuevoVideo, listarVideosPorCurso } from "../controllers/videos.controller.js";
 import { validarNuevoVideo } from "../validations/videos.validation.js";
 import { validarCampos } from "../middlewares/validarCampos.middleware.js";
 import { verificarToken } from "../middlewares/auth.middleware.js";
@@ -64,5 +64,46 @@ router.post(
   validarCampos,
   crearNuevoVideo
 );
+
+/**
+ * @swagger
+ * /api/v1/videos/{cursoId}:
+ *   get:
+ *     summary: Obtener todos los videos de un curso específico
+ *     tags:
+ *       - Videos
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: cursoId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del curso
+ *     responses:
+ *       200:
+ *         description: Lista de videos del curso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   curso_id:
+ *                     type: integer
+ *                   titulo:
+ *                     type: string
+ *                   url:
+ *                     type: string
+ *                   es_gratuito:
+ *                     type: boolean
+ *       500:
+ *         description: Error al obtener los videos
+ */
+router.get('/:cursoId', verificarToken, listarVideosPorCurso);
 
 export default router;
