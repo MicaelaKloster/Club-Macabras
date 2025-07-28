@@ -18,17 +18,15 @@ const CursoDetalle = () => {
 
     const fetchMateriales = async () => {
       try {
-        const [resVideos, resDocs] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_API_URL}/cursos/${id}/videos`, {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/cursos/${id}/materiales`,
+          {
             headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`${import.meta.env.VITE_API_URL}/cursos/${id}/documentos`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-        ]);
+          }
+        );
 
-        setVideos(resVideos.data.videos || []);
-        setDocumentos(resDocs.data.documentos || []);
+        setVideos(res.data.videos || []);
+        setDocumentos(res.data.documentos || []);
       } catch (error) {
         console.error("❌ Error al cargar materiales:", error.response?.data || error.message);
         setVideos([]);      // Evita el "cursos.map is not a function"
@@ -90,25 +88,40 @@ const CursoDetalle = () => {
 
       <h2 className="text-2xl font-bold text-pink-800">Videos</h2>
       <ul className="space-y-3">
-        {videos.map((video) => (
-          <li key={video.id} className="border p-4 rounded shadow">
-            <h3 className="font-semibold text-pink-700">{video.titulo}</h3>
-            {video.es_gratuito || membresiaActiva ? (
-              <a
-                href={video.url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-600 underline"
-              >
-                Ver video
-              </a>
-            ) : (
-              <p className="text-gray-500 italic">
-                Contenido exclusivo para miembros
-              </p>
-            )}
-          </li>
-        ))}
+        {videos.map((video) => {
+          const obtenerUrlEmbed = (url) => {
+            const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/;
+            const match = url.match(regex);
+            return match ? `https://www.youtube.com/embed/${match[1]}` : null;
+          };
+
+          const urlEmbed = obtenerUrlEmbed(video.url);
+
+          return (
+            <li key={video.id} className="border p-4 rounded shadow space-y-2">
+              <h3 className="font-semibold text-pink-700">{video.titulo}</h3>
+              {video.es_gratuito || membresiaActiva ? (
+                urlEmbed ? (
+                  <div className="aspect-video">
+                    <iframe
+                      src={urlEmbed}
+                      title={video.titulo}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full rounded"
+                    />
+                  </div>
+                ) : (
+                  <p className="text-red-500">❌ URL de video no válida</p>
+                )
+              ) : (
+                <p className="text-gray-500 italic">
+                  Contenido exclusivo para miembros
+                </p>
+              )}
+            </li>
+          );
+        })}
       </ul>
 
       <h2 className="text-2xl font-bold text-pink-800">Documentos</h2>
@@ -120,7 +133,7 @@ const CursoDetalle = () => {
               href={doc.url}
               target="_blank"
               rel="noreferrer"
-              className="text-blue-600 underline"
+              className="text-pink-600 underline"
             >
               Ver documento ({doc.tipo})
             </a>
