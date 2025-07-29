@@ -12,6 +12,7 @@ const CursoDetalle = () => {
   const [documentos, setDocumentos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [membresiaActiva, setMembresiaActiva] = useState(false);
+  const [cursoInfo, setCursoInfo] = useState({ titulo: "", categoria: ""});
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -52,9 +53,28 @@ const CursoDetalle = () => {
       }
     };
 
+    const obtenerCurso = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/cursos/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setCursoInfo({
+          titulo: res.data.titulo,
+          categoria: res.data.categoria || "Sin categoría",
+        });
+
+      } catch (error) {
+        console.error("❌ Error al obtener datos del curso:", error);
+        setCursoInfo({ titulo: "Curso no encontrado", categoria: "" });
+      }
+    };
+
+
     if (usuario) {
       fetchMateriales();
       verificarMembresia();
+      obtenerCurso();
     }
   }, [id, usuario]);
 
@@ -68,6 +88,11 @@ const CursoDetalle = () => {
       >
         ← Volver a cursos
       </button>
+
+      <div className="space-y-1 mb-4">
+        <h1 className="text-3xl font-bold text-pink-800">{cursoInfo.titulo}</h1>
+        <p className="text-sm text-gray-600">📂 Categoría: {cursoInfo.categoria}</p>
+      </div>
 
       <div className="text-sm text-gray-700">
         {membresiaActiva ? (

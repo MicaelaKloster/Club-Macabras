@@ -39,3 +39,11 @@ export const obtenerMaterialesDelCurso = async (cursoId) => {
         documentos
     };
 };
+
+export const buscarCursoPorId = async (id) => {
+  const [rows] = await db.promise().query(
+    'SELECT id, titulo, descripcion, categoria FROM cursos WHERE id = ?',
+    [id]
+  );
+  return rows[0];
+};

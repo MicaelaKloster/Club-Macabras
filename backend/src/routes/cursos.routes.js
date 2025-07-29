@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { crearNuevoCurso, listarCursos, listarMaterialesDelCurso } from '../controllers/cursos.controller.js';
+import { crearNuevoCurso, listarCursos, listarMaterialesDelCurso, obtenerCursoPorId } from '../controllers/cursos.controller.js';
 import { validarCreacionCurso } from '../validations/cursos.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
@@ -127,5 +127,45 @@ router.get(
   verificarMembresiaActiva, // Sólo miembros activos ven los materiales
   listarMaterialesDelCurso
 );
+
+/**
+ * @swagger
+ * /cursos/{id}:
+ *   get:
+ *     summary: Obtener información de un curso por su ID
+ *     tags: [Cursos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del curso
+ *     responses:
+ *       200:
+ *         description: Información del curso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 titulo:
+ *                   type: string
+ *                 descripcion:
+ *                   type: string
+ *                 categoria:
+ *                   type: string
+ *                 materiales:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *       404:
+ *         description: Curso no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
+router.get('/:id', verificarToken, obtenerCursoPorId);
 
 export default router;
