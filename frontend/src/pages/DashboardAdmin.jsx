@@ -25,12 +25,12 @@ const DashboardAdmin = () => {
           📚 Gestión de Cursos
         </button>
 
-        {/* <button
-          onClick={() => navigate("/admin/materiales")}
+        <button
+          onClick={() => navigate("/admin/preguntas")}
           className="bg-pink-700 text-white px-6 py-3 rounded hover:bg-pink-800"
         >
-          🎥 Subida de Materiales
-        </button> */}
+          ❓ Preguntas Pendientes
+        </button>
       </div>
     </div>
   );

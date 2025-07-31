@@ -24,6 +24,7 @@ import NuevoCurso from '../pages/admin/NuevoCurso';
 import AdminMateriales from '../pages/admin/AdminMateriales';
 import NuevoDocumento from '../pages/admin/NuevoDocumento';
 import NuevoVideo from '../pages/admin/NuevoVideo';
+import AdminPreguntas from '../pages/admin/AdminPreguntas';
 
 import RutaPrivada from './RutaPrivada';
 
@@ -41,8 +42,8 @@ const AppRouter = () => {
 
         {/* Rutas privadas */}
         <Route element={<RutaPrivada><LayoutPrivado /></RutaPrivada>}>
-          <Route path="/dashboard" element={<Home />} />
-          <Route path="/cursos" element={<Cursos />} />
+          <Route path="/dashboard" element={<Cursos />} />
+          {/* <Route path="/cursos" element={<Cursos />} /> */}
           <Route path="/cursos/:id" element={<CursoDetalle />} />
           <Route path="/foro" element={<Foro />} />
           <Route path="/foro/:id" element={<TemaDetalle />} />
@@ -73,6 +74,7 @@ const AppRouter = () => {
               <Route path="/admin/materiales/:cursoId" element={<AdminMateriales />} />
               <Route path="/admin/materiales/:cursoId/documento/nuevo" element={<NuevoDocumento />} />
               <Route path="/admin/materiales/:cursoId/video/nuevo" element={<NuevoVideo />} />
+              <Route path="/admin/preguntas" element={<AdminPreguntas />} />
             </>
           )}
 
