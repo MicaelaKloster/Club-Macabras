@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AdminPreguntas = () => {
   const { usuario } = useAuth();
+  const navigate = useNavigate();
   const [preguntas, setPreguntas] = useState([]);
-  const [respuestas, setRespuestas] = useState({}); // objeto donde clave = preguntaId, valor = respuesta
+  const [respuestas, setRespuestas] = useState({});
   const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
@@ -39,7 +41,7 @@ const AdminPreguntas = () => {
       );
 
       setMensaje("✅ Respuesta enviada con éxito");
-      // Limpiamos la respuesta local y actualizamos lista
+
       setRespuestas((prev) => ({ ...prev, [preguntaId]: "" }));
       setPreguntas((prev) =>
         prev.map((p) =>
@@ -51,57 +53,86 @@ const AdminPreguntas = () => {
     }
   };
 
+  // Agrupar preguntas por curso_id
+  const preguntasPorCurso = preguntas.reduce((acc, p) => {
+    if (!acc[p.curso_id]) acc[p.curso_id] = [];
+    acc[p.curso_id].push(p);
+    return acc;
+  }, {});
+
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6">
+    <div className="max-w-5xl mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold text-pink-800">Panel de Preguntas Pendientes</h1>
 
       {mensaje && <p className="text-green-600 font-semibold">{mensaje}</p>}
 
-      {preguntas.length === 0 ? (
+      {Object.keys(preguntasPorCurso).length === 0 ? (
         <p className="text-gray-600">No hay preguntas disponibles.</p>
       ) : (
-        <ul className="space-y-4">
-          {preguntas.map((p) => (
-            <li key={p.id} className="border p-4 rounded shadow space-y-2">
-              <p className="text-sm text-gray-600">Curso ID: {p.curso_id}</p>
-              <p>
-                <strong className="text-pink-700">{p.usuario} preguntó:</strong>{" "}
-                {p.pregunta}
-              </p>
+        Object.entries(preguntasPorCurso).map(([cursoId, preguntasCurso]) => (
+          <div
+            key={cursoId}
+            className="border border-pink-300 rounded p-4 bg-pink-50 space-y-3"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-xl font-bold text-pink-700">
+                Curso ID: {preguntasCurso[0].curso} (ID: {cursoId})
+              </h2>
+              <button
+                onClick={() => navigate(`/cursos/${cursoId}`)}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                🔍 Ver curso
+              </button>
+            </div>
 
-              {p.respondida ? (
-                <div className="bg-green-50 border-l-4 border-green-600 p-3 rounded">
-                  <p className="text-green-700 font-semibold">Respuesta:</p>
-                  <p>{p.respuesta}</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <textarea
-                    rows={3}
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="Escribí tu respuesta..."
-                    value={respuestas[p.id] || ""}
-                    onChange={(e) =>
-                      setRespuestas((prev) => ({
-                        ...prev,
-                        [p.id]: e.target.value,
-                      }))
-                    }
-                  />
-                  <button
-                    onClick={() => handleResponder(p.id)}
-                    className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"
-                  >
-                    Enviar respuesta
-                  </button>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
+            <ul className="space-y-4">
+              {preguntasCurso.map((p) => (
+                <li
+                  key={p.id}
+                  className="bg-white p-4 rounded shadow space-y-2 border"
+                >
+                  <p>
+                    <strong className="text-pink-700">{p.usuario} preguntó:</strong>{" "}
+                    {p.pregunta}
+                  </p>
+
+                  {p.respondida ? (
+                    <div className="bg-green-50 border-l-4 border-green-600 p-3 rounded">
+                      <p className="text-green-700 font-semibold">Respuesta:</p>
+                      <p>{p.respuesta}</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <textarea
+                        rows={3}
+                        className="w-full border rounded px-3 py-2"
+                        placeholder="Escribí tu respuesta..."
+                        value={respuestas[p.id] || ""}
+                        onChange={(e) =>
+                          setRespuestas((prev) => ({
+                            ...prev,
+                            [p.id]: e.target.value,
+                          }))
+                        }
+                      />
+                      <button
+                        onClick={() => handleResponder(p.id)}
+                        className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800"
+                      >
+                        Enviar respuesta
+                      </button>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
       )}
     </div>
   );
 };
+
 
 export default AdminPreguntas;

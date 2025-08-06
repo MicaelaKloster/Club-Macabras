@@ -235,12 +235,6 @@ const CursoDetalle = () => {
           <p className="text-gray-500 italic">No hay videos disponibles para este curso.</p>
         ): (
 
-          // {videos.length > 0 && (
-          //   <p className="text-sm text-gray-600 mb-4">
-          //     🧠 Progreso: {videosVistos.length} / {videos.length} videos vistos
-          //   </p>
-          // )}
-
           <ul className="space-y-3">
           
             {videos.map((video) => {
@@ -322,6 +316,12 @@ const CursoDetalle = () => {
 
       {/* Preguntas y respuestas */}
       <h2 className="text-2xl font-bold text-pink-800">Preguntas del curso</h2>
+      
+      {usuario?.rol !== 'admin' && (
+        <p className="text-sm text-gray-500 italic mb-2">
+          * Solo los administradores pueden responder las preguntas.
+        </p>
+      )}
 
       <div className="space-y-4">
         {preguntas.length === 0 ? (
@@ -350,6 +350,50 @@ const CursoDetalle = () => {
                 </p>
               )}
 
+              {usuario?.rol === 'admin' && !pregunta.respuesta && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.target;
+                    const respuesta = form.respuesta.value.trim();
+                    if (!respuesta) return;
+
+                    const responder = async () => {
+                      try{
+                        const token = localStorage.getItem("token");
+                        await axios.put(
+                          `${import.meta.env.VITE_API_URL}/preguntas/${pregunta.id}`,
+                          { respuesta },
+                          {
+                            headers: { Authorization: `Bearer ${token}` },
+                          }
+                        );
+                        form.reset();
+                        fetchPreguntas(); // refresca la lista
+
+                      }catch (error){
+                        console.error("❌ Error al responder pregunta: ", error);
+                      }
+                    };
+
+                    responder();
+                  }}
+                  className="mt-2 space-y-2"
+                >
+                  <textarea
+                    name="respuesta"
+                    rows="2"
+                    className="w-full p-2 border border-gray-300 rounded"
+                    placeholder="Escribí tu respuesta..."
+                  />
+                  <button
+                    type="submit"
+                    className="bg-pink-700 text-white px-4 py-2 rounded hover:bg-pink-800 text-sm"
+                  >
+                    Responder
+                  </button>
+                </form>
+              )}
               
             </div>
           ))

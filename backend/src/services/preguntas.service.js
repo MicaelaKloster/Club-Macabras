@@ -32,3 +32,23 @@ export const responderPregunta = async (id, respuesta) => {
     [respuesta, id]
   );
 };
+
+export const obtenerTodasLasPreguntas = async () => {
+  const [rows] = await db.promise().query(
+    `SELECT 
+      p.id,
+      p.pregunta,
+      p.respuesta,
+      p.fecha,
+      p.curso_id,
+      u.nombre AS usuario,
+      c.titulo AS curso,
+      CASE WHEN p.respuesta IS NULL OR p.respuesta = '' THEN false ELSE true END AS respondida
+    FROM preguntas_respuestas p
+    JOIN usuarios u ON p.usuario_id = u.id
+    JOIN cursos c ON p.curso_id = c.id
+    ORDER BY p.fecha DESC`
+  );
+
+  return rows;
+};

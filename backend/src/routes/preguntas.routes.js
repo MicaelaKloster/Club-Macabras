@@ -119,4 +119,28 @@ router.put(
     responderPreguntaPorId
 );
 
+/**
+ * @swagger
+ * /preguntas:
+ *   get:
+ *     summary: Listar todas las preguntas agrupadas por curso (solo admin)
+ *     tags: [Preguntas]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista agrupada de preguntas
+ *       403:
+ *         description: Acceso denegado
+ *       500:
+ *         description: Error del servidor
+ */
+router.get(
+  '/',
+  verificarToken,
+  permitirSoloRol('admin'),
+  listarTodasLasPreguntas
+);
+
+
 export default router;

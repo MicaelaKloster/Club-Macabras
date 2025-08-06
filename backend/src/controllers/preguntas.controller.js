@@ -1,4 +1,4 @@
-import { crearPregunta, obtenerPreguntasPorCurso, responderPregunta } from '../services/preguntas.service.js';
+import { crearPregunta, obtenerPreguntasPorCurso, responderPregunta, obtenerTodasLasPreguntas } from '../services/preguntas.service.js';
 
 export const hacerPregunta = async (req, res) => {
     try{
@@ -43,6 +43,17 @@ export const responderPreguntaPorId = async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error al responder pregunta:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+export const listarTodasLasPreguntas = async (req, res) => {
+  try{
+    const preguntas = await obtenerTodasLasPreguntas();
+    res.status(200).json(preguntas);
+    console.log("📋 Listando todas las preguntas")
+  }catch (error){
+    console.error('❌ Error al listar todas las preguntas: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
