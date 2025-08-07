@@ -19,6 +19,7 @@ import mensajesRoutes from './routes/mensajes.routes.js'
 import trabajosRoutes from './routes/trabajos.routes.js';
 import likesRoutes from './routes/likes.routes.js';
 import progresoRoutes from './routes/progreso.routes.js';
+import pagosRoutes from './routes/pagos.routes.js';
 
 import {ejecutarVerificacionDeMembresias} from './jobs/verificarMembresias.job.js';
 
@@ -54,6 +55,7 @@ app.use('/api/v1/mensajes', mensajesRoutes);
 app.use('/api/v1/trabajos', trabajosRoutes);
 app.use('/api/v1', likesRoutes);
 app.use('/api/v1', progresoRoutes);
+app.use('/api/v1/pagos', pagosRoutes);
 // Servir la carpeta uploads de forma pública
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
