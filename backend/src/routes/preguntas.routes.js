@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { hacerPregunta, listarPreguntasPorCurso, responderPreguntaPorId } from '../controllers/preguntas.controller.js';
+import { hacerPregunta, listarPreguntasPorCurso, responderPreguntaPorId, listarTodasLasPreguntas } from '../controllers/preguntas.controller.js';
 import { validarPregunta, validarRespuesta } from '../validations/preguntas.validation.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';

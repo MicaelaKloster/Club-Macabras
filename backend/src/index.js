@@ -19,7 +19,7 @@ import mensajesRoutes from './routes/mensajes.routes.js'
 import trabajosRoutes from './routes/trabajos.routes.js';
 import likesRoutes from './routes/likes.routes.js';
 import progresoRoutes from './routes/progreso.routes.js';
-import pagosRoutes from './routes/pagos.routes.js';
+import mercadoPagoRoutes from './routes/mercadoPago.routes.js';
 
 import {ejecutarVerificacionDeMembresias} from './jobs/verificarMembresias.job.js';
 
@@ -41,6 +41,8 @@ const __dirname = path.dirname(__filename);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // RUTAS
+app.use(express.json({ type: '*/*' })); // Importante para recibir Webhooks
+
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/usuarios', usuariosRoutes);
 app.use('/api/v1/perfil', perfilRoutes);
@@ -55,7 +57,7 @@ app.use('/api/v1/mensajes', mensajesRoutes);
 app.use('/api/v1/trabajos', trabajosRoutes);
 app.use('/api/v1', likesRoutes);
 app.use('/api/v1', progresoRoutes);
-app.use('/api/v1/pagos', pagosRoutes);
+app.use('/api/v1/mercadopago', mercadoPagoRoutes);
 // Servir la carpeta uploads de forma pública
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

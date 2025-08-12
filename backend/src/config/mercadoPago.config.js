@@ -1,7 +1,6 @@
-import mercadopago from 'mercadopago';
+import { MercadoPagoConfig } from "mercadopago";
 
-mercadopago.configure({
-	access_token: 'TEST-3024972117865756-080713-1a1a93da366defd9638730b5c73560ed-1472198855',
+// Cliente Mercado Pago con Access Token
+export const mpClient = new MercadoPagoConfig({
+  accessToken: process.env.MP_ACCESS_TOKEN, // Tu access token de test o producción
 });
-	
-export default mercadopago;
