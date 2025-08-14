@@ -197,7 +197,35 @@ const CursoDetalle = () => {
         {membresiaActiva ? (
           <p className="text-green-600">✅ Tenés una membresía activa</p>
         ) : (
-          <p className="text-red-500">❌ No tenés una membresía activa</p>
+          <div>
+            <p className="text-red-500">❌ No tenés una membresía activa</p>
+            <button
+              onClick={async () => {
+                try {
+                  const token = localStorage.getItem("token");
+                  const res = await axios.post(
+                    `${import.meta.env.VITE_API_URL}/mercadopago/preferencia`,
+                    {
+                      usuario_id: usuario.id,
+                      precio: 1500 // 🔹 Fijo por ahora, pero editable en backend solo por admin
+                    },
+                    {
+                      headers: { Authorization: `Bearer ${token}` },
+                    }
+                  );
+                  
+                  // Redirigir al checkout de Mercado Pago
+                  window.location.href = `https://www.mercadopago.com/checkout/v1/redirect?pref_id=${res.data.id}`;
+                } catch (error) {
+                  console.error("❌ Error al iniciar pago:", error.response?.data || error.message);
+                  alert("Ocurrió un error al iniciar el pago. Intenta nuevamente.");
+                }
+              }}
+              className="bg-pink-700 hover:bg-pink-800 text-white px-4 py-2 rounded"
+            >
+              Comprar Membresía
+            </button>
+          </div>
         )}
       </div>
 

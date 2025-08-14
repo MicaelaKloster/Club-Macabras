@@ -26,16 +26,16 @@ export const crearPreferencia = async (req, res) => {
             currency_id: "ARS",
           },
         ],
-        // back_urls: {
-        //   success: `${process.env.FRONTEND_URL}/pago-exitoso`,
-        //   failure: `${process.env.FRONTEND_URL}/pago-fallido`,
-        //   pending: `${process.env.FRONTEND_URL}/pago-pendiente`,
-        // },
         back_urls: {
-          success: "https://www.google.com",
-          failure: "https://www.google.com",
-          pending: "https://www.google.com",
+          success: `${process.env.FRONTEND_URL}/pago-exitoso`,
+          failure: `${process.env.FRONTEND_URL}/pago-fallido`,
+          pending: `${process.env.FRONTEND_URL}/pago-pendiente`,
         },
+        // back_urls: {
+        //   success: "https://www.google.com",
+        //   failure: "https://www.google.com",
+        //   pending: "https://www.google.com",
+        // },
         auto_return: "approved",
         notification_url: `${process.env.BACKEND_URL}/api/v1/mercadopago/webhook`, // 🔹 Ngrok URL aquí
         metadata: {

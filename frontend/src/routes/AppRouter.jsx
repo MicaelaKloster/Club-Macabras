@@ -25,6 +25,9 @@ import AdminMateriales from '../pages/admin/AdminMateriales';
 import NuevoDocumento from '../pages/admin/NuevoDocumento';
 import NuevoVideo from '../pages/admin/NuevoVideo';
 import AdminPreguntas from '../pages/admin/AdminPreguntas';
+import PagoExitoso from "../pages/PagoExitoso";
+import PagoFallido from "../pages/PagoFallido";
+import PagoPendiente from "../pages/PagoPendiente";
 
 import RutaPrivada from './RutaPrivada';
 
@@ -38,6 +41,9 @@ const AppRouter = () => {
           <Route path="/" element={<Bienvenida />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
+          <Route path="/pago-exitoso" element={<PagoExitoso />} />
+          <Route path="/pago-fallido" element={<PagoFallido />} />
+          <Route path="/pago-pendiente" element={<PagoPendiente />} />
         </Route>
 
         {/* Rutas privadas */}
