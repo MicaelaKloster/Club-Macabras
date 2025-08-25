@@ -25,6 +25,7 @@ import AdminMateriales from '../pages/admin/AdminMateriales';
 import NuevoDocumento from '../pages/admin/NuevoDocumento';
 import NuevoVideo from '../pages/admin/NuevoVideo';
 import AdminPreguntas from '../pages/admin/AdminPreguntas';
+import ComprarMembresia from '../pages/ComprarMembresia';
 import PagoExitoso from "../pages/PagoExitoso";
 import PagoFallido from "../pages/PagoFallido";
 import PagoPendiente from "../pages/PagoPendiente";
@@ -41,6 +42,7 @@ const AppRouter = () => {
           <Route path="/" element={<Bienvenida />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
+          <Route path="/membresia" element={<ComprarMembresia />} />
           <Route path="/pago-exitoso" element={<PagoExitoso />} />
           <Route path="/pago-fallido" element={<PagoFallido />} />
           <Route path="/pago-pendiente" element={<PagoPendiente />} />
@@ -49,7 +51,6 @@ const AppRouter = () => {
         {/* Rutas privadas */}
         <Route element={<RutaPrivada><LayoutPrivado /></RutaPrivada>}>
           <Route path="/dashboard" element={<Cursos />} />
-          {/* <Route path="/cursos" element={<Cursos />} /> */}
           <Route path="/cursos/:id" element={<CursoDetalle />} />
           <Route path="/foro" element={<Foro />} />
           <Route path="/foro/:id" element={<TemaDetalle />} />

@@ -46,14 +46,7 @@ const Header = () => {
 
                 {/* Navegación */}
                 <nav className="flex gap-6">
-                    {/* <NavLink
-                        to="/"
-                        className={({ isActive }) =>
-                            isActive ? "text-pink-700 font-semibold" : "text-gray-700"
-                        }
-                    >
-                        Inicio
-                    </NavLink> */}
+                    
                     <NavLink
                         to="/dashboard"
                         className={({ isActive }) =>
@@ -69,6 +62,14 @@ const Header = () => {
                         }
                     >
                         Foro de la Comunidad
+                    </NavLink>
+                    <NavLink
+                        to="/membresia"
+                        className={({ isActive }) =>
+                            isActive ? "text-pink-700 font-semibold" : "text-gray-700"
+                        }
+                    >
+                        Membresia
                     </NavLink>
                     <NavLink
                         to="/perfil"

@@ -37,7 +37,7 @@ export const crearPreferencia = async (req, res) => {
         //   pending: "https://www.google.com",
         // },
         auto_return: "approved",
-        notification_url: `${process.env.BACKEND_URL}/api/v1/mercadopago/webhook`, // 🔹 Ngrok URL aquí
+        notification_url: `${process.env.BACKEND_URL}/mercadopago/webhook`, // 🔹 Ngrok URL aquí
         metadata: {
           usuario_id
         }
