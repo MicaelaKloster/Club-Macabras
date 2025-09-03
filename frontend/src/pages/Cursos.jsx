@@ -11,7 +11,6 @@ const Cursos = () => {
                 const token = localStorage.getItem("token");
                 const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/cursos`,{
                     headers: {
-                        'ngrok-skip-browser-warning': 'true',
                         Authorization: `Bearer ${token}`
                     },
                 });

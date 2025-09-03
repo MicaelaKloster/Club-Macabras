@@ -13,7 +13,7 @@ import NuevoTema from '../pages/NuevoTema';
 import Trabajos from '../pages/Trabajos';
 import SubirTrabajo from '../pages/SubirTrabajo';
 import Home from '../pages/Home';
-import Bienvenida from '../pages/Bienvenida';
+// import Bienvenida from '../pages/Bienvenida';
 import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 import Perfil from '../pages/Perfil';
 import EditarPerfil from '../pages/EditarPerfil'
@@ -40,7 +40,7 @@ const AppRouter = () => {
       <Routes>
         {/* Rutas públicas */}
         <Route element={<LayoutPublico />}>
-          <Route path="/" element={<Bienvenida />} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/registro" element={<Registro />} />
           <Route path="/membresia" element={<ComprarMembresia />} />

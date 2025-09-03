@@ -5,21 +5,21 @@ import Navbar from '../components/Navbar';
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // Placeholder para las imágenes del cliente
+  // Imágenes del carrusel
   const slides = [
     {
       id: 1,
-      image: '../assets/background-1.jpg',
+      image: '/images/background-1.jpg',
       alt: 'Marroquinería artesanal 1'
     },
     {
       id: 2,
-      image: '../assets/background-2.jpg',
+      image: '/images/background-2.jpg',
       alt: 'Marroquinería artesanal 2'
     },
     {
       id: 3,
-      image: '../assets/background-4.jpg',
+      image: '/images/background-4.jpg',
       alt: 'Marroquinería artesanal 3'
     }
   ];
@@ -51,15 +51,14 @@ const Home = () => {
               <img
                 src={slide.image}
                 alt={slide.alt}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover filter brightness-50"
                 onError={(e) => {
-                  // Fallback para cuando no hay imágenes
+                  console.error('Error cargando imagen:', e.target.src);
                   e.target.style.display = 'none';
                   e.target.parentElement.style.backgroundColor = '#f8f9fa';
                 }}
+                onLoad={() => console.log('Imagen cargada:', slides[currentSlide]?.image)}
               />
-              {/* Overlay oscuro para mejor legibilidad del texto */}
-              <div className="absolute inset-0 bg-black bg-opacity-40"></div>
             </div>
           ))}
         </div>
@@ -162,14 +161,14 @@ const Home = () => {
               </div>
             </div>
             <div className="bg-pink-50 p-8 rounded-lg">
-              {/* <h3 className="text-xl font-semibold text-pink-700 mb-4">
+              <h3 className="text-xl font-semibold text-pink-700 mb-4">
                 Horarios de Atención
               </h3>
               <div className="space-y-2 text-gray-700">
                 <p><strong>Lunes a Viernes:</strong> 9:00 - 18:00</p>
                 <p><strong>Sábados:</strong> 9:00 - 14:00</p>
                 <p><strong>Domingos:</strong> Cerrado</p>
-              </div> */}
+              </div>
               <div className="mt-6">
                 <p className="text-sm text-gray-500">
                   Respondemos todas las consultas en un máximo de 24 horas.

@@ -27,7 +27,6 @@ const CursoDetalle = () => {
           `${import.meta.env.VITE_API_URL}/cursos/${id}/materiales`,
           {
             headers: { 
-              'ngrok-skip-browser-warning': 'true',
               Authorization: `Bearer ${token}` 
             },
           }
@@ -50,7 +49,6 @@ const CursoDetalle = () => {
           `${import.meta.env.VITE_API_URL}/membresias/${usuario.id}`,
           {
             headers: { 
-              'ngrok-skip-browser-warning': 'true',
               Authorization: `Bearer ${token}` 
             },
           }
@@ -67,7 +65,6 @@ const CursoDetalle = () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/cursos/${id}`, {
           headers: { 
-            'ngrok-skip-browser-warning': 'true',
             Authorization: `Bearer ${token}` 
           },
         });
@@ -91,7 +88,6 @@ const CursoDetalle = () => {
           `${import.meta.env.VITE_API_URL}/usuarios/${usuario.id}/progreso/${id}`,
           {
             headers: { 
-              'ngrok-skip-browser-warning': 'true',
               Authorization: `Bearer ${token}` 
             },
           }
@@ -111,9 +107,7 @@ const CursoDetalle = () => {
       setPorcentajeAvance(0);
     }
 
-    
-
-
+  
     if (usuario) {
       fetchMateriales();
       verificarMembresia();
@@ -136,7 +130,6 @@ const CursoDetalle = () => {
         },
         {
           headers: { 
-            'ngrok-skip-browser-warning': 'true',
             Authorization: `Bearer ${token}` 
           },
         }
@@ -158,7 +151,6 @@ const CursoDetalle = () => {
         `${import.meta.env.VITE_API_URL}/preguntas/${id}`,
         {
           headers: { 
-            'ngrok-skip-browser-warning': 'true',
             Authorization: `Bearer ${token}` 
           },
         }
@@ -185,7 +177,6 @@ const CursoDetalle = () => {
         },
         {
           headers: { 
-            'ngrok-skip-browser-warning': 'true',
             Authorization: `Bearer ${token}` 
           },
         }
