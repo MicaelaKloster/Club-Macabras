@@ -9,12 +9,12 @@ export const crearCurso = async (titulo, descripcion, categoria) => {
 
 export const obtenerCursosPaginados = async (limite, offset) => {
     const [cursos] = await db.promise().query(
-        'SELECT * FROM cursos ORDER BY creado_en DESC LIMIT ? OFFSET ?',
+        'SELECT * FROM cursos WHERE estado = 1 ORDER BY creado_en DESC LIMIT ? OFFSET ?',
         [limite, offset]
     );
     
     const [totalRows] = await db.promise().query(
-        'SELECT COUNT(*) as total FROM cursos'
+        'SELECT COUNT(*) as total FROM cursos WHERE estado = 1'
     );
 
     return {
@@ -46,4 +46,20 @@ export const buscarCursoPorId = async (id) => {
     [id]
   );
   return rows[0];
+};
+
+export const actualizarCurso = async (id, titulo, descripcion, categoria) => {
+    const [result] = await db.promise().query(
+        'UPDATE cursos SET titulo = ?, descripcion = ?, categoria = ? WHERE id = ?',
+        [titulo, descripcion, categoria, id]
+    );
+    return result.affectedRows > 0;
+};
+
+export const eliminarCursoLogico = async (id) => {
+    const [result] = await db.promise().query(
+        'UPDATE cursos SET estado = 0 WHERE id = ?',
+        [id]
+    );
+    return result.affectedRows > 0;
 };

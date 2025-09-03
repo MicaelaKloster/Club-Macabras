@@ -26,7 +26,10 @@ const CursoDetalle = () => {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/cursos/${id}/materiales`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { 
+              'ngrok-skip-browser-warning': 'true',
+              Authorization: `Bearer ${token}` 
+            },
           }
         );
 
@@ -46,7 +49,10 @@ const CursoDetalle = () => {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/membresias/${usuario.id}`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { 
+              'ngrok-skip-browser-warning': 'true',
+              Authorization: `Bearer ${token}` 
+            },
           }
         );
         setMembresiaActiva(res.data.activa);
@@ -60,7 +66,10 @@ const CursoDetalle = () => {
     const obtenerCurso = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/cursos/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 
+            'ngrok-skip-browser-warning': 'true',
+            Authorization: `Bearer ${token}` 
+          },
         });
 
         setCursoInfo({
@@ -81,7 +90,10 @@ const CursoDetalle = () => {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/usuarios/${usuario.id}/progreso/${id}`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { 
+              'ngrok-skip-browser-warning': 'true',
+              Authorization: `Bearer ${token}` 
+            },
           }
         );
         setVideosVistos(res.data.vistos || []);
@@ -123,7 +135,10 @@ const CursoDetalle = () => {
           curso_id: id
         },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 
+            'ngrok-skip-browser-warning': 'true',
+            Authorization: `Bearer ${token}` 
+          },
         }
       );
 
@@ -142,7 +157,10 @@ const CursoDetalle = () => {
       const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/preguntas/${id}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 
+            'ngrok-skip-browser-warning': 'true',
+            Authorization: `Bearer ${token}` 
+          },
         }
       );
       setPreguntas(res.data || []);
@@ -166,7 +184,10 @@ const CursoDetalle = () => {
           pregunta: nuevaPregunta.trim(),
         },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 
+            'ngrok-skip-browser-warning': 'true',
+            Authorization: `Bearer ${token}` 
+          },
         }
       );
       setNuevaPregunta("");

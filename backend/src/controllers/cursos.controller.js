@@ -1,5 +1,6 @@
-import { crearCurso, obtenerCursosPaginados, obtenerMaterialesDelCurso, buscarCursoPorId } from "../services/cursos.service.js";
+import { crearCurso, obtenerCursosPaginados, obtenerMaterialesDelCurso, buscarCursoPorId, actualizarCurso, eliminarCursoLogico } from "../services/cursos.service.js";
 
+// Función para crear nuevo curso
 export const crearNuevoCurso = async (req, res) => {
     try{
         const { titulo, descripcion, categoria } = req.body;
@@ -14,6 +15,7 @@ export const crearNuevoCurso = async (req, res) => {
     }
 };
 
+// Función para listar cursos con paginación
 export const listarCursos = async (req, res) => {
     try{
         const page = parseInt(req.query.page) || 1;
@@ -37,6 +39,7 @@ export const listarCursos = async (req, res) => {
     }
 };
 
+// Función para listar materiales de un curso
 export const listarMaterialesDelCurso = async (req, res) => {
     try {
         const cursoId = req.params.id;
@@ -55,6 +58,7 @@ export const listarMaterialesDelCurso = async (req, res) => {
     }
 };
 
+// Función para obtener curso por id
 export const obtenerCursoPorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -69,4 +73,45 @@ export const obtenerCursoPorId = async (req, res) => {
     console.error('❌ Error al obtener curso por ID: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
+};
+
+// Función para actualizar curso
+export const editarCurso = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { titulo, descripcion, categoria } = req.body;
+
+        const actualizado = await actualizarCurso(id, titulo, descripcion, categoria);
+
+        if (!actualizado) {
+            return res.status(404).json({ error: 'Curso no encontrado' });
+        }
+
+        console.log(`✅ Curso actualizado: ${titulo}`);
+        res.status(200).json({ mensaje: 'Curso actualizado exitosamente' });
+
+    } catch (error) {
+        console.error('❌ Error al actualizar curso:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+// Función para eliminar curso (lógico)
+export const eliminarCurso = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const eliminado = await eliminarCursoLogico(id);
+
+        if (!eliminado) {
+            return res.status(404).json({ error: 'Curso no encontrado' });
+        }
+
+        console.log(`🗑️ Curso eliminado (lógico): ID ${id}`);
+        res.status(200).json({ mensaje: 'Curso eliminado exitosamente' });
+
+    } catch (error) {
+        console.error('❌ Error al eliminar curso:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
 };

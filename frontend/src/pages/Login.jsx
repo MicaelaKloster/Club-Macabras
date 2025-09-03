@@ -30,6 +30,8 @@ const Login = () => {
     }
   };
 
+  console.log('API URL:', import.meta.env.VITE_API_URL);
+
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4 text-center">Iniciar sesión</h2>

@@ -14,6 +14,7 @@ import Trabajos from '../pages/Trabajos';
 import SubirTrabajo from '../pages/SubirTrabajo';
 import Home from '../pages/Home';
 import Bienvenida from '../pages/Bienvenida';
+import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 import Perfil from '../pages/Perfil';
 import EditarPerfil from '../pages/EditarPerfil'
 import DashboardAdmin from '../pages/DashboardAdmin';
@@ -86,7 +87,7 @@ const AppRouter = () => {
           )}
 
         {/* Página no encontrada */}
-        <Route path="*" element={<h2>Página no encontrada</h2>} />
+        <Route path="*" element={<PaginaNoEncontrada />} />
       </Routes>
     </BrowserRouter>
   );

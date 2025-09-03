@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { crearNuevoCurso, listarCursos, listarMaterialesDelCurso, obtenerCursoPorId } from '../controllers/cursos.controller.js';
+import { crearNuevoCurso, listarCursos, listarMaterialesDelCurso, obtenerCursoPorId, editarCurso, eliminarCurso } from '../controllers/cursos.controller.js';
 import { validarCreacionCurso } from '../validations/cursos.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
@@ -167,5 +167,84 @@ router.get(
  *         description: Error interno del servidor
  */
 router.get('/:id', verificarToken, obtenerCursoPorId);
+
+// PUT /cursos/:id - Actualizar curso
+/**
+ * @swagger
+ * /cursos/{id}:
+ *   put:
+ *     summary: Actualizar un curso (solo admins)
+ *     tags: [Cursos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del curso
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - titulo
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *               descripcion:
+ *                 type: string
+ *               categoria:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Curso actualizado exitosamente
+ *       404:
+ *         description: Curso no encontrado
+ *       403:
+ *         description: Acceso denegado - solo admin
+ */
+router.put(
+  '/:id',
+  verificarToken,
+  permitirSoloRol('admin'),
+  validarCreacionCurso, // Reutilizamos la misma validación
+  validarCampos,
+  editarCurso
+);
+
+// DELETE /cursos/:id - Eliminar curso (lógico)
+/**
+ * @swagger
+ * /cursos/{id}:
+ *   delete:
+ *     summary: Eliminar un curso (eliminado lógico, solo admins)
+ *     tags: [Cursos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID del curso
+ *     responses:
+ *       200:
+ *         description: Curso eliminado exitosamente
+ *       404:
+ *         description: Curso no encontrado
+ *       403:
+ *         description: Acceso denegado - solo admin
+ */
+router.delete(
+  '/:id',
+  verificarToken,
+  permitirSoloRol('admin'),
+  eliminarCurso
+);
 
 export default router;

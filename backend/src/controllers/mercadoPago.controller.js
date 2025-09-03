@@ -27,14 +27,14 @@ export const crearPreferencia = async (req, res) => {
           },
         ],
         back_urls: {
-          success: `${process.env.FRONTEND_URL}/pago-exitoso`,
-          failure: `${process.env.FRONTEND_URL}/pago-fallido`,
-          pending: `${process.env.FRONTEND_URL}/pago-pendiente`,
+          success: "http://localhost:5173/pago-exitoso",
+          failure: "http://localhost:5173/pago-fallido",
+          pending: "http://localhost:5173/pago-pendiente",
         },
         // back_urls: {
-        //   success: "https://www.google.com",
-        //   failure: "https://www.google.com",
-        //   pending: "https://www.google.com",
+        //   success: `${process.env.FRONTEND_URL}/pago-exitoso`,
+        //   failure: `${process.env.FRONTEND_URL}/pago-fallido`,
+        //   pending: `${process.env.FRONTEND_URL}/pago-pendiente`,
         // },
         auto_return: "approved",
         notification_url: `${process.env.BACKEND_URL}/mercadopago/webhook`, // 🔹 Ngrok URL aquí
