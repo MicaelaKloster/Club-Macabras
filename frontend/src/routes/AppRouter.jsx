@@ -14,7 +14,6 @@ import Trabajos from '../pages/Trabajos';
 import SubirTrabajo from '../pages/SubirTrabajo';
 import Home from '../pages/Home';
 // import Bienvenida from '../pages/Bienvenida';
-import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 import Perfil from '../pages/Perfil';
 import EditarPerfil from '../pages/EditarPerfil'
 import DashboardAdmin from '../pages/DashboardAdmin';
@@ -30,6 +29,9 @@ import ComprarMembresia from '../pages/ComprarMembresia';
 import PagoExitoso from "../pages/PagoExitoso";
 import PagoFallido from "../pages/PagoFallido";
 import PagoPendiente from "../pages/PagoPendiente";
+import InfoExtra from "../pages/InfoExtra";
+import InfoExtraAdmin from "../pages/InfoExtraAdmin";
+import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 
 import RutaPrivada from './RutaPrivada';
 
@@ -58,6 +60,8 @@ const AppRouter = () => {
           <Route path="/foro/nuevo" element={<NuevoTema />} />
           <Route path="/cursos/:cursoId/trabajos" element={<Trabajos />} />
           <Route path="/cursos/:cursoId/trabajos/nuevo" element={<SubirTrabajo />} />
+          <Route path="/info-extra" element={<InfoExtra />} />
+
           {usuario && (
             <>
               <Route path="/perfil" element={<Perfil />} />
@@ -83,6 +87,7 @@ const AppRouter = () => {
               <Route path="/admin/materiales/:cursoId/documento/nuevo" element={<NuevoDocumento />} />
               <Route path="/admin/materiales/:cursoId/video/nuevo" element={<NuevoVideo />} />
               <Route path="/admin/preguntas" element={<AdminPreguntas />} />
+              <Route path="/admin/info-extra" element={<InfoExtraAdmin />} />
             </>
           )}
 

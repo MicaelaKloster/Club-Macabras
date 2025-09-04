@@ -17,6 +17,7 @@ const CursoDetalle = () => {
   const [porcentajeAvance, setPorcentajeAvance] = useState(0);
   const [preguntas, setPreguntas] = useState([]);
   const [nuevaPregunta, setNuevaPregunta] = useState("");
+  const [precioMembresia, setPrecioMembresia] = useState(2000); // valor por defecto
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,8 +36,8 @@ const CursoDetalle = () => {
         setVideos(res.data.videos || []);
         setDocumentos(res.data.documentos || []);
       } catch (error) {
-        console.error("❌ Error al cargar materiales:", error.response?.data || error.message);
-        setVideos([]);      // Evita el "cursos.map is not a function"
+        console.error("Error al cargar materiales:", error.response?.data || error.message);
+        setVideos([]);      
         setDocumentos([]); 
       } finally {
         setLoading(false);
@@ -44,6 +45,12 @@ const CursoDetalle = () => {
     };
 
     const verificarMembresia = async () => {
+      // Si es admin, no verificar membresía - tiene acceso total
+      if (usuario?.rol === 'admin') {
+        setMembresiaActiva(true);
+        return;
+      }
+
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/membresias/${usuario.id}`,
@@ -56,7 +63,7 @@ const CursoDetalle = () => {
         setMembresiaActiva(res.data.activa);
 
       } catch (error) {
-        console.error("❌ Error al verificar membresía:", error);
+        console.error("Error al verificar membresía:", error);
         setMembresiaActiva(false);
       }
     };
@@ -75,14 +82,12 @@ const CursoDetalle = () => {
         });
 
       } catch (error) {
-        console.error("❌ Error al obtener datos del curso:", error);
+        console.error("Error al obtener datos del curso:", error);
         setCursoInfo({ titulo: "Curso no encontrado", categoria: "" });
       }
     };
 
     const obtenerProgreso = async () => {
-      const token = localStorage.getItem("token");
-
       try {
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/usuarios/${usuario.id}/progreso/${id}`,
@@ -94,8 +99,25 @@ const CursoDetalle = () => {
         );
         setVideosVistos(res.data.vistos || []);
       } catch (error) {
-        console.error("❌ Error al obtener progreso:", error);
+        console.error("Error al obtener progreso:", error);
         setVideosVistos([]);
+      }
+    };
+
+    const obtenerPrecioMembresia = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/info-extra/configuraciones`,
+          {
+            headers: { 
+              Authorization: `Bearer ${token}` 
+            },
+          }
+        );
+        setPrecioMembresia(res.data.precio_membresia);
+      } catch (error) {
+        console.error("Error al obtener precio:", error);
+        // Mantener valor por defecto
       }
     };
 
@@ -103,17 +125,17 @@ const CursoDetalle = () => {
       const vistos = videos.filter((v) => videosVistos.includes(v.id)).length;
       const porcentaje = Math.round((vistos / videos.length) * 100);
       setPorcentajeAvance(porcentaje);
-    }else{
+    } else {
       setPorcentajeAvance(0);
     }
 
-  
     if (usuario) {
       fetchMateriales();
       verificarMembresia();
       obtenerCurso();
       obtenerProgreso();
       fetchPreguntas();
+      obtenerPrecioMembresia();
     }
 
   }, [id, usuario, videos, videosVistos]);
@@ -135,11 +157,10 @@ const CursoDetalle = () => {
         }
       );
 
-      // Actualizamos localmente el progreso
       setVideosVistos((prev) => [...prev, videoId]);
 
     } catch (error) {
-      console.error("❌ Error al marcar como visto:", error);
+      console.error("Error al marcar como visto:", error);
     }
   };
 
@@ -157,13 +178,12 @@ const CursoDetalle = () => {
       );
       setPreguntas(res.data || []);
         
-    }catch (error) {
-      console.error("❌ Error al obtener preguntas: ", error);
+    } catch (error) {
+      console.error("Error al obtener preguntas: ", error);
     }
-
   };
 
-    const enviarPregunta = async () => {
+  const enviarPregunta = async () => {
     const token = localStorage.getItem("token");
 
     if(!nuevaPregunta.trim()) return;
@@ -182,11 +202,10 @@ const CursoDetalle = () => {
         }
       );
       setNuevaPregunta("");
-      fetchPreguntas(); // Refresca la lista de preguntas
-    }catch (error){
-      console.error("❌ Error al enviar pregunta: ", error.response?.data || error.message);
+      fetchPreguntas();
+    } catch (error){
+      console.error("Error al enviar pregunta: ", error.response?.data || error.message);
     }
-
   };
 
   if (loading) return <p className="text-center">Cargando materiales...</p>;
@@ -205,41 +224,52 @@ const CursoDetalle = () => {
         <p className="text-sm text-gray-600">📂 Categoría: {cursoInfo.categoria}</p>
       </div>
 
-      <div className="text-sm text-gray-700">
-        {membresiaActiva ? (
-          <p className="text-green-600">✅ Tenés una membresía activa</p>
-        ) : (
-          <div>
-            <p className="text-red-500">❌ No tenés una membresía activa</p>
-            <button
-              onClick={async () => {
-                try {
-                  const token = localStorage.getItem("token");
-                  const res = await axios.post(
-                    `${import.meta.env.VITE_API_URL}/mercadopago/preferencia`,
-                    {
-                      usuario_id: usuario.id,
-                      precio: 1500 // 🔹 Fijo por ahora, pero editable en backend solo por admin
-                    },
-                    {
-                      headers: { Authorization: `Bearer ${token}` },
-                    }
-                  );
-                  
-                  // Redirigir al checkout de Mercado Pago
-                  window.location.href = `https://www.mercadopago.com/checkout/v1/redirect?pref_id=${res.data.id}`;
-                } catch (error) {
-                  console.error("❌ Error al iniciar pago:", error.response?.data || error.message);
-                  alert("Ocurrió un error al iniciar el pago. Intenta nuevamente.");
-                }
-              }}
-              className="bg-pink-700 hover:bg-pink-800 text-white px-4 py-2 rounded"
-            >
-              Comprar Membresía
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Mostrar estado de membresía solo para usuarios normales */}
+      {usuario?.rol !== 'admin' && (
+        <div className="text-sm text-gray-700">
+          {membresiaActiva ? (
+            <p className="text-green-600">✅ Tenés una membresía activa</p>
+          ) : (
+            <div>
+              <p className="text-red-500">❌ No tenés una membresía activa</p>
+              <button
+                onClick={async () => {
+                  try {
+                    const token = localStorage.getItem("token");
+                    const res = await axios.post(
+                      `${import.meta.env.VITE_API_URL}/mercadopago/preferencia`,
+                      {
+                        usuario_id: usuario.id,
+                        precio: precioMembresia
+                      },
+                      {
+                        headers: { Authorization: `Bearer ${token}` },
+                      }
+                    );
+                    
+                    window.location.href = `https://www.mercadopago.com/checkout/v1/redirect?pref_id=${res.data.id}`;
+                  } catch (error) {
+                    console.error("Error al iniciar pago:", error.response?.data || error.message);
+                    alert("Ocurrió un error al iniciar el pago. Intenta nuevamente.");
+                  }
+                }}
+                className="bg-pink-700 hover:bg-pink-800 text-white px-4 py-2 rounded"
+              >
+                Comprar Membresía (${precioMembresia})
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Mensaje especial para admin */}
+      {usuario?.rol === 'admin' && (
+        <div className="bg-blue-50 border border-blue-200 rounded p-3">
+          <p className="text-blue-700 text-sm">
+            👑 <strong>Acceso de administrador:</strong> Tienes acceso completo a todos los contenidos.
+          </p>
+        </div>
+      )}
 
       {membresiaActiva && (
         <button
@@ -409,10 +439,10 @@ const CursoDetalle = () => {
                           }
                         );
                         form.reset();
-                        fetchPreguntas(); // refresca la lista
+                        fetchPreguntas();
 
                       }catch (error){
-                        console.error("❌ Error al responder pregunta: ", error);
+                        console.error("Error al responder pregunta: ", error);
                       }
                     };
 

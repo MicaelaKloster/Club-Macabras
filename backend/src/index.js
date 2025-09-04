@@ -20,6 +20,7 @@ import trabajosRoutes from './routes/trabajos.routes.js';
 import likesRoutes from './routes/likes.routes.js';
 import progresoRoutes from './routes/progreso.routes.js';
 import mercadoPagoRoutes from './routes/mercadoPago.routes.js';
+import infoExtraRoutes from './routes/infoExtra.routes.js';
 
 import {ejecutarVerificacionDeMembresias} from './jobs/verificarMembresias.job.js';
 
@@ -66,6 +67,7 @@ app.use('/api/v1/trabajos', trabajosRoutes);
 app.use('/api/v1', likesRoutes);
 app.use('/api/v1', progresoRoutes);
 app.use('/api/v1/mercadopago', mercadoPagoRoutes);
+app.use('/api/v1/info-extra', infoExtraRoutes);
 // Servir la carpeta uploads de forma pública
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

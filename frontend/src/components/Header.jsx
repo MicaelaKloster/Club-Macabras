@@ -24,7 +24,7 @@ const Header = () => {
                 const sinResponder = res.data.filter((p) => !p.respuesta);
                 setPreguntasPendientes(sinResponder.length);
             } catch (error) {
-                console.error("❌ Error al obtener preguntas pendientes:", error);
+                console.error("Error al obtener preguntas pendientes:", error);
             }
         };
 
@@ -63,14 +63,29 @@ const Header = () => {
                     >
                         Foro de la Comunidad
                     </NavLink>
+                    
+                    {/* Info Extra - Solo mostrar si hay contenido */}
                     <NavLink
-                        to="/membresia"
+                        to="/info-extra"
                         className={({ isActive }) =>
                             isActive ? "text-pink-700 font-semibold" : "text-gray-700"
                         }
                     >
-                        Membresia
+                        Info Extra
                     </NavLink>
+                    
+                    {/* Mostrar membresía solo si NO es admin */}
+                    {usuario?.rol !== "admin" && (
+                        <NavLink
+                            to="/membresia"
+                            className={({ isActive }) =>
+                                isActive ? "text-pink-700 font-semibold" : "text-gray-700"
+                            }
+                        >
+                            Membresía
+                        </NavLink>
+                    )}
+                    
                     <NavLink
                         to="/perfil"
                         className={({ isActive }) =>
@@ -78,6 +93,15 @@ const Header = () => {
                         }
                     >
                         Mi Perfil
+                    </NavLink>
+
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) =>
+                            isActive ? "text-pink-700 font-semibold" : "text-gray-700"
+                        }
+                    >
+                        Cerrar Sesión
                     </NavLink>
 
                     {usuario?.rol === "admin" && (
