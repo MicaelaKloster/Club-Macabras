@@ -39,7 +39,7 @@ const DashboardAdmin = () => {
         </button>
 
         <button
-          onClick={() => navigate("/info-extra/admin")}
+          onClick={() => navigate("/admin/info-extra")}
           className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 text-left"
         >
           <div className="text-2xl mb-2">📄</div>

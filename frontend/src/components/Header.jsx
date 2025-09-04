@@ -95,15 +95,6 @@ const Header = () => {
                         Mi Perfil
                     </NavLink>
 
-                    <NavLink
-                        to="/"
-                        className={({ isActive }) =>
-                            isActive ? "text-pink-700 font-semibold" : "text-gray-700"
-                        }
-                    >
-                        Cerrar Sesión
-                    </NavLink>
-
                     {usuario?.rol === "admin" && (
                         <>
                             <NavLink
@@ -127,6 +118,15 @@ const Header = () => {
                             </div>
                         </>
                     )}
+
+                    <NavLink
+                        to="/"
+                        className={({ isActive }) =>
+                            isActive ? "text-pink-700 font-semibold" : "text-gray-700"
+                        }
+                    >
+                        Cerrar Sesión
+                    </NavLink>
 
                 </nav>
             </div>

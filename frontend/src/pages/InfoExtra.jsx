@@ -73,7 +73,7 @@ const InfoExtra = () => {
                     {/* Solo mostrar opción de gestión a admin */}
                     {usuario?.rol === 'admin' && (
                         <button
-                            onClick={() => navigate('/info-extra/admin')}
+                            onClick={() => navigate('/admin/info-extra')}
                             className="bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700"
                         >
                             Gestionar Info Extra
@@ -133,6 +133,7 @@ const InfoExtra = () => {
                         <ul className="text-blue-600 text-sm space-y-1">
                             <li>• Este contenido es exclusivo para miembros</li>
                             <li>• Si tienes problemas para acceder, contacta al soporte</li>
+                            <li>• El contenido se actualiza periódicamente</li>
                         </ul>
                     </div>
                 </div>

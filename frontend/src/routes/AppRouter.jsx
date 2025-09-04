@@ -30,7 +30,7 @@ import PagoExitoso from "../pages/PagoExitoso";
 import PagoFallido from "../pages/PagoFallido";
 import PagoPendiente from "../pages/PagoPendiente";
 import InfoExtra from "../pages/InfoExtra";
-import InfoExtraAdmin from "../pages/InfoExtraAdmin";
+import InfoExtraAdmin from "../pages/admin/InfoExtraAdmin";
 import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 
 import RutaPrivada from './RutaPrivada';

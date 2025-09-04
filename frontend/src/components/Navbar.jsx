@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Menu, X, User, Phone, Info } from "lucide-react";
 
 const Navbar = () => {
   const [menuAbierto, setMenuAbierto] = useState(false);
@@ -9,7 +11,7 @@ const Navbar = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-    setMenuAbierto(false); // Cerrar menú después de hacer click
+    setMenuAbierto(false);
   };
 
   const toggleMenu = () => {
@@ -17,94 +19,106 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 items-center justify-between px-4">
         {/* Logo */}
         <div className="flex items-center">
-          <span className="text-2xl font-bold text-pink-700">Club Macabras</span>
+          <span className="text-2xl font-bold text-primary">Club Macabras</span>
         </div>
 
         {/* Enlaces de navegación - Desktop */}
-        <div className="hidden md:flex items-center space-x-8">
-          <button
+        <div className="hidden md:flex items-center space-x-6">
+          <Button
+            variant="ghost"
             onClick={() => scrollToSection('sobre-nosotros')}
-            className="text-gray-700 hover:text-pink-700 transition-colors"
+            className="flex items-center gap-2"
           >
+            <Info size={16} />
             Sobre Nosotros
-          </button>
+          </Button>
           
-          <button
+          <Button
+            variant="ghost"
             onClick={() => scrollToSection('contacto')}
-            className="text-gray-700 hover:text-pink-700 transition-colors"
+            className="flex items-center gap-2"
           >
-            Contactanos
-          </button>
+            <Phone size={16} />
+            Contáctanos
+          </Button>
           
-          <Link
-            to="/registro"
-            className="text-gray-700 hover:text-pink-700 transition-colors"
-          >
-            Registrarme
-          </Link>
+          <Button variant="ghost" asChild>
+            <Link to="/registro" className="flex items-center gap-2">
+              <User size={16} />
+              Registrarme
+            </Link>
+          </Button>
           
-          <Link
-            to="/login"
-            className="bg-pink-600 text-white px-6 py-2 rounded-lg hover:bg-pink-700 transition-colors"
-          >
-            Iniciar Sesión
-          </Link>
+          <Button asChild>
+            <Link to="/login">
+              Iniciar Sesión
+            </Link>
+          </Button>
         </div>
 
         {/* Botón menú hamburguesa - Móvil */}
         <div className="md:hidden">
-          <button 
+          <Button 
+            variant="ghost"
+            size="icon"
             onClick={toggleMenu}
-            className="text-gray-700 focus:outline-none"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {menuAbierto ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
+            {menuAbierto ? <X size={20} /> : <Menu size={20} />}
+          </Button>
         </div>
       </div>
 
       {/* Menú móvil */}
       {menuAbierto && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
-          <div className="px-4 py-2 space-y-2">
-            <button
+        <div className="md:hidden border-t bg-background">
+          <div className="container px-4 py-4 space-y-2">
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
               onClick={() => scrollToSection('sobre-nosotros')}
-              className="block w-full text-left py-2 text-gray-700 hover:text-pink-700 transition-colors"
             >
+              <Info size={16} className="mr-2" />
               Sobre Nosotros
-            </button>
+            </Button>
             
-            <button
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
               onClick={() => scrollToSection('contacto')}
-              className="block w-full text-left py-2 text-gray-700 hover:text-pink-700 transition-colors"
             >
-              Contactanos
-            </button>
+              <Phone size={16} className="mr-2" />
+              Contáctanos
+            </Button>
             
-            <Link
-              to="/registro"
-              onClick={() => setMenuAbierto(false)}
-              className="block py-2 text-gray-700 hover:text-pink-700 transition-colors"
+            <Button 
+              variant="ghost"
+              className="w-full justify-start"
+              asChild
             >
-              Registrarme
-            </Link>
+              <Link
+                to="/registro"
+                onClick={() => setMenuAbierto(false)}
+              >
+                <User size={16} className="mr-2" />
+                Registrarme
+              </Link>
+            </Button>
             
-            <Link
-              to="/login"
-              onClick={() => setMenuAbierto(false)}
-              className="block bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors text-center mt-2"
+            <Button 
+              className="w-full"
+              asChild
             >
-              Iniciar Sesión
-            </Link>
+              <Link
+                to="/login"
+                onClick={() => setMenuAbierto(false)}
+              >
+                Iniciar Sesión
+              </Link>
+            </Button>
           </div>
         </div>
       )}
