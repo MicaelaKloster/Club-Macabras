@@ -1,19 +1,17 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
-    /* Manteniendo los colores rosa/pink de tu marca */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    
-    /* Rosa/Pink como color principal */
-    --primary: 322 84% 48%; /* pink-600 equivalente */
+    --primary: 322 84% 48%;
     --primary-foreground: 210 40% 98%;
-    
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96%;
@@ -24,7 +22,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 322 84% 48%; /* Rosa para focus */
+    --ring: 322 84% 48%;
     --radius: 0.5rem;
   }
 
@@ -35,7 +33,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 322 84% 55%; /* Rosa más claro para dark mode */
+    --primary: 322 84% 55%;
     --primary-foreground: 222.2 84% 4.9%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
