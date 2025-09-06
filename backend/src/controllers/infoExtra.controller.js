@@ -100,3 +100,12 @@ export const actualizarConfiguraciones = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
+export const obtenerSoloPrecioMembresia = async (req, res) => {
+  try {
+    const precio = await obtenerPrecioMembresia();
+    res.status(200).json({ precio_membresia: precio });
+  } catch (error) {
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};

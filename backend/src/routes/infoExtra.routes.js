@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { crearNuevaInfoExtra, obtenerInfoExtraActual, editarInfoExtra, obtenerConfiguraciones, actualizarConfiguraciones } from '../controllers/infoExtra.controller.js';
+import { crearNuevaInfoExtra, obtenerInfoExtraActual, editarInfoExtra, obtenerConfiguraciones, actualizarConfiguraciones, obtenerSoloPrecioMembresia } from '../controllers/infoExtra.controller.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
 import { permitirSoloRol } from '../middlewares/rol.middleware.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
@@ -135,5 +135,7 @@ router.put(
     validarCampos,
     actualizarConfiguraciones
 );
+
+router.get('/precio-membresia', obtenerSoloPrecioMembresia);
 
 export default router;

@@ -19,7 +19,7 @@ const LayoutPublico = ({ children }) => {
     // Layout centrado para login, registro, etc.
     return (
         <div className="bg-gray-50 min-h-screen flex items-center justify-center">
-            <div className="w-full max-w-md p-6 bg-white rounded shadow-md">
+            <div className="w-full p-6 bg-white rounded shadow-md"> {/* Eliminada la propiedad max-w-md */}
                 {children}
                 <Outlet />
             </div>
