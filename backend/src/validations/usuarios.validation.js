@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 // Middleware de validación para el registro de usuario
 export const validarRegistroUsuario = [
@@ -32,5 +32,19 @@ export const validarRegistroUsuario = [
   // Valida el campo 'rol'
   body('rol')
     .optional()
+    .isIn(['admin', 'usuario']).withMessage('El rol solo puede ser "admin" o "usuario"')
+];
+
+// Middleware de validación para el cambio de rol
+export const validarCambioRol = [
+  // Valida el parámetro 'id'
+  param('id')
+    .isInt({ min: 1 })
+    .withMessage('El ID debe ser un número entero positivo'),
+    
+  // Valida el campo 'rol'
+  body('rol')
+    .trim()
+    .notEmpty().withMessage('El rol es obligatorio')
     .isIn(['admin', 'usuario']).withMessage('El rol solo puede ser "admin" o "usuario"')
 ];

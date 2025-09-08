@@ -15,7 +15,7 @@ const DashboardAdmin = () => {
             description: "Administrar cuentas de usuarios",
             icon: Users,
             route: "/admin/usuarios",
-            color: "bg-pink-700 hover:bg-pink-800",
+            color: "bg-pink-600 hover:bg-pink-700",
             textColor: "text-pink-100"
         },
         {
@@ -23,7 +23,7 @@ const DashboardAdmin = () => {
             description: "Crear, editar y eliminar cursos",
             icon: BookOpen,
             route: "/admin/cursos",
-            color: "bg-pink-700 hover:bg-pink-800",
+            color: "bg-pink-600 hover:bg-pink-700",
             textColor: "text-pink-100"
         },
         {
@@ -31,7 +31,7 @@ const DashboardAdmin = () => {
             description: "Responder consultas de estudiantes", 
             icon: MessageCircleQuestion,
             route: "/admin/preguntas",
-            color: "bg-pink-700 hover:bg-pink-800",
+            color: "bg-pink-600 hover:bg-pink-700",
             textColor: "text-pink-100"
         },
         {
@@ -39,8 +39,8 @@ const DashboardAdmin = () => {
             description: "Gestionar información adicional y precios",
             icon: Settings,
             route: "/admin/info-extra", 
-            color: "bg-blue-600 hover:bg-blue-700",
-            textColor: "text-blue-100"
+            color: "bg-pink-600 hover:bg-pink-700",
+            textColor: "text-pink-100"
         }
     ];
 
@@ -75,7 +75,7 @@ const DashboardAdmin = () => {
             {/* Header */}
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-pink-800">Panel del Administrador</h1>
+                    <h1 className="text-3xl font-bold text-pink-600">Panel del Administrador</h1>
                     <Badge variant="secondary" className="text-sm">
                         Administrador
                     </Badge>

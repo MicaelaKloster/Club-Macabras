@@ -133,7 +133,7 @@ const Trabajos = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold text-pink-800 flex items-center">
+          <h2 className="text-3xl font-bold text-pink-600 flex items-center">
             <ImageIcon className="h-8 w-8 mr-3" />
             Trabajos publicados
           </h2>

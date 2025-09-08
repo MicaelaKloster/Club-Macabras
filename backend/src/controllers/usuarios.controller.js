@@ -2,7 +2,9 @@ import bcrypt from 'bcrypt';
 import {
   obtenerTodosLosUsuarios,
   buscarUsuariosPorEmail,
-  insertarUsuario
+  insertarUsuario,
+  buscarUsuarioPorId,
+  actualizarRolUsuario
 } from '../services/usuarios.service.js';
 import { enviarCorreoBienvenida } from '../utils/mailer.js';
 
@@ -58,6 +60,59 @@ export const listarUsuarios = async (req, res) => {
     res.status(200).json(usuarios);
   } catch (error) {
     console.error('❌ Error al obtener usuarios:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// Controlador para cambiar el rol de un usuario
+export const cambiarRolUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rol } = req.body;
+
+    // Verificar que el ID sea un número válido
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ error: 'ID de usuario inválido' });
+    }
+
+    // Verificar que el rol sea válido
+    if (!rol || !['admin', 'usuario'].includes(rol)) {
+      return res.status(400).json({ error: 'Rol inválido. Debe ser "admin" o "usuario"' });
+    }
+
+    // Verificar que el usuario existe
+    const usuarioExistente = await buscarUsuarioPorId(id);
+    if (!usuarioExistente) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    // Verificar que no se está intentando cambiar el propio rol
+    if (req.usuario.id == id) {
+      return res.status(400).json({ error: 'No puedes cambiar tu propio rol' });
+    }
+
+    // Verificar que el rol actual sea diferente al nuevo rol
+    if (usuarioExistente.rol === rol) {
+      return res.status(400).json({ error: `El usuario ya tiene el rol "${rol}"` });
+    }
+
+    // Actualizar el rol en la base de datos
+    await actualizarRolUsuario(id, rol);
+
+    // Log del cambio
+    console.log(`✅ Rol actualizado - Usuario ID: ${id} | Nuevo rol: ${rol} | Cambiado por: ${req.usuario.email}`);
+
+    // Responder con éxito
+    res.status(200).json({ 
+      mensaje: 'Rol actualizado con éxito',
+      usuario: {
+        id: parseInt(id),
+        rol: rol
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error al cambiar rol de usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
