@@ -89,7 +89,7 @@ const Foro = () => {
 
         <Button
           onClick={() => navigate("/foro/nuevo")}
-          className="bg-pink-700 hover:bg-pink-800 text-white"
+          className="bg-pink-600 hover:bg-pink-700 text-white"
         >
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Tema
@@ -98,7 +98,7 @@ const Foro = () => {
 
       {/* Title */}
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-pink-800 flex items-center justify-center">
+        <h2 className="text-3xl font-bold text-pink-600 flex items-center justify-center">
           <MessageCircle className="h-8 w-8 mr-3" />
           Foro de la comunidad
         </h2>
@@ -121,7 +121,7 @@ const Foro = () => {
               </p>
               <Button
                 onClick={() => navigate("/foro/nuevo")}
-                className="bg-pink-700 hover:bg-pink-800 text-white"
+                className="bg-pink-600 hover:bg-pink-700 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Crear primer tema

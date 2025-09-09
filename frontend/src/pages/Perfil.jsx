@@ -111,7 +111,7 @@ const Perfil = () => {
             <Card className="shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-pink-50 to-pink-100">
                     <div className="flex items-center justify-between">
-                        <CardTitle className="text-2xl font-bold text-pink-800 flex items-center">
+                        <CardTitle className="text-2xl font-bold text-pink-600 flex items-center">
                             <User className="h-7 w-7 mr-3" />
                             Mi perfil
                         </CardTitle>
@@ -149,7 +149,7 @@ const Perfil = () => {
                     <div className="flex justify-center pt-4">
                         <Button
                             onClick={() => navigate("/perfil/editar")}
-                            className="bg-pink-700 hover:bg-pink-800 text-white px-8 py-2 text-base"
+                            className="bg-pink-600 hover:bg-pink-700 text-white px-8 py-2 text-base"
                         >
                             <Edit3 className="h-4 w-4 mr-2" />
                             Editar Perfil

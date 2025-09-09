@@ -50,7 +50,7 @@ const NuevoTema = () => {
     <div className="max-w-3xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-pink-800 flex items-center justify-center">
+        <h2 className="text-3xl font-bold text-pink-600 flex items-center justify-center">
           <MessageCirclePlus className="h-8 w-8 mr-3" />
           Crear Nuevo Tema
         </h2>

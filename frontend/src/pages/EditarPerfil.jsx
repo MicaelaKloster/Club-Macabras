@@ -119,7 +119,7 @@ const EditarPerfil = () => {
             {/* Main Card */}
             <Card className="shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-pink-50 to-pink-100">
-                    <CardTitle className="text-2xl font-bold text-pink-800 flex items-center">
+                    <CardTitle className="text-2xl font-bold text-pink-600 flex items-center">
                         <User className="h-6 w-6 mr-3" />
                         Editar Perfil
                     </CardTitle>
@@ -228,7 +228,7 @@ const EditarPerfil = () => {
                             <Button
                                 type="submit"
                                 disabled={isLoading}
-                                className="bg-pink-700 hover:bg-pink-800 text-white flex-1"
+                                className="bg-pink-600 hover:bg-pink-700 text-white flex-1"
                             >
                                 <Save className="h-4 w-4 mr-2" />
                                 {isLoading ? "Guardando..." : "Guardar cambios"}
