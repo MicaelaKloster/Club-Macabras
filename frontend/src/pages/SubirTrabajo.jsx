@@ -113,7 +113,7 @@ const SubirTrabajo = () => {
             {/* Main Card */}
             <Card className="shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-pink-50 to-purple-50">
-                    <CardTitle className="text-2xl font-bold text-pink-800 flex items-center">
+                    <CardTitle className="text-2xl font-bold text-pink-600 flex items-center">
                         <Upload className="h-6 w-6 mr-3" />
                         Subir nuevo trabajo
                     </CardTitle>

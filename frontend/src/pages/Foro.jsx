@@ -138,7 +138,7 @@ const Foro = () => {
                 <div className="flex items-start justify-between mb-3">
                   <Link
                     to={`/foro/${tema.id}`}
-                    className="text-xl font-semibold text-pink-700 hover:text-pink-800 hover:underline line-clamp-2 flex-1"
+                    className="text-xl font-semibold text-pink-600 hover:text-pink-700 hover:underline line-clamp-2 flex-1"
                   >
                     {tema.tema}
                   </Link>

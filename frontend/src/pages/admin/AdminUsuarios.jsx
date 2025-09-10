@@ -31,6 +31,8 @@ const AdminUsuarios = () => {
     const [filtroEstado, setFiltroEstado] = useState("todos");
     const [usuarioEditando, setUsuarioEditando] = useState(null);
     const [cargandoCambio, setCargandoCambio] = useState(null);
+    const [usuarioEditandoEstado, setUsuarioEditandoEstado] = useState(null);
+    const [cargandoEstado, setCargandoEstado] = useState(null);
 
     const obtenerUsuarios = async () => {
         const token = localStorage.getItem("token");
@@ -85,6 +87,42 @@ const AdminUsuarios = () => {
             alert("Error al cambiar el rol del usuario");
         } finally {
             setCargandoCambio(null);
+        }
+    };
+
+    const cambiarEstadoUsuario = async (usuarioId, nuevoEstado) => {
+        const token = localStorage.getItem("token");
+        setCargandoEstado(usuarioId);
+
+        try {
+            await axios.put(
+                `${import.meta.env.VITE_API_URL}/usuarios/${usuarioId}/estado`,
+                { estado: nuevoEstado },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            // Actualizar el estado local
+            setUsuarios(usuarios.map(usuario => 
+                usuario.id === usuarioId 
+                    ? { ...usuario, estado: nuevoEstado }
+                    : usuario
+            ));
+
+            setUsuarioEditandoEstado(null);
+            
+            // Mostrar mensaje de éxito (opcional)
+            console.log(`✅ Estado cambiado exitosamente para usuario ${usuarioId} a ${nuevoEstado === 1 ? 'Activo' : 'Inactivo'}`);
+            
+        } catch (error) {
+            console.error("❌ Error al cambiar estado:", error);
+            // Aquí podrías mostrar un toast o mensaje de error
+            alert("Error al cambiar el estado del usuario");
+        } finally {
+            setCargandoEstado(null);
         }
     };
 
@@ -171,6 +209,68 @@ const AdminUsuarios = () => {
         );
     };
 
+    // Componente para el selector de estado
+    const SelectorEstado = ({ usuario }) => {
+        if (usuarioEditandoEstado === usuario.id) {
+            return (
+                <div className="flex items-center space-x-2">
+                    <select
+                        value={usuario.estado}
+                        onChange={(e) => cambiarEstadoUsuario(usuario.id, parseInt(e.target.value))}
+                        disabled={cargandoEstado === usuario.id}
+                        className="text-xs border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-pink-500"
+                    >
+                        <option value={1}>Activo</option>
+                        <option value={0}>Inactivo</option>
+                    </select>
+                    <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setUsuarioEditandoEstado(null)}
+                        className="h-6 w-6 p-0"
+                        disabled={cargandoEstado === usuario.id}
+                    >
+                        <XCircle className="h-3 w-3" />
+                    </Button>
+                </div>
+            );
+        }
+
+        return (
+            <div className="flex items-center space-x-2">
+                <Badge 
+                    variant={usuario.estado === 1 ? 'default' : 'secondary'}
+                    className={
+                        usuario.estado === 1 
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-red-100 text-red-700'
+                    }
+                >
+                    {usuario.estado === 1 ? (
+                        <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Activo
+                        </>
+                    ) : (
+                        <>
+                            <XCircle className="h-3 w-3 mr-1" />
+                            Inactivo
+                        </>
+                    )}
+                </Badge>
+                <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setUsuarioEditandoEstado(usuario.id)}
+                    className="h-6 w-6 p-0 hover:bg-gray-200"
+                    disabled={cargandoEstado === usuario.id}
+                >
+                    <Settings className="h-3 w-3" />
+                </Button>
+            </div>
+        );
+    };
+
     if (loading) {
         return (
             <div className="max-w-7xl mx-auto p-6 space-y-6">
@@ -227,7 +327,7 @@ const AdminUsuarios = () => {
 
             {/* Header */}
             <div className="text-center space-y-2">
-                <h2 className="text-3xl font-bold text-pink-800 flex items-center justify-center">
+                <h2 className="text-3xl font-bold text-pink-600 flex items-center justify-center">
                     <Users className="h-8 w-8 mr-3" />
                     Gestión de Usuarios
                 </h2>
@@ -242,7 +342,7 @@ const AdminUsuarios = () => {
                     <div className="flex items-center space-x-2 text-amber-700">
                         <AlertTriangle className="h-4 w-4" />
                         <p className="text-sm">
-                            <strong>Nota:</strong> Haz clic en el ícono de configuración <Settings className="h-3 w-3 inline" /> junto al rol para cambiarlo.
+                            <strong>Nota:</strong> Haz clic en el ícono de configuración <Settings className="h-3 w-3 inline" /> junto al rol o estado para modificarlo.
                         </p>
                     </div>
                 </CardContent>
@@ -369,11 +469,11 @@ const AdminUsuarios = () => {
                         <table className="w-full">
                             <thead className="bg-gradient-to-r from-pink-50 to-purple-50">
                                 <tr className="text-left border-b">
-                                    <th className="px-6 py-4 font-semibold text-pink-700">Usuario</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-700">Contacto</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-700">Ubicación</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-700">Rol</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-700">Estado</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600">Usuario</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600">Contacto</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600">Ubicación</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600">Rol</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600">Estado Membresia</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -413,26 +513,7 @@ const AdminUsuarios = () => {
                                         </td>
 
                                         <td className="px-6 py-4">
-                                            <Badge 
-                                                variant={u.estado === 1 ? 'default' : 'secondary'}
-                                                className={
-                                                    u.estado === 1 
-                                                        ? 'bg-green-100 text-green-700' 
-                                                        : 'bg-red-100 text-red-700'
-                                                }
-                                            >
-                                                {u.estado === 1 ? (
-                                                    <>
-                                                        <CheckCircle className="h-3 w-3 mr-1" />
-                                                        Activo
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <XCircle className="h-3 w-3 mr-1" />
-                                                        Inactivo
-                                                    </>
-                                                )}
-                                            </Badge>
+                                            <SelectorEstado usuario={u} />
                                         </td>
                                     </tr>
                                 ))}

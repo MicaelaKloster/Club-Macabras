@@ -214,7 +214,7 @@ const AdminPreguntas = () => {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-2">
-                              <span className="font-semibold text-pink-700">{p.usuario}</span>
+                              <span className="font-semibold text-pink-600">{p.usuario}</span>
                               <span className="text-sm text-muted-foreground">preguntó:</span>
                               <Badge 
                                 variant={p.respondida ? "default" : "secondary"}

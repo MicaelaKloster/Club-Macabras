@@ -184,7 +184,7 @@ const TemaDetalle = () => {
         <CardHeader className="bg-gradient-to-r from-pink-50 to-purple-50">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <CardTitle className="text-2xl font-bold text-pink-800 mb-3 leading-tight">
+              <CardTitle className="text-2xl font-bold text-pink-600 mb-3 leading-tight">
                 {tema.tema}
               </CardTitle>
               <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
@@ -202,7 +202,7 @@ const TemaDetalle = () => {
                 </div>
               </div>
             </div>
-            <Badge variant="secondary" className="bg-pink-100 text-pink-700">
+            <Badge variant="secondary" className="bg-pink-100 text-pink-600">
               <MessageCircle className="h-3 w-3 mr-1" />
               {tema.respuestas?.length || 0} respuestas
             </Badge>
@@ -221,7 +221,7 @@ const TemaDetalle = () => {
       {/* Responses Section */}
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl text-pink-700 flex items-center">
+          <CardTitle className="text-xl text-pink-600 flex items-center">
             <MessageCircle className="h-5 w-5 mr-2" />
             Respuestas ({tema.respuestas?.length || 0})
           </CardTitle>

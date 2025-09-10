@@ -122,7 +122,7 @@ const InfoExtra = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex items-center space-x-3">
                     <Info className="h-8 w-8 text-pink-600" />
-                    <h1 className="text-3xl font-bold text-pink-800">Info Extra</h1>
+                    <h1 className="text-3xl font-bold text-pink-600">Info Extra</h1>
                     {usuario?.rol === 'admin' && (
                         <Badge variant="secondary" className="bg-purple-100 text-purple-700">
                             Administrador
@@ -192,7 +192,7 @@ const InfoExtra = () => {
 
                             {/* Access Link */}
                             <div className="bg-gradient-to-r from-pink-50 to-pink-100 border border-pink-200 rounded-lg p-6">
-                                <h3 className="text-lg font-semibold text-pink-700 mb-3 flex items-center">
+                                <h3 className="text-lg font-semibold text-pink-600 mb-3 flex items-center">
                                     <ExternalLink className="h-5 w-5 mr-2" />
                                     Acceder al contenido
                                 </h3>

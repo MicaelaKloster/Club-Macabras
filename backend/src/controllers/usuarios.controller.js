@@ -4,7 +4,11 @@ import {
   buscarUsuariosPorEmail,
   insertarUsuario,
   buscarUsuarioPorId,
-  actualizarRolUsuario
+  actualizarRolUsuario,
+  actualizarEstadoUsuario,
+  verificarYActualizarEstadoUsuario,
+  sincronizarTodosLosEstadosConMembresias,
+  obtenerUsuariosDesactualizados
 } from '../services/usuarios.service.js';
 import { enviarCorreoBienvenida } from '../utils/mailer.js';
 
@@ -54,9 +58,15 @@ export const registrarUsuario = async (req, res) => {
   }
 };
 
+// Controlador mejorado para listar usuarios (con sincronización automática)
 export const listarUsuarios = async (req, res) => {
   try {
+    // NUEVO: Sincronizar estados antes de obtener la lista
+    await sincronizarTodosLosEstadosConMembresias();
+    
+    // Obtener usuarios actualizados
     const usuarios = await obtenerTodosLosUsuarios();
+    
     res.status(200).json(usuarios);
   } catch (error) {
     console.error('❌ Error al obtener usuarios:', error);
@@ -99,6 +109,11 @@ export const cambiarRolUsuario = async (req, res) => {
     // Actualizar el rol en la base de datos
     await actualizarRolUsuario(id, rol);
 
+    // NUEVO: Si se cambia a usuario, verificar su estado basado en membresía
+    if (rol === 'usuario') {
+      await verificarYActualizarEstadoUsuario(id);
+    }
+
     // Log del cambio
     console.log(`✅ Rol actualizado - Usuario ID: ${id} | Nuevo rol: ${rol} | Cambiado por: ${req.usuario.email}`);
 
@@ -115,4 +130,111 @@ export const cambiarRolUsuario = async (req, res) => {
     console.error('❌ Error al cambiar rol de usuario:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
+};
+
+// Controlador mejorado para cambiar estado (con validación de membresía)
+export const cambiarEstadoUsuario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { estado } = req.body;
+
+        // Validar que el estado sea 0 o 1
+        if (estado !== 0 && estado !== 1) {
+            return res.status(400).json({
+                error: 'El estado debe ser 0 (inactivo) o 1 (activo)'
+            });
+        }
+
+        // Buscar el usuario usando el servicio
+        const usuario = await buscarUsuarioPorId(id);
+        
+        if (!usuario) {
+            return res.status(404).json({
+                error: 'Usuario no encontrado'
+            });
+        }
+
+        // NUEVO: Para usuarios regulares, verificar membresía antes de activar
+        if (usuario.rol === 'usuario' && estado === 1) {
+            const estadoBasadoEnMembresia = await verificarYActualizarEstadoUsuario(id);
+            
+            if (estadoBasadoEnMembresia === 0) {
+                return res.status(400).json({
+                    error: 'No se puede activar al usuario porque no tiene una membresía activa',
+                    sugerencia: 'Primero asigne una membresía válida al usuario'
+                });
+            }
+        } else {
+            // Para admins o para desactivar usuarios, actualizar directamente
+            const actualizado = await actualizarEstadoUsuario(id, estado);
+
+            if (!actualizado) {
+                return res.status(500).json({
+                    error: 'No se pudo actualizar el estado del usuario'
+                });
+            }
+        }
+
+        res.json({
+            mensaje: `Usuario ${estado === 1 ? 'activado' : 'desactivado'} exitosamente`,
+            usuario_id: parseInt(id),
+            nuevo_estado: estado
+        });
+
+    } catch (error) {
+        console.error('Error al cambiar estado del usuario:', error);
+        res.status(500).json({
+            error: 'Error interno del servidor'
+        });
+    }
+};
+
+// NUEVOS CONTROLADORES PARA SINCRONIZACIÓN
+
+// Endpoint para sincronizar manualmente todos los estados
+export const sincronizarEstados = async (req, res) => {
+    try {
+        const usuariosActualizados = await sincronizarTodosLosEstadosConMembresias();
+        
+        res.json({
+            mensaje: 'Sincronización completada exitosamente',
+            usuarios_actualizados: usuariosActualizados
+        });
+    } catch (error) {
+        console.error('❌ Error en sincronización manual:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+// Endpoint para verificar el estado de un usuario específico
+export const verificarEstadoUsuario = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const estadoActualizado = await verificarYActualizarEstadoUsuario(parseInt(id));
+        
+        res.json({
+            usuario_id: parseInt(id),
+            estado_actualizado: estadoActualizado,
+            mensaje: estadoActualizado === 1 ? 'Usuario activo' : 'Usuario inactivo'
+        });
+    } catch (error) {
+        console.error('❌ Error al verificar estado del usuario:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+// Endpoint para obtener usuarios con estados desactualizados (debugging)
+export const obtenerEstadosDesactualizados = async (req, res) => {
+    try {
+        const usuariosDesactualizados = await obtenerUsuariosDesactualizados();
+        
+        res.json({
+            usuarios_desactualizados: usuariosDesactualizados,
+            total: usuariosDesactualizados.length
+        });
+    } catch (error) {
+        console.error('❌ Error al obtener estados desactualizados:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
 };

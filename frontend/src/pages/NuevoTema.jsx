@@ -132,7 +132,7 @@ const NuevoTema = () => {
               <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 bg-gray-50">
                 <h4 className="text-sm font-semibold text-gray-600 mb-2">Vista previa:</h4>
                 {tema && (
-                  <h3 className="text-lg font-semibold text-pink-700 mb-2">
+                  <h3 className="text-lg font-semibold text-pink-600 mb-2">
                     {tema}
                   </h3>
                 )}
