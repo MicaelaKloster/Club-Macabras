@@ -197,7 +197,7 @@ const Home = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Mail className="text-primary" size={20} />
-                    <span>info@clubmacabras.com</span>
+                    <span>clubmacabras@gmail.com</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="text-primary" size={20} />

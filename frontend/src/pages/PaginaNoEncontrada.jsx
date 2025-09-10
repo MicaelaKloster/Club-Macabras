@@ -96,9 +96,9 @@ const PaginaNoEncontrada = () => {
                   variant="link"
                   className="text-pink-600 hover:text-pink-700 p-0 h-auto font-normal"
                 >
-                  <a href="mailto:info@clubmacabras.com">
+                  <a href="mailto:clubmacabras@gmail.com">
                     <Mail className="h-4 w-4 mr-1" />
-                    info@clubmacabras.com
+                    clubmacabras@gmail.com
                   </a>
                 </Button>
               </p>
