@@ -1,4 +1,4 @@
-import { crearInfoExtra, obtenerInfoExtra, actualizarInfoExtra, obtenerPrecioMembresia, actualizarPrecioMembresia } from '../services/infoExtra.service.js';
+import { crearInfoExtra, obtenerInfoExtra, actualizarInfoExtra, eliminarInfoExtra, obtenerPrecioMembresia, actualizarPrecioMembresia } from '../services/infoExtra.service.js';
 
 export const crearNuevaInfoExtra = async (req, res) => {
     try {
@@ -52,6 +52,25 @@ export const editarInfoExtra = async (req, res) => {
 
     } catch (error) {
         console.error('❌ Error al actualizar info extra:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+export const eliminarInfoExtraControlador = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const eliminada = await eliminarInfoExtra(id);
+
+        if (!eliminada) {
+            return res.status(404).json({ error: 'Información extra no encontrada' });
+        }
+
+        console.log(`✅ Info Extra eliminada: ID ${id}`);
+        res.status(200).json({ mensaje: 'Información extra eliminada exitosamente' });
+
+    } catch (error) {
+        console.error('❌ Error al eliminar info extra:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

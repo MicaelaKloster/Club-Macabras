@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { crearNuevaInfoExtra, obtenerInfoExtraActual, editarInfoExtra, obtenerConfiguraciones, actualizarConfiguraciones, obtenerSoloPrecioMembresia } from '../controllers/infoExtra.controller.js';
+import { crearNuevaInfoExtra, obtenerInfoExtraActual, editarInfoExtra, eliminarInfoExtraControlador, obtenerConfiguraciones, actualizarConfiguraciones, obtenerSoloPrecioMembresia } from '../controllers/infoExtra.controller.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
 import { permitirSoloRol } from '../middlewares/rol.middleware.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
@@ -101,6 +101,39 @@ router.put(
     validarInfoExtra,
     validarCampos,
     editarInfoExtra
+);
+
+// DELETE /info-extra/:id - Eliminar información extra (solo admin)
+/**
+ * @swagger
+ * /info-extra/{id}:
+ *   delete:
+ *     summary: Eliminar información extra (solo admin)
+ *     tags: [InfoExtra]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la información extra a eliminar
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Información extra eliminada exitosamente
+ *       404:
+ *         description: Información extra no encontrada
+ *       403:
+ *         description: Acceso denegado, se requiere rol de administrador
+ *       500:
+ *         description: Error del servidor
+ */
+router.delete(
+    '/:id',
+    verificarToken,
+    permitirSoloRol('admin'),
+    eliminarInfoExtraControlador
 );
 
 // Rutas para configuraciones del sistema

@@ -23,6 +23,14 @@ export const actualizarInfoExtra = async (id, titulo, descripcion, url) => {
     return result.affectedRows > 0;
 };
 
+export const eliminarInfoExtra = async (id) => {
+    const [result] = await db.promise().query(
+        'DELETE FROM info_extra WHERE id = ?',
+        [id]
+    );
+    return result.affectedRows > 0;
+};
+
 // Servicios para configuraciones
 export const obtenerPrecioMembresia = async () => {
     const [rows] = await db.promise().query(

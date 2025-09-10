@@ -29,8 +29,14 @@ const AdminPreguntas = () => {
 
   useEffect(() => {
     const fetchPreguntas = async () => {
+      const token = localStorage.getItem("token");
+      
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/preguntas`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/preguntas`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setPreguntas(res.data);
       } catch (error) {
         console.error("⚠ Error al traer preguntas:", error);
