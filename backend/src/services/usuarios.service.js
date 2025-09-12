@@ -2,48 +2,48 @@ import db from '../config/db.js';
 
 // Obtiene todos los usuarios de la base de datos
 export const obtenerTodosLosUsuarios = async () => {
-  const [rows] = await db.promise().query(
+  const result = await db.query(
     'SELECT id, nombre, email, provincia, ciudad, rol, estado FROM usuarios'
   );
-  return rows;
+  return result.rows;
 };
 
 // Busca usuarios en la base de datos por email
 export const buscarUsuariosPorEmail = async (email) => {
     // Realiza una consulta SQL para buscar usuarios con el email proporcionado
-    const [rows] = await db.promise().query('SELECT * FROM usuarios WHERE email = ?', [email]);
+    const result = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
     // Retorna los usuarios encontrados (puede ser un array vacío si no hay coincidencias)
-    return rows;
+    return result.rows;
 };
 
 // Busca un usuario específico por ID
 export const buscarUsuarioPorId = async (id) => {
-    const [rows] = await db.promise().query(
-        'SELECT id, nombre, email, provincia, ciudad, rol, estado FROM usuarios WHERE id = ?', 
+    const result = await db.query(
+        'SELECT id, nombre, email, provincia, ciudad, rol, estado FROM usuarios WHERE id = $1', 
         [id]
     );
     // Retorna el primer usuario encontrado o null si no existe
-    return rows.length > 0 ? rows[0] : null;
+    return result.rows.length > 0 ? result.rows[0] : null;
 };
 
 // Inserta un nuevo usuario en la base de datos
 export const insertarUsuario = async ({nombre, email, contraseña, provincia, ciudad, rol}) => {
     // Ejecuta una consulta SQL para insertar un nuevo usuario con los datos proporcionados
-    await db.promise().query(
-        'INSERT INTO usuarios (nombre, email, contraseña, provincia, ciudad, rol, estado) VALUES (?, ?, ?, ?, ?, ?, 1)',
+    await db.query(
+        'INSERT INTO usuarios (nombre, email, contraseña, provincia, ciudad, rol, estado) VALUES ($1, $2, $3, $4, $5, $6, 1)',
         [nombre, email, contraseña, provincia, ciudad, rol || 'usuario']
     );
 };
 
 // Actualiza el rol de un usuario específico
 export const actualizarRolUsuario = async (id, nuevoRol) => {
-    const [result] = await db.promise().query(
-        'UPDATE usuarios SET rol = ? WHERE id = ?',
+    const result = await db.query(
+        'UPDATE usuarios SET rol = $1 WHERE id = $2',
         [nuevoRol, id]
     );
     
     // Verificar si se actualizó algún registro
-    if (result.affectedRows === 0) {
+    if (result.rowCount === 0) {
         throw new Error('Usuario no encontrado o no se pudo actualizar');
     }
     
@@ -52,33 +52,33 @@ export const actualizarRolUsuario = async (id, nuevoRol) => {
 
 // Cambiar estado del usuario
 export const actualizarEstadoUsuario = async (id, estado) => {
-    const [result] = await db.execute(
-        'UPDATE usuarios SET estado = ? WHERE id = ?',
+    const result = await db.query(
+        'UPDATE usuarios SET estado = $1 WHERE id = $2',
         [estado, id]
     );
-    return result.affectedRows > 0;
+    return result.rowCount > 0;
 };
 
 // Obtener datos básicos del usuario (opcional)
 export const obtenerDatosBasicosUsuario = async (id) => {
-    const [rows] = await db.execute(
-        'SELECT id, nombre, email, rol, estado FROM usuarios WHERE id = ?',
+    const result = await db.query(
+        'SELECT id, nombre, email, rol, estado FROM usuarios WHERE id = $1',
         [id]
     );
-    return rows[0] || null;
+    return result.rows[0] || null;
 };
 
 // NUEVAS FUNCIONES PARA SINCRONIZACIÓN CON MEMBRESÍAS
 
 // Verificar si un usuario tiene membresía activa
 export const verificarMembresiaActiva = async (usuarioId) => {
-    const [rows] = await db.promise().query(
+    const result = await db.query(
         `SELECT id FROM membresias 
-         WHERE usuario_id = ? AND estado = 1 AND fecha_vencimiento >= CURDATE()
+         WHERE usuario_id = $1 AND estado = 1 AND fecha_vencimiento >= CURRENT_DATE
          LIMIT 1`,
         [usuarioId]
     );
-    return rows.length > 0;
+    return result.rows.length > 0;
 };
 
 // Verificar y actualizar estado de usuario basado en membresía
@@ -113,21 +113,23 @@ export const verificarYActualizarEstadoUsuario = async (usuarioId) => {
 export const sincronizarTodosLosEstadosConMembresias = async () => {
     try {
         // Actualizar todos los usuarios (excepto admins) basándose en sus membresías
-        const [result] = await db.promise().query(`
-            UPDATE usuarios u 
-            LEFT JOIN membresias m ON u.id = m.usuario_id 
-                AND m.estado = 1 
-                AND m.fecha_vencimiento >= CURDATE()
-            SET u.estado = CASE 
-                WHEN u.rol = 'admin' THEN u.estado -- Mantener estado actual de admins
-                WHEN m.id IS NOT NULL THEN 1        -- Usuario con membresía activa
-                ELSE 0                              -- Usuario sin membresía activa
+        const result = await db.query(`
+            UPDATE usuarios 
+            SET estado = CASE 
+                WHEN usuarios.rol = 'admin' THEN usuarios.estado -- Mantener estado actual de admins
+                WHEN membresias.id IS NOT NULL THEN 1        -- Usuario con membresía activa
+                ELSE 0                                       -- Usuario sin membresía activa
             END
-            WHERE u.rol = 'usuario'
+            FROM (
+                SELECT DISTINCT usuario_id, id 
+                FROM membresias 
+                WHERE estado = 1 AND fecha_vencimiento >= CURRENT_DATE
+            ) AS membresias
+            WHERE usuarios.id = membresias.usuario_id OR usuarios.rol = 'usuario'
         `);
         
-        console.log(`🔄 Sincronización masiva completada: ${result.affectedRows} usuarios actualizados`);
-        return result.affectedRows;
+        console.log(`🔄 Sincronización masiva completada: ${result.rowCount} usuarios actualizados`);
+        return result.rowCount;
     } catch (error) {
         console.error('❌ Error en sincronización masiva:', error);
         throw error;
@@ -136,7 +138,7 @@ export const sincronizarTodosLosEstadosConMembresias = async () => {
 
 // Obtener usuarios con estados desactualizados (para debugging)
 export const obtenerUsuariosDesactualizados = async () => {
-    const [rows] = await db.promise().query(`
+    const result = await db.query(`
         SELECT 
             u.id, 
             u.nombre, 
@@ -150,7 +152,7 @@ export const obtenerUsuariosDesactualizados = async () => {
         FROM usuarios u
         LEFT JOIN membresias m ON u.id = m.usuario_id 
             AND m.estado = 1 
-            AND m.fecha_vencimiento >= CURDATE()
+            AND m.fecha_vencimiento >= CURRENT_DATE
         WHERE u.rol = 'usuario'
         AND u.estado != CASE 
             WHEN m.id IS NOT NULL THEN 1 
@@ -158,5 +160,5 @@ export const obtenerUsuariosDesactualizados = async () => {
         END
     `);
     
-    return rows;
+    return result.rows;
 };

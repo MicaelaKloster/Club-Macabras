@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loginUsuario, recuperarPassword, restablecerPassword } from '../controllers/auth.controller.js';
+import { loginUsuario, recuperarPassword, reestablecerPassword } from '../controllers/auth.controller.js';
 import rateLimit from 'express-rate-limit';
 import { validarLogin } from '../validations/auth.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
@@ -111,6 +111,6 @@ router.post('/recuperar-password', recuperarPassword);
  *       400:
  *         description: Token inválido o expirado
  */
-router.post('/restablecer-password', restablecerPassword);
+router.post('/reestablecer-password', reestablecerPassword);
 
 export default router;

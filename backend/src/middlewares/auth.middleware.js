@@ -13,12 +13,12 @@ export const verificarToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Verifica que el usuario siga activo
-    const [rows] = await db.promise().query(
-      'SELECT id, nombre, email, rol, estado FROM usuarios WHERE id = ?',
+    const result = await db.query(
+      'SELECT id, nombre, email, rol, estado FROM usuarios WHERE id = $1',
       [decoded.id]
     );
 
-    const usuario = rows[0];
+    const usuario = result.rows[0];
 
     if (!usuario || usuario.estado !== 1) {
       return res.status(403).json({ error: 'Usuario inactivo o no encontrado' });

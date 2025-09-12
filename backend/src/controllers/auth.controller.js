@@ -76,7 +76,7 @@ export const recuperarPassword = async (req, res) => {
   }
 };
 
-export const restablecerPassword = async (req, res) => {
+export const reestablecerPassword = async (req, res) => {
   try {
     const { token, nuevaContraseña } = req.body;
 

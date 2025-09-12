@@ -1,14 +1,14 @@
 import db from '../config/db.js';
 
 export const crearPregunta = async (usuarioId, cursoId, pregunta) => {
-    await db.promise().query(
-        'INSERT INTO preguntas_respuestas (usuario_id, curso_id, pregunta) VALUES (?, ?, ?)',
+    await db.query(
+        'INSERT INTO preguntas_respuestas (usuario_id, curso_id, pregunta) VALUES ($1, $2, $3)',
         [usuarioId, cursoId, pregunta]
     );
 };
 
 export const obtenerPreguntasPorCurso = async (cursoId) => {
-    const [rows] = await db.promise().query(
+    const result = await db.query(
         `SELECT 
         p.id,
         p.pregunta,
@@ -18,23 +18,23 @@ export const obtenerPreguntasPorCurso = async (cursoId) => {
         CASE WHEN p.respuesta IS NULL OR p.respuesta = '' THEN false ELSE true END AS respondida
         FROM preguntas_respuestas p
         JOIN usuarios u ON p.usuario_id = u.id
-        WHERE p.curso_id = ?
+        WHERE p.curso_id = $1
         ORDER BY p.fecha DESC`,
         [cursoId]
     );
 
-    return rows;
+    return result.rows;
 };
 
 export const responderPregunta = async (id, respuesta) => {
-  await db.promise().query(
-    `UPDATE preguntas_respuestas SET respuesta = ? WHERE id = ?`,
+  await db.query(
+    `UPDATE preguntas_respuestas SET respuesta = $1 WHERE id = $2`,
     [respuesta, id]
   );
 };
 
 export const obtenerTodasLasPreguntas = async () => {
-  const [rows] = await db.promise().query(
+  const result = await db.query(
     `SELECT 
       p.id,
       p.pregunta,
@@ -50,5 +50,5 @@ export const obtenerTodasLasPreguntas = async () => {
     ORDER BY p.fecha DESC`
   );
 
-  return rows;
+  return result.rows;
 };

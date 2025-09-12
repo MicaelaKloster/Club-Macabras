@@ -1,14 +1,14 @@
 import db from '../config/db.js';
 
 export const subirTrabajo = async (usuarioId, cursoId, imagen_url, descripcion) => {
-  await db.promise().query(
-    `INSERT INTO trabajos_usuarios (usuario_id, curso_id, imagen_url, descripcion) VALUES (?, ?, ?, ?)`,
+  await db.query(
+    `INSERT INTO trabajos_usuarios (usuario_id, curso_id, imagen_url, descripcion) VALUES ($1, $2, $3, $4)`,
     [usuarioId, cursoId, imagen_url, descripcion]
   );
 };
 
 export const obtenerTrabajosDeCurso = async (cursoId, usuarioLogueadoId) => {
-  const [rows] = await db.promise().query(
+  const result = await db.query(
     `
     SELECT 
       t.id,
@@ -24,18 +24,18 @@ export const obtenerTrabajosDeCurso = async (cursoId, usuarioLogueadoId) => {
       (
         SELECT COUNT(*) 
         FROM likes_trabajos l 
-        WHERE l.trabajo_id = t.id AND l.usuario_id = ?
+        WHERE l.trabajo_id = t.id AND l.usuario_id = $1
       ) AS dado_like
     FROM trabajos_usuarios t
     JOIN usuarios u ON t.usuario_id = u.id
-    WHERE t.curso_id = ?
+    WHERE t.curso_id = $2
     ORDER BY t.fecha DESC
     `,
     [usuarioLogueadoId, cursoId]
   );
 
   // Convertimos el campo `dado_like` en booleano
-  return rows.map(trabajo => ({
+  return result.rows.map(trabajo => ({
     ...trabajo,
     dado_like: !!trabajo.dado_like
   }));

@@ -32,6 +32,8 @@ import PagoPendiente from "../pages/PagoPendiente";
 import InfoExtra from "../pages/InfoExtra";
 import InfoExtraAdmin from "../pages/admin/InfoExtraAdmin";
 import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
+import RecuperarPassword from '../pages/RecuperarPassword';
+import ReestablecerPassword from '../pages/ReestablecerPassword';
 
 import RutaPrivada from './RutaPrivada';
 
@@ -49,6 +51,8 @@ const AppRouter = () => {
           <Route path="/pago-exitoso" element={<PagoExitoso />} />
           <Route path="/pago-fallido" element={<PagoFallido />} />
           <Route path="/pago-pendiente" element={<PagoPendiente />} />
+          <Route path="/recuperar-password" element={<RecuperarPassword />} />
+          <Route path="/reestablecer-password" element={<ReestablecerPassword />} />
         </Route>
 
         {/* Rutas privadas */}
