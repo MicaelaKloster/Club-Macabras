@@ -7,13 +7,10 @@ dotenv.config();
 // Configuración del pool de conexiones para PostgreSQL/Supabase
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false // Necesario para Supabase
-    },
-    // Configuración del pool
-    max: 20, // Máximo 20 conexiones en el pool
-    idleTimeoutMillis: 30000, // Cerrar conexiones inactivas después de 30s
-    connectionTimeoutMillis: 2000, // Timeout de conexión de 2s
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000, // Aumentar timeout
 });
 
 // Función para probar la conexión
