@@ -13,11 +13,11 @@ import {
   Clock,
   Hash
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Textarea } from "@/components/ui/Textarea";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
 
 const AdminPreguntas = () => {
   const { usuario } = useAuth();

@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { XCircle, CreditCard, Home, RefreshCw, AlertTriangle, HelpCircle, Phone, Mail } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
 
 const PagoFallido = () => {
   const navigate = useNavigate();

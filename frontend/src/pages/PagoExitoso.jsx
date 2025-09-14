@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { CheckCircle, BookOpen, Home, Sparkles, Gift, ArrowRight } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
 const PagoExitoso = () => {
   const navigate = useNavigate();

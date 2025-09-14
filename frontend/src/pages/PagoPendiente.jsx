@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Clock, RefreshCw, CreditCard, Home, AlertTriangle, CheckCircle, Info, Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { Badge } from "@/components/ui/Badge";
 
 const PagoPendiente = () => {
   const navigate = useNavigate();
