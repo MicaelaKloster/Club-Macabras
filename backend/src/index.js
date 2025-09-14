@@ -34,13 +34,13 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Middleware
-const allowedOrigins = [
-  "http://localhost:5173", // Desarrollo
-  process.env.FRONTEND_URL // Producción (se configurará después)
-].filter(Boolean); // Elimina valores undefined/null
+// const allowedOrigins = [
+//   "http://localhost:5173", // Desarrollo
+//   process.env.FRONTEND_URL // Producción (se configurará después)
+// ].filter(Boolean); // Elimina valores undefined/null
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
