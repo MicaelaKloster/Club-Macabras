@@ -8,7 +8,7 @@ import {
   verificarEstadoUsuario,
   obtenerEstadosDesactualizados
 } from '../controllers/usuarios.controller.js';
-import { validarRegistroUsuario, validarCambioRol } from '../validations/usuarios.validation.js';
+import { validarRegistroUsuario, validarCambioRol, validarCambioEstado } from '../validations/usuarios.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
 import { permitirSoloRol } from '../middlewares/rol.middleware.js';
@@ -196,7 +196,7 @@ router.put(
   '/:id/estado',
   verificarToken,
   permitirSoloRol('admin'),
-  validarCambioRol, 
+  validarCambioEstado,
   validarCampos,
   cambiarEstadoUsuario
 );

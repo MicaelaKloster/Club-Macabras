@@ -48,3 +48,16 @@ export const validarCambioRol = [
     .notEmpty().withMessage('El rol es obligatorio')
     .isIn(['admin', 'usuario']).withMessage('El rol solo puede ser "admin" o "usuario"')
 ];
+
+// Middleware de validación para el cambio de estado
+export const validarCambioEstado = [
+  // Valida el parámetro 'id'
+  param('id')
+    .isInt({ min: 1 })
+    .withMessage('El ID debe ser un número entero positivo'),
+    
+  // Valida el campo 'estado'
+  body('estado')
+    .notEmpty().withMessage('El estado es obligatorio')
+    .isIn([0, 1]).withMessage('El estado solo puede ser 0 (inactivo) o 1 (activo)')
+];
