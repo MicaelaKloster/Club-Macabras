@@ -36,8 +36,10 @@ app.set('trust proxy', 1);
 // Middleware
 const allowedOrigins = [
   "http://localhost:5173", // Desarrollo
-  "https://clubmacabras.netlify.app" // Producción
+  process.env.FRONTEND_URL // Producción
 ];
+
+console.log('Allowed origins:', allowedOrigins);
 
 app.use(cors({
   origin: allowedOrigins,
