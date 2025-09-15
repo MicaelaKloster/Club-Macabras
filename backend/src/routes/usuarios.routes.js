@@ -196,6 +196,8 @@ router.put(
   '/:id/estado',
   verificarToken,
   permitirSoloRol('admin'),
+  validarCambioRol, 
+  validarCampos,
   cambiarEstadoUsuario
 );
 

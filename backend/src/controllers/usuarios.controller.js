@@ -135,6 +135,12 @@ export const cambiarRolUsuario = async (req, res) => {
 // Controlador mejorado para cambiar estado (con validación de membresía)
 export const cambiarEstadoUsuario = async (req, res) => {
     try {
+        console.log('=== DEBUG CAMBIAR ESTADO ===');
+        console.log('Params:', req.params);
+        console.log('Body:', req.body);
+        console.log('Tipo de estado:', typeof req.body.estado);
+        console.log('Usuario autenticado:', req.usuario);
+        
         const { id } = req.params;
         const { estado } = req.body;
 

@@ -101,6 +101,7 @@ const AdminUsuarios = () => {
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     },
                 }
             );
@@ -118,9 +119,10 @@ const AdminUsuarios = () => {
             console.log(`✅ Estado cambiado exitosamente para usuario ${usuarioId} a ${nuevoEstado === 1 ? 'Activo' : 'Inactivo'}`);
             
         } catch (error) {
-            console.error("❌ Error al cambiar estado:", error);
-            // Aquí podrías mostrar un toast o mensaje de error
-            alert("Error al cambiar el estado del usuario");
+            // console.error("❌ Error al cambiar estado:", error);
+            // alert("Error al cambiar el estado del usuario");
+            console.error("Error completo:", error.response?.data || error.message);
+            alert(`Error: ${error.response?.data?.error || error.message}`);
         } finally {
             setCargandoEstado(null);
         }
