@@ -17,7 +17,7 @@ import {
   Calendar,
   CreditCard,
   Plus,
-  Refresh
+  RefreshCw
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -589,7 +589,7 @@ const AdminUsuarios = () => {
                     size="sm"
                     className="text-pink-600 hover:text-pink-700"
                 >
-                    <Refresh className="h-4 w-4 mr-2" />
+                    <RefreshCw className="h-4 w-4 mr-2" />
                     Actualizar
                 </Button>
             </div>
