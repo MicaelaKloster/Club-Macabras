@@ -67,16 +67,16 @@ app.use('/api/v1/cursos', cursosRoutes);
 app.use('/api/v1/videos', videosRoutes);
 app.use('/api/v1/documentos', documentosRoutes);
 app.use('/api/v1/membresias', membresiasRoutes);
-app.use('/api/v1', membresiasRoutes); 
 app.use('/api/v1/temas-foro', temasForoRoutes);
 app.use('/api/v1/temas-foro', respuestasForoRoutes);
 app.use('/api/v1/preguntas', preguntasRoutes);
 app.use('/api/v1/mensajes', mensajesRoutes);
 app.use('/api/v1/trabajos', trabajosRoutes);
-app.use('/api/v1', likesRoutes);
-app.use('/api/v1', progresoRoutes);
 app.use('/api/v1/mercadopago', mercadoPagoRoutes);
 app.use('/api/v1/info-extra', infoExtraRoutes);
+app.use('/api/v1', membresiasRoutes); 
+app.use('/api/v1', likesRoutes);
+app.use('/api/v1', progresoRoutes);
 // Servir la carpeta uploads de forma pública
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
