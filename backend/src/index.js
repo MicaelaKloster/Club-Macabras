@@ -67,6 +67,7 @@ app.use('/api/v1/cursos', cursosRoutes);
 app.use('/api/v1/videos', videosRoutes);
 app.use('/api/v1/documentos', documentosRoutes);
 app.use('/api/v1/membresias', membresiasRoutes);
+app.use('/api/v1', membresiasRoutes); 
 app.use('/api/v1/temas-foro', temasForoRoutes);
 app.use('/api/v1/temas-foro', respuestasForoRoutes);
 app.use('/api/v1/preguntas', preguntasRoutes);

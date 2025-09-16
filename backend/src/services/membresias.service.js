@@ -28,3 +28,21 @@ export const desactivarMembresiasVencidas = async () => {
 
     console.log(`🔄 Membresías desactivadas automáticamente: ${result.rowCount}`);
 };
+
+// Actualizar estado de membresía
+export const actualizarEstadoMembresia = async (id, estado) => {
+    const result = await db.query(
+        'UPDATE membresias SET estado = $1 WHERE id = $2',
+        [estado, id]
+    );
+    return result.rowCount > 0;
+};
+
+// Obtener membresía por ID
+export const obtenerMembresiaPorId = async (id) => {
+    const result = await db.query(
+        'SELECT * FROM membresias WHERE id = $1',
+        [id]
+    );
+    return result.rows[0] || null;
+};

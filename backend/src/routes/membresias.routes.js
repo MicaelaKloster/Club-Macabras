@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { registrarMembresia, obtenerMembresiaDeUsuario } from "../controllers/membresias.controller.js";
+import { 
+    registrarMembresia, 
+    obtenerMembresiaDeUsuario,
+    obtenerMembresiaUsuarioAdmin,
+    crearMembresiaManual,
+    cambiarEstadoMembresiaAdmin
+} from "../controllers/membresias.controller.js";
 import { validarCreacionMembresia } from "../validations/membresias.validation.js";
 import { validarCampos } from "../middlewares/validarCampos.middleware.js";
 import { verificarToken } from "../middlewares/auth.middleware.js";
@@ -92,6 +98,28 @@ router.get(
   '/:usuarioId',
   verificarToken,
   obtenerMembresiaDeUsuario
+);
+
+// Nuevas rutas para administración
+router.get(
+    '/usuarios/:id/membresias',
+    verificarToken,
+    permitirSoloRol('admin'),
+    obtenerMembresiaUsuarioAdmin
+);
+
+router.post(
+    '/usuarios/:id/membresias',
+    verificarToken,
+    permitirSoloRol('admin'),
+    crearMembresiaManual
+);
+
+router.put(
+    '/membresias/:id/estado',
+    verificarToken,
+    permitirSoloRol('admin'),
+    cambiarEstadoMembresiaAdmin
 );
 
 export default router;

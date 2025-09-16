@@ -12,9 +12,12 @@ import {
   ArrowLeft,
   Search,
   Filter,
-  Download,
   Settings,
-  AlertTriangle
+  AlertTriangle,
+  Calendar,
+  CreditCard,
+  Plus,
+  Refresh
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -25,18 +28,20 @@ import { Skeleton } from "@/components/ui/Skeleton";
 const AdminUsuarios = () => {
     const navigate = useNavigate();
     const [usuarios, setUsuarios] = useState([]);
+    const [membresias, setMembresias] = useState({});
     const [loading, setLoading] = useState(true);
     const [filtroNombre, setFiltroNombre] = useState("");
     const [filtroRol, setFiltroRol] = useState("todos");
     const [filtroEstado, setFiltroEstado] = useState("todos");
+    const [filtroMembresia, setFiltroMembresia] = useState("todas");
     const [usuarioEditando, setUsuarioEditando] = useState(null);
     const [cargandoCambio, setCargandoCambio] = useState(null);
     const [usuarioEditandoEstado, setUsuarioEditandoEstado] = useState(null);
     const [cargandoEstado, setCargandoEstado] = useState(null);
+    const [cargandoMembresia, setCargandoMembresia] = useState(null);
 
     const obtenerUsuarios = async () => {
         const token = localStorage.getItem("token");
-
         try {
             const { data } = await axios.get(
                 `${import.meta.env.VITE_API_URL}/usuarios`,
@@ -47,11 +52,38 @@ const AdminUsuarios = () => {
                 }
             );
             setUsuarios(data || []);
+            
+            // Obtener membresías para cada usuario
+            await obtenerMembresiasUsuarios(data || []);
         } catch (error) {
             console.error("⚠️ Error al obtener usuarios: ", error);
         } finally {
             setLoading(false);
         }
+    };
+
+    const obtenerMembresiasUsuarios = async (usuarios) => {
+        const token = localStorage.getItem("token");
+        const membresiasPorUsuario = {};
+
+        for (const usuario of usuarios) {
+            try {
+                const { data } = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/usuarios/${usuario.id}/membresias`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                membresiasPorUsuario[usuario.id] = data;
+            } catch (error) {
+                console.error(`Error al obtener membresías del usuario ${usuario.id}:`, error);
+                membresiasPorUsuario[usuario.id] = null;
+            }
+        }
+        
+        setMembresias(membresiasPorUsuario);
     };
 
     const cambiarRolUsuario = async (usuarioId, nuevoRol) => {
@@ -65,11 +97,11 @@ const AdminUsuarios = () => {
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
                     },
                 }
             );
 
-            // Actualizar el estado local
             setUsuarios(usuarios.map(usuario => 
                 usuario.id === usuarioId 
                     ? { ...usuario, rol: nuevoRol }
@@ -77,14 +109,11 @@ const AdminUsuarios = () => {
             ));
 
             setUsuarioEditando(null);
-            
-            // Mostrar mensaje de éxito (opcional)
             console.log(`✅ Rol cambiado exitosamente para usuario ${usuarioId}`);
             
         } catch (error) {
             console.error("❌ Error al cambiar rol:", error);
-            // Aquí podrías mostrar un toast o mensaje de error
-            alert("Error al cambiar el rol del usuario");
+            alert(`Error: ${error.response?.data?.error || error.message}`);
         } finally {
             setCargandoCambio(null);
         }
@@ -106,7 +135,6 @@ const AdminUsuarios = () => {
                 }
             );
 
-            // Actualizar el estado local
             setUsuarios(usuarios.map(usuario => 
                 usuario.id === usuarioId 
                     ? { ...usuario, estado: nuevoEstado }
@@ -114,17 +142,88 @@ const AdminUsuarios = () => {
             ));
 
             setUsuarioEditandoEstado(null);
-            
-            // Mostrar mensaje de éxito (opcional)
             console.log(`✅ Estado cambiado exitosamente para usuario ${usuarioId} a ${nuevoEstado === 1 ? 'Activo' : 'Inactivo'}`);
             
         } catch (error) {
-            // console.error("❌ Error al cambiar estado:", error);
-            // alert("Error al cambiar el estado del usuario");
-            console.error("Error completo:", error.response?.data || error.message);
+            console.error("❌ Error al cambiar estado:", error);
             alert(`Error: ${error.response?.data?.error || error.message}`);
         } finally {
             setCargandoEstado(null);
+        }
+    };
+
+    const cambiarEstadoMembresia = async (usuarioId, membresiaId, nuevoEstado) => {
+        const token = localStorage.getItem("token");
+        setCargandoMembresia(usuarioId);
+
+        try {
+            await axios.put(
+                `${import.meta.env.VITE_API_URL}/membresias/${membresiaId}/estado`,
+                { estado: nuevoEstado },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                }
+            );
+
+            // Actualizar membresías localmente
+            setMembresias(prev => ({
+                ...prev,
+                [usuarioId]: {
+                    ...prev[usuarioId],
+                    estado: nuevoEstado
+                }
+            }));
+
+            console.log(`✅ Membresía ${nuevoEstado === 1 ? 'activada' : 'desactivada'} para usuario ${usuarioId}`);
+            
+            // Refrescar usuarios para sincronizar estados
+            await obtenerUsuarios();
+            
+        } catch (error) {
+            console.error("❌ Error al cambiar estado de membresía:", error);
+            alert(`Error: ${error.response?.data?.error || error.message}`);
+        } finally {
+            setCargandoMembresia(null);
+        }
+    };
+
+    const crearMembresia = async (usuarioId) => {
+        const token = localStorage.getItem("token");
+        setCargandoMembresia(usuarioId);
+
+        try {
+            const fechaInicio = new Date().toISOString().split('T')[0];
+            const fechaVencimiento = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+            await axios.post(
+                `${import.meta.env.VITE_API_URL}/usuarios/${usuarioId}/membresias`,
+                {
+                    fecha_inicio: fechaInicio,
+                    fecha_vencimiento: fechaVencimiento,
+                    metodo_pago: 'Manual (Admin)',
+                    estado: 1
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                }
+            );
+
+            console.log(`✅ Membresía creada exitosamente para usuario ${usuarioId}`);
+            
+            // Refrescar datos
+            await obtenerUsuarios();
+            
+        } catch (error) {
+            console.error("❌ Error al crear membresía:", error);
+            alert(`Error: ${error.response?.data?.error || error.message}`);
+        } finally {
+            setCargandoMembresia(null);
         }
     };
 
@@ -141,13 +240,46 @@ const AdminUsuarios = () => {
                               (filtroEstado === "activo" && usuario.estado === 1) ||
                               (filtroEstado === "inactivo" && usuario.estado !== 1);
         
-        return coincideNombre && coincideRol && coincideEstado;
+        // Filtro por membresía
+        let coincidemMembresia = true;
+        if (filtroMembresia !== "todas") {
+            const membresia = membresias[usuario.id];
+            
+            if (filtroMembresia === "sin_membresia") {
+                coincidemMembresia = !membresia;
+            } else if (filtroMembresia === "activas") {
+                coincidemMembresia = membresia && membresia.estado === 1 && new Date(membresia.fecha_vencimiento) >= new Date();
+            } else if (filtroMembresia === "vencidas") {
+                coincidemMembresia = membresia && (membresia.estado === 0 || new Date(membresia.fecha_vencimiento) < new Date());
+            } else if (filtroMembresia === "proximas_vencer") {
+                if (membresia && membresia.estado === 1) {
+                    const fechaVencimiento = new Date(membresia.fecha_vencimiento);
+                    const hoy = new Date();
+                    const diasRestantes = Math.ceil((fechaVencimiento - hoy) / (1000 * 60 * 60 * 24));
+                    coincidemMembresia = diasRestantes <= 7 && diasRestantes >= 0;
+                } else {
+                    coincidemMembresia = false;
+                }
+            }
+        }
+        
+        return coincideNombre && coincideRol && coincideEstado && coincidemMembresia;
     });
 
     // Estadísticas
     const totalUsuarios = usuarios.length;
     const usuariosActivos = usuarios.filter(u => u.estado === 1).length;
     const admins = usuarios.filter(u => u.rol === 'admin').length;
+    const conMembresia = Object.values(membresias).filter(m => m && m.estado === 1).length;
+    
+    // Nueva estadística: membresías próximas a vencer
+    const membresiasPorVencer = Object.values(membresias).filter(m => {
+        if (!m || m.estado !== 1) return false;
+        const fechaVencimiento = new Date(m.fecha_vencimiento);
+        const hoy = new Date();
+        const diasRestantes = Math.ceil((fechaVencimiento - hoy) / (1000 * 60 * 60 * 24));
+        return diasRestantes <= 7 && diasRestantes >= 0;
+    }).length;
 
     // Componente para el selector de rol
     const SelectorRol = ({ usuario }) => {
@@ -211,8 +343,8 @@ const AdminUsuarios = () => {
         );
     };
 
-    // Componente para el selector de estado
-    const SelectorEstado = ({ usuario }) => {
+    // Componente para el selector de estado de usuario
+    const SelectorEstadoUsuario = ({ usuario }) => {
         if (usuarioEditandoEstado === usuario.id) {
             return (
                 <div className="flex items-center space-x-2">
@@ -273,6 +405,132 @@ const AdminUsuarios = () => {
         );
     };
 
+    // Componente para gestión de membresías (MEJORADO)
+    const GestionMembresia = ({ usuario }) => {
+        const membresia = membresias[usuario.id];
+        
+        if (!membresia) {
+            return (
+                <div className="space-y-2 min-w-[140px]">
+                    <Badge variant="outline" className="bg-gray-100 text-gray-700">
+                        <XCircle className="h-3 w-3 mr-1" />
+                        Sin membresía
+                    </Badge>
+                    <div className="text-xs text-gray-500">
+                        No tiene membresía activa
+                    </div>
+                    <Button
+                        size="sm"
+                        onClick={() => crearMembresia(usuario.id)}
+                        disabled={cargandoMembresia === usuario.id}
+                        className="h-7 text-xs bg-green-600 hover:bg-green-700 text-white w-full"
+                    >
+                        <Plus className="h-3 w-3 mr-1" />
+                        Crear
+                    </Button>
+                </div>
+            );
+        }
+
+        const estaActiva = membresia.estado === 1;
+        const fechaVencimiento = new Date(membresia.fecha_vencimiento);
+        const fechaInicio = new Date(membresia.fecha_inicio);
+        const hoy = new Date();
+        const estaVencida = fechaVencimiento < hoy;
+        
+        // Calcular días restantes
+        const diasRestantes = Math.ceil((fechaVencimiento - hoy) / (1000 * 60 * 60 * 24));
+        const estaProximaAVencer = diasRestantes <= 7 && diasRestantes > 0;
+
+        return (
+            <div className="space-y-2 min-w-[140px]">
+                {/* Estado de la membresía */}
+                <Badge 
+                    variant={estaActiva ? 'default' : 'secondary'}
+                    className={
+                        estaActiva && !estaVencida && !estaProximaAVencer
+                            ? 'bg-green-100 text-green-700' 
+                            : estaProximaAVencer
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : estaVencida 
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-gray-100 text-gray-700'
+                    }
+                >
+                    <CreditCard className="h-3 w-3 mr-1" />
+                    {estaActiva && !estaVencida && !estaProximaAVencer ? 'Activa' : 
+                     estaProximaAVencer ? 'Por vencer' :
+                     estaVencida ? 'Vencida' : 'Inactiva'}
+                </Badge>
+                
+                {/* Fechas */}
+                <div className="text-xs text-gray-600 space-y-1">
+                    <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1 text-blue-500" />
+                        <span className="font-medium">Inicio:</span>
+                        <span className="ml-1">{fechaInicio.toLocaleDateString('es-AR', { 
+                            day: '2-digit', 
+                            month: '2-digit', 
+                            year: '2-digit' 
+                        })}</span>
+                    </div>
+                    
+                    <div className="flex items-center">
+                        <Calendar className="h-3 w-3 mr-1 text-red-500" />
+                        <span className="font-medium">Vence:</span>
+                        <span className={`ml-1 ${
+                            estaVencida ? 'text-red-600 font-semibold' : 
+                            estaProximaAVencer ? 'text-yellow-600 font-semibold' : 
+                            'text-gray-600'
+                        }`}>
+                            {fechaVencimiento.toLocaleDateString('es-AR', { 
+                                day: '2-digit', 
+                                month: '2-digit', 
+                                year: '2-digit' 
+                            })}
+                        </span>
+                    </div>
+                    
+                    {/* Días restantes */}
+                    {!estaVencida && estaActiva && (
+                        <div className={`text-xs font-medium ${
+                            estaProximaAVencer ? 'text-yellow-600' : 'text-green-600'
+                        }`}>
+                            {diasRestantes > 0 ? `${diasRestantes} días restantes` : 'Vence hoy'}
+                        </div>
+                    )}
+                    
+                    {estaVencida && (
+                        <div className="text-xs font-medium text-red-600">
+                            Vencida hace {Math.abs(diasRestantes)} días
+                        </div>
+                    )}
+                </div>
+
+                {/* Método de pago */}
+                <div className="text-xs text-gray-500">
+                    <span className="font-medium">Método:</span> {membresia.metodo_pago || 'N/A'}
+                </div>
+
+                {/* Botones de acción */}
+                <div className="flex space-x-1">
+                    <Button
+                        size="sm"
+                        onClick={() => cambiarEstadoMembresia(usuario.id, membresia.id, estaActiva ? 0 : 1)}
+                        disabled={cargandoMembresia === usuario.id}
+                        className={`h-7 text-xs flex-1 ${
+                            estaActiva 
+                                ? 'bg-red-600 hover:bg-red-700' 
+                                : 'bg-green-600 hover:bg-green-700'
+                        } text-white`}
+                    >
+                        {estaActiva ? 'Desactivar' : 'Activar'}
+                    </Button>
+                </div>
+            </div>
+        );
+    };
+
     if (loading) {
         return (
             <div className="max-w-7xl mx-auto p-6 space-y-6">
@@ -281,8 +539,8 @@ const AdminUsuarios = () => {
                 </div>
                 <Skeleton className="h-8 w-64" />
                 
-                <div className="grid gap-4 md:grid-cols-3">
-                    {[1, 2, 3].map(i => (
+                <div className="grid gap-4 md:grid-cols-4">
+                    {[1, 2, 3, 4].map(i => (
                         <Card key={i}>
                             <CardContent className="p-4">
                                 <Skeleton className="h-4 w-20 mb-2" />
@@ -315,7 +573,7 @@ const AdminUsuarios = () => {
     return (
         <div className="max-w-7xl mx-auto p-6 space-y-6">
             {/* Back Button */}
-            <div className="flex items-center">
+            <div className="flex items-center justify-between">
                 <Button
                     onClick={() => navigate(-1)}
                     variant="ghost"
@@ -325,16 +583,25 @@ const AdminUsuarios = () => {
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Volver
                 </Button>
+                <Button
+                    onClick={() => obtenerUsuarios()}
+                    variant="outline"
+                    size="sm"
+                    className="text-pink-600 hover:text-pink-700"
+                >
+                    <Refresh className="h-4 w-4 mr-2" />
+                    Actualizar
+                </Button>
             </div>
 
             {/* Header */}
             <div className="text-center space-y-2">
                 <h2 className="text-3xl font-bold text-pink-600 flex items-center justify-center">
                     <Users className="h-8 w-8 mr-3" />
-                    Gestión de Usuarios
+                    Gestión de Usuarios y Membresías
                 </h2>
                 <p className="text-muted-foreground">
-                    Administra y visualiza todos los usuarios de la plataforma
+                    Administra usuarios, roles, estados y membresías de la plataforma
                 </p>
             </div>
 
@@ -344,14 +611,14 @@ const AdminUsuarios = () => {
                     <div className="flex items-center space-x-2 text-amber-700">
                         <AlertTriangle className="h-4 w-4" />
                         <p className="text-sm">
-                            <strong>Nota:</strong> Haz clic en el ícono de configuración <Settings className="h-3 w-3 inline" /> junto al rol o estado para modificarlo.
+                            <strong>Nota:</strong> Haz clic en <Settings className="h-3 w-3 inline" /> para modificar rol/estado de usuario. Los estados se sincronizan automáticamente con las membresías.
                         </p>
                     </div>
                 </CardContent>
             </Card>
 
-            {/* Stats */}
-            <div className="grid gap-4 md:grid-cols-3">
+            {/* Stats - CON NUEVA ESTADÍSTICA */}
+            <div className="grid gap-4 md:grid-cols-4">
                 <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
                     <CardContent className="p-4">
                         <div className="flex items-center justify-between">
@@ -380,10 +647,22 @@ const AdminUsuarios = () => {
                     <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-purple-600">Administradores</p>
-                                <p className="text-2xl font-bold text-purple-800">{admins}</p>
+                                <p className="text-sm font-medium text-purple-600">Con Membresía</p>
+                                <p className="text-2xl font-bold text-purple-800">{conMembresia}</p>
                             </div>
-                            <Shield className="h-8 w-8 text-purple-600" />
+                            <CreditCard className="h-8 w-8 text-purple-600" />
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-200">
+                    <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-medium text-yellow-600">Por Vencer</p>
+                                <p className="text-2xl font-bold text-yellow-800">{membresiasPorVencer}</p>
+                            </div>
+                            <AlertTriangle className="h-8 w-8 text-yellow-600" />
                         </div>
                     </CardContent>
                 </Card>
@@ -398,7 +677,7 @@ const AdminUsuarios = () => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-4">
-                    <div className="grid gap-4 md:grid-cols-4">
+                    <div className="grid gap-4 md:grid-cols-5">
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Buscar</label>
                             <div className="relative">
@@ -426,7 +705,7 @@ const AdminUsuarios = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Estado</label>
+                            <label className="text-sm font-medium">Estado Usuario</label>
                             <select
                                 value={filtroEstado}
                                 onChange={(e) => setFiltroEstado(e.target.value)}
@@ -438,12 +717,28 @@ const AdminUsuarios = () => {
                             </select>
                         </div>
 
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Membresía</label>
+                            <select
+                                value={filtroMembresia}
+                                onChange={(e) => setFiltroMembresia(e.target.value)}
+                                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+                            >
+                                <option value="todas">Todas las membresías</option>
+                                <option value="activas">Con membresía activa</option>
+                                <option value="vencidas">Membresías vencidas</option>
+                                <option value="sin_membresia">Sin membresía</option>
+                                <option value="proximas_vencer">Próximas a vencer</option>
+                            </select>
+                        </div>
+
                         <div className="flex items-end">
                             <Button
                                 onClick={() => {
                                     setFiltroNombre("");
                                     setFiltroRol("todos");
                                     setFiltroEstado("todos");
+                                    setFiltroMembresia("todas");
                                 }}
                                 variant="outline"
                                 size="sm"
@@ -475,7 +770,8 @@ const AdminUsuarios = () => {
                                     <th className="px-6 py-4 font-semibold text-pink-600">Contacto</th>
                                     <th className="px-6 py-4 font-semibold text-pink-600">Ubicación</th>
                                     <th className="px-6 py-4 font-semibold text-pink-600">Rol</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-600">Estado Membresia</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600">Estado Usuario</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600">Membresía</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -515,7 +811,11 @@ const AdminUsuarios = () => {
                                         </td>
 
                                         <td className="px-6 py-4">
-                                            <SelectorEstado usuario={u} />
+                                            <SelectorEstadoUsuario usuario={u} />
+                                        </td>
+
+                                        <td className="px-6 py-4">
+                                            <GestionMembresia usuario={u} />
                                         </td>
                                     </tr>
                                 ))}

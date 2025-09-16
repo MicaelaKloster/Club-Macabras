@@ -85,11 +85,6 @@ const ComprarMembresia = () => {
       descripcion: "Respuestas directas de instructores expertos"
     },
     {
-      icon: Trophy,
-      titulo: "Certificados de Logro",
-      descripcion: "Valida tus habilidades con certificaciones oficiales"
-    },
-    {
       icon: Star,
       titulo: "Contenido Actualizado",
       descripcion: "Nuevos cursos y técnicas cada mes"
@@ -189,7 +184,7 @@ const ComprarMembresia = () => {
                 ${precioMembresia}
               </CardTitle>
               <CardDescription>
-                Pago único • Acceso de por vida
+                Pago por mes • Acceso de por vida
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
