@@ -15,6 +15,8 @@ const validarInfoExtra = [
 
 const validarPrecio = [
     body('precio_membresia')
+        .notEmpty()
+        .withMessage('El precio de membresía es requerido')
         .isNumeric()
         .withMessage('El precio debe ser numérico')
         .custom(value => {
@@ -31,6 +33,42 @@ const validarPrecio = [
  *   name: InfoExtra
  *   description: Gestión de información extra del sistema
  */
+
+// Rutas para configuraciones del sistema (PRIMERO)
+// GET /configuraciones - Obtener configuraciones (solo admin)
+/**
+ * @swagger
+ * /configuraciones:
+ *   get:
+ *     summary: Obtener configuraciones del sistema (solo admin)
+ *     tags: [InfoExtra]
+ */
+router.get(
+    '/configuraciones',
+    verificarToken,
+    permitirSoloRol('admin'),
+    obtenerConfiguraciones
+);
+
+// PUT /configuraciones - Actualizar configuraciones (solo admin)
+/**
+ * @swagger
+ * /configuraciones:
+ *   put:
+ *     summary: Actualizar configuraciones del sistema (solo admin)
+ *     tags: [InfoExtra]
+ */
+router.put(
+    '/configuraciones',
+    verificarToken,
+    permitirSoloRol('admin'),
+    validarPrecio,
+    validarCampos,
+    actualizarConfiguraciones
+);
+
+// GET /precio-membresia - Obtener solo el precio (público)
+router.get('/precio-membresia', obtenerSoloPrecioMembresia);
 
 // GET /info-extra - Obtener información extra actual (usuarios)
 /**
@@ -135,40 +173,5 @@ router.delete(
     permitirSoloRol('admin'),
     eliminarInfoExtraControlador
 );
-
-// Rutas para configuraciones del sistema
-// GET /configuraciones - Obtener configuraciones (solo admin)
-/**
- * @swagger
- * /configuraciones:
- *   get:
- *     summary: Obtener configuraciones del sistema (solo admin)
- *     tags: [InfoExtra]
- */
-router.get(
-    '/configuraciones',
-    verificarToken,
-    permitirSoloRol('admin'),
-    obtenerConfiguraciones
-);
-
-// PUT /configuraciones - Actualizar configuraciones (solo admin)
-/**
- * @swagger
- * /configuraciones:
- *   put:
- *     summary: Actualizar configuraciones del sistema (solo admin)
- *     tags: [InfoExtra]
- */
-router.put(
-    '/configuraciones',
-    verificarToken,
-    permitirSoloRol('admin'),
-    validarPrecio,
-    validarCampos,
-    actualizarConfiguraciones
-);
-
-router.get('/precio-membresia', obtenerSoloPrecioMembresia);
 
 export default router;
