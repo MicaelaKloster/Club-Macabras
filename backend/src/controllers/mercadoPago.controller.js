@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { crearMembresia, obtenerMembresiaActivaPorUsuario } from "../services/membresias.service.js";
 import { enviarCorreoPagoExitoso, enviarCorreoNuevoPagoAdmin } from '../utils/mailer.js';
 import { registrarPagoEnHistorial } from '../services/historialPagos.service.js';
+import { obtenerUsuarioPorId } from '../services/usuarios.service.js';
 
 dotenv.config();
 
@@ -66,7 +67,7 @@ export const recibirWebhook = async (req, res) => {
         const usuarioId = payment.metadata?.usuario_id;
 
         if (usuarioId) {
-          const usuario = await buscarUsuarioPorId(usuarioId);
+          const usuario = await obtenerUsuarioPorId(usuarioId);
           const monto = payment.transaction_amount;
   
           // 📌 Verificar si ya tiene una membresía activa para evitar duplicados
@@ -95,7 +96,11 @@ export const recibirWebhook = async (req, res) => {
               descripcion: 'Membresía Club Macabras - 30 días'
             });
             // Enviar correos de confirmación
-            await enviarCorreoPagoExitoso(usuario.email, usuario.nombre, fechaVencimiento);
+            await enviarCorreoPagoExitoso(
+              usuario.email, 
+              usuario.nombre, 
+              fechaVencimiento.toLocaleDateString('es-AR')
+            );
             await enviarCorreoNuevoPagoAdmin(usuario.nombre, usuario.email, monto);
 
             console.log(`✅ Membresía creada automáticamente para usuario ${usuarioId}`);
@@ -110,8 +115,8 @@ export const recibirWebhook = async (req, res) => {
     }
 
     res.sendStatus(200);
-  } catch (error) {
-    console.error("❌ Error en webhook:", error);
+  } catch (emailError) {
+    console.error('Error enviando emails de confirmación:', emailError);
     res.sendStatus(500);
   }
 };
