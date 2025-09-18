@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { crearMembresia, obtenerMembresiaActivaPorUsuario } from "../services/membresias.service.js";
 import { enviarCorreoPagoExitoso, enviarCorreoNuevoPagoAdmin } from '../utils/mailer.js';
 import { registrarPagoEnHistorial } from '../services/historialPagos.service.js';
-import { obtenerUsuarioPorId } from '../services/usuarios.service.js';
+import { buscarUsuarioPorId } from '../services/usuarios.service.js';
 
 dotenv.config();
 
@@ -67,7 +67,7 @@ export const recibirWebhook = async (req, res) => {
         const usuarioId = payment.metadata?.usuario_id;
 
         if (usuarioId) {
-          const usuario = await obtenerUsuarioPorId(usuarioId);
+          const usuario = await buscarUsuarioPorId(usuarioId);
           const monto = payment.transaction_amount;
   
           // 📌 Verificar si ya tiene una membresía activa para evitar duplicados
