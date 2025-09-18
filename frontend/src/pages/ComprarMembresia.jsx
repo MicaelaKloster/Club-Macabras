@@ -16,23 +16,22 @@ const ComprarMembresia = () => {
   useEffect(() => {
     const obtenerPrecio = async () => {
       try {
-        const token = localStorage.getItem("token");
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/info-extra/configuraciones`,
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+          `${import.meta.env.VITE_API_URL}/info-extra/precio-membresia`
         );
-        setPrecioMembresia(res.data.precio_membresia);
+        
+        if (res.data && res.data.precio_membresia) {
+          setPrecioMembresia(res.data.precio_membresia);
+        }
       } catch (error) {
         console.error("Error al obtener precio:", error);
+        // Mantener el precio por defecto en caso de error
+        console.log("Usando precio por defecto:", precioMembresia);
       }
     };
 
-    if (usuario) {
-      obtenerPrecio();
-    }
-  }, [usuario]);
+    obtenerPrecio();
+  }, []);
 
   const handleComprar = async () => {
     if (!usuario) {
@@ -178,10 +177,10 @@ const ComprarMembresia = () => {
           </Card>
 
           {/* Card de Pago */}
-          <Card className="h-fit w-full mx-auto sticky top-8"> {/* Eliminado lg:max-w-md */}
+          <Card className="h-fit w-full mx-auto sticky top-8">
             <CardHeader className="text-center">
               <CardTitle className="text-3xl font-bold text-primary">
-                ${precioMembresia}
+                ${precioMembresia.toLocaleString('es-AR')}
               </CardTitle>
               <CardDescription>
                 Pago por mes • Acceso de por vida
