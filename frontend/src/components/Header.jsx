@@ -56,7 +56,8 @@ const Header = () => {
         navigate("/");
     };
 
-    const NavItem = ({ to, icon: Icon, children, onClick, badge = null }) => (
+    // NavItem para desktop (con texto oculto en móvil)
+    const NavItemDesktop = ({ to, icon: Icon, children, onClick, badge = null }) => (
         <NavLink
             to={to}
             onClick={onClick}
@@ -78,6 +79,32 @@ const Header = () => {
         </NavLink>
     );
 
+    // NavItem para móvil (con texto siempre visible)
+    const NavItemMobile = ({ to, icon: Icon, children, onClick, badge = null }) => (
+        <NavLink
+            to={to}
+            onClick={() => {
+                setMenuMovilAbierto(false); // Cerrar menú al navegar
+                if (onClick) onClick();
+            }}
+            className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-md transition-colors relative ${
+                    isActive 
+                        ? "bg-primary/10 text-primary font-medium" 
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                }`
+            }
+        >
+            <Icon size={20} />
+            <span>{children}</span>
+            {badge && (
+                <Badge variant="destructive" className="ml-auto min-w-[1.25rem] h-5 px-1 text-xs">
+                    {badge}
+                </Badge>
+            )}
+        </NavLink>
+    );
+
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-16 items-center justify-between px-4">
@@ -88,36 +115,36 @@ const Header = () => {
 
                 {/* Navegación Desktop */}
                 <nav className="hidden md:flex items-center space-x-1">
-                    <NavItem to="/dashboard" icon={BookOpen}>
+                    <NavItemDesktop to="/dashboard" icon={BookOpen}>
                         Cursos
-                    </NavItem>
+                    </NavItemDesktop>
                     
-                    <NavItem to="/foro" icon={MessageSquare}>
+                    <NavItemDesktop to="/foro" icon={MessageSquare}>
                         Foro
-                    </NavItem>
+                    </NavItemDesktop>
                     
-                    <NavItem to="/info-extra" icon={FileText}>
+                    <NavItemDesktop to="/info-extra" icon={FileText}>
                         Info Extra
-                    </NavItem>
+                    </NavItemDesktop>
                     
                     {usuario?.rol !== "admin" && (
-                        <NavItem to="/membresia" icon={CreditCard}>
+                        <NavItemDesktop to="/membresia" icon={CreditCard}>
                             Membresía
-                        </NavItem>
+                        </NavItemDesktop>
                     )}
                     
-                    <NavItem to="/perfil" icon={User}>
+                    <NavItemDesktop to="/perfil" icon={User}>
                         Perfil
-                    </NavItem>
+                    </NavItemDesktop>
 
                     {usuario?.rol === "admin" && (
-                        <NavItem 
+                        <NavItemDesktop 
                             to="/admin" 
                             icon={Settings}
                             badge={preguntasPendientes > 0 ? preguntasPendientes : null}
                         >
                             Admin
-                        </NavItem>
+                        </NavItemDesktop>
                     )}
                 </nav>
 
@@ -162,36 +189,36 @@ const Header = () => {
 
                         {/* Navegación móvil */}
                         <div className="space-y-1">
-                            <NavItem to="/dashboard" icon={BookOpen}>
+                            <NavItemMobile to="/dashboard" icon={BookOpen}>
                                 Cursos
-                            </NavItem>
+                            </NavItemMobile>
                             
-                            <NavItem to="/foro" icon={MessageSquare}>
+                            <NavItemMobile to="/foro" icon={MessageSquare}>
                                 Foro de la Comunidad
-                            </NavItem>
+                            </NavItemMobile>
                             
-                            <NavItem to="/info-extra" icon={FileText}>
+                            <NavItemMobile to="/info-extra" icon={FileText}>
                                 Info Extra
-                            </NavItem>
+                            </NavItemMobile>
                             
                             {usuario?.rol !== "admin" && (
-                                <NavItem to="/membresia" icon={CreditCard}>
+                                <NavItemMobile to="/membresia" icon={CreditCard}>
                                     Membresía
-                                </NavItem>
+                                </NavItemMobile>
                             )}
                             
-                            <NavItem to="/perfil" icon={User}>
+                            <NavItemMobile to="/perfil" icon={User}>
                                 Mi Perfil
-                            </NavItem>
+                            </NavItemMobile>
 
                             {usuario?.rol === "admin" && (
-                                <NavItem 
+                                <NavItemMobile 
                                     to="/admin" 
                                     icon={Settings}
                                     badge={preguntasPendientes > 0 ? preguntasPendientes : null}
                                 >
                                     Panel Admin
-                                </NavItem>
+                                </NavItemMobile>
                             )}
                         </div>
 

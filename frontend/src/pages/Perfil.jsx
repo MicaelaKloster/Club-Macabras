@@ -121,9 +121,9 @@ const Perfil = () => {
                             Historial de Pagos
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6">
+                    <CardContent className="p-4 sm:p-6">
                         <div className="text-center space-y-4">
-                            <p className="text-gray-600">No tienes pagos registrados aún.</p>
+                            <p className="text-gray-600 text-sm sm:text-base">No tienes pagos registrados aún.</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -138,16 +138,16 @@ const Perfil = () => {
                         Historial de Pagos
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6">
-                    <div className="space-y-4">
+                <CardContent className="p-4 sm:p-6">
+                    <div className="space-y-3 sm:space-y-4">
                         {historialPagos.map((pago) => {
                             const fechaPago = new Date(pago.fecha_pago);
                             const esAprobado = pago.estado === 'approved';
                             
                             return (
-                                <div key={pago.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                                <div key={pago.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 border rounded-lg hover:bg-gray-50 space-y-3 sm:space-y-0">
                                     <div className="flex items-center space-x-3">
-                                        <div className={`p-2 rounded-full ${
+                                        <div className={`p-2 rounded-full flex-shrink-0 ${
                                             esAprobado ? 'bg-green-100' : 'bg-gray-100'
                                         }`}>
                                             {esAprobado ? (
@@ -156,14 +156,14 @@ const Perfil = () => {
                                                 <Clock className="h-4 w-4 text-gray-600" />
                                             )}
                                         </div>
-                                        <div>
-                                            <p className="font-medium text-gray-900">
+                                        <div className="min-w-0 flex-1">
+                                            <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
                                                 {pago.descripcion || 'Membresía Club Macabras'}
                                             </p>
-                                            <p className="text-sm text-gray-500">
+                                            <p className="text-xs sm:text-sm text-gray-500">
                                                 {fechaPago.toLocaleDateString('es-AR', { 
                                                     day: '2-digit', 
-                                                    month: 'long', 
+                                                    month: 'short', 
                                                     year: 'numeric',
                                                     hour: '2-digit',
                                                     minute: '2-digit'
@@ -172,18 +172,18 @@ const Perfil = () => {
                                         </div>
                                     </div>
                                     
-                                    <div className="text-right">
-                                        <p className="font-semibold text-gray-900">
+                                    <div className="flex items-center justify-between sm:flex-col sm:items-end sm:text-right">
+                                        <p className="font-semibold text-gray-900 text-sm sm:text-base">
                                             ${Number(pago.monto).toLocaleString('es-AR', { 
                                                 minimumFractionDigits: 2,
                                                 maximumFractionDigits: 2 
                                             })}
                                         </p>
-                                        <Badge className={
+                                        <Badge className={`text-xs ${
                                             esAprobado 
                                                 ? 'bg-green-100 text-green-700' 
                                                 : 'bg-gray-100 text-gray-700'
-                                        }>
+                                        }`}>
                                             {esAprobado ? 'Aprobado' : 'Pendiente'}
                                         </Badge>
                                     </div>
@@ -193,7 +193,7 @@ const Perfil = () => {
                         
                         {historialPagos.length >= 5 && (
                             <div className="text-center pt-4 border-t">
-                                <p className="text-sm text-gray-500">
+                                <p className="text-xs sm:text-sm text-gray-500">
                                     Mostrando los últimos 5 pagos
                                 </p>
                             </div>
@@ -215,15 +215,15 @@ const Perfil = () => {
                             Estado de Membresía
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6">
+                    <CardContent className="p-4 sm:p-6">
                         <div className="text-center space-y-4">
                             <Badge variant="outline" className="bg-gray-100 text-gray-700">
                                 Sin Membresía Activa
                             </Badge>
-                            <p className="text-gray-600">No tienes una membresía activa actualmente.</p>
+                            <p className="text-gray-600 text-sm sm:text-base">No tienes una membresía activa actualmente.</p>
                             <Button
                                 onClick={() => navigate("/membresia")}
-                                className="bg-pink-600 hover:bg-pink-700 text-white"
+                                className="bg-pink-600 hover:bg-pink-700 text-white w-full sm:w-auto"
                             >
                                 Adquirir Membresía
                             </Button>
@@ -247,35 +247,35 @@ const Perfil = () => {
                         Membresía Activa
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-4">
-                    <div className="flex items-center justify-between">
-                        <Badge className="bg-green-100 text-green-700">
+                <CardContent className="p-4 sm:p-6 space-y-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+                        <Badge className="bg-green-100 text-green-700 w-fit">
                             ✅ Membresía Activa
                         </Badge>
-                        <Badge variant="outline" className="text-sm">
+                        <Badge variant="outline" className="text-xs sm:text-sm w-fit">
                             {membresia.metodo_pago}
                         </Badge>
                     </div>
 
                     <div className="space-y-3">
-                        <div className="flex items-center justify-between text-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm space-y-1 sm:space-y-0">
                             <span className="font-medium text-gray-600">Fecha de inicio:</span>
-                            <span>{new Date(membresia.fecha_inicio).toLocaleDateString('es-AR')}</span>
+                            <span className="text-gray-900">{new Date(membresia.fecha_inicio).toLocaleDateString('es-AR')}</span>
                         </div>
                         
-                        <div className="flex items-center justify-between text-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm space-y-1 sm:space-y-0">
                             <span className="font-medium text-gray-600">Vence el:</span>
-                            <span className={
+                            <span className={`${
                                 estaVencida ? 'text-red-600 font-semibold' : 
                                 estaProximaAVencer ? 'text-yellow-600 font-semibold' : 
                                 'text-gray-900'
-                            }>
+                            }`}>
                                 {fechaVencimiento.toLocaleDateString('es-AR')}
                             </span>
                         </div>
 
                         {!estaVencida && (
-                            <div className="flex items-center justify-between text-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between text-sm space-y-1 sm:space-y-0">
                                 <span className="font-medium text-gray-600">Días restantes:</span>
                                 <span className={`font-semibold ${
                                     estaProximaAVencer ? 'text-yellow-600' : 'text-green-600'
@@ -289,17 +289,17 @@ const Perfil = () => {
                     {estaProximaAVencer && (
                         <Alert className="border-yellow-200 bg-yellow-50">
                             <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                            <AlertDescription className="text-yellow-700">
+                            <AlertDescription className="text-yellow-700 text-sm">
                                 Tu membresía está próxima a vencer. Renuévala para mantener el acceso a todos los cursos.
                             </AlertDescription>
                         </Alert>
                     )}
 
-                    <div className="flex space-x-3 pt-4">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 pt-4">
                         <Button
                             onClick={() => navigate("/membresia")}
                             variant="outline"
-                            className="flex-1"
+                            className="w-full sm:flex-1 text-sm"
                         >
                             Renovar Membresía
                         </Button>
@@ -308,7 +308,7 @@ const Perfil = () => {
                             onClick={cancelarMembresia}
                             disabled={cargandoCancelacion}
                             variant="destructive"
-                            className="flex-1"
+                            className="w-full sm:flex-1 text-sm"
                         >
                             {cargandoCancelacion ? (
                                 <>
@@ -380,7 +380,7 @@ const Perfil = () => {
 
     if (loading) {
         return (
-            <div className="max-w-2xl mx-auto p-6 space-y-6">
+            <div className="max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
                 <div className="flex items-center space-x-2">
                     <Skeleton className="h-8 w-20" />
                 </div>
@@ -401,7 +401,7 @@ const Perfil = () => {
     }
 
     return (
-        <div className="max-w-2xl mx-auto p-6 space-y-6">
+        <div className="max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
             {/* Back Button */}
             <div className="flex items-center">
                 <Button
@@ -424,20 +424,20 @@ const Perfil = () => {
             {/* Profile Card */}
             <Card className="shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-pink-50 to-pink-100">
-                    <div className="flex items-center justify-between">
-                        <CardTitle className="text-2xl font-bold text-pink-600 flex items-center">
-                            <User className="h-7 w-7 mr-3" />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0">
+                        <CardTitle className="text-xl sm:text-2xl font-bold text-pink-600 flex items-center">
+                            <User className="h-6 sm:h-7 w-6 sm:w-7 mr-2 sm:mr-3 flex-shrink-0" />
                             Mi perfil
                         </CardTitle>
-                        <Badge variant="secondary" className="text-sm">
+                        <Badge variant="secondary" className="text-sm w-fit">
                             Usuario
                         </Badge>
                     </div>
                 </CardHeader>
                 
-                <CardContent className="p-6 space-y-6">
+                <CardContent className="p-4 sm:p-6 space-y-6">
                     {/* Profile Information */}
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
                         {profileFields.map((field, index) => {
                             const IconComponent = field.icon;
                             return (
@@ -445,12 +445,12 @@ const Perfil = () => {
                                     key={index}
                                     className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                                 >
-                                    <div className={`p-2 rounded-full bg-white ${field.color}`}>
+                                    <div className={`p-2 rounded-full bg-white ${field.color} flex-shrink-0`}>
                                         <IconComponent className="h-4 w-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-600">{field.label}:</p>
-                                        <p className="text-base text-gray-900 truncate">
+                                        <p className="text-xs sm:text-sm font-medium text-gray-600">{field.label}:</p>
+                                        <p className="text-sm sm:text-base text-gray-900 truncate">
                                             {field.value}
                                         </p>
                                     </div>
@@ -463,7 +463,7 @@ const Perfil = () => {
                     <div className="flex justify-center pt-4">
                         <Button
                             onClick={() => navigate("/perfil/editar")}
-                            className="bg-pink-600 hover:bg-pink-700 text-white px-8 py-2 text-base"
+                            className="bg-pink-600 hover:bg-pink-700 text-white w-full sm:w-auto px-6 sm:px-8 py-2 text-sm sm:text-base"
                         >
                             <Edit3 className="h-4 w-4 mr-2" />
                             Editar Perfil
