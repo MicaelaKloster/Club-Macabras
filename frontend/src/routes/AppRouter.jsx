@@ -34,6 +34,7 @@ import InfoExtraAdmin from "../pages/admin/InfoExtraAdmin";
 import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 import RecuperarPassword from '../pages/RecuperarPassword';
 import ReestablecerPassword from '../pages/ReestablecerPassword';
+import AdminHistorialPagos from '../pages/AdminHistorialPagos';
 
 import RutaPrivada from './RutaPrivada';
 
@@ -92,6 +93,7 @@ const AppRouter = () => {
               <Route path="/admin/materiales/:cursoId/video/nuevo" element={<NuevoVideo />} />
               <Route path="/admin/preguntas" element={<AdminPreguntas />} />
               <Route path="/admin/info-extra" element={<InfoExtraAdmin />} />
+              <Route path="/admin/historial-pagos" element={<AdminHistorialPagos />} />
             </>
           )}
 

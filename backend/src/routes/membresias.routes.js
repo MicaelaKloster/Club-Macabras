@@ -4,7 +4,8 @@ import {
     obtenerMembresiaDeUsuario,
     obtenerMembresiaUsuarioAdmin,
     crearMembresiaManual,
-    cambiarEstadoMembresiaAdmin
+    cambiarEstadoMembresiaAdmin,
+    cancelarMiMembresia
 } from "../controllers/membresias.controller.js";
 import { validarCreacionMembresia } from "../validations/membresias.validation.js";
 import { validarCampos } from "../middlewares/validarCampos.middleware.js";
@@ -120,6 +121,30 @@ router.put(
     verificarToken,
     permitirSoloRol('admin'),
     cambiarEstadoMembresiaAdmin
+);
+
+/**
+ * @swagger
+ * /membresias/cancelar:
+ *   put:
+ *     summary: Cancelar mi membresía activa
+ *     tags: [Membresías]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Membresía cancelada exitosamente
+ *       404:
+ *         description: No tiene membresía activa
+ *       401:
+ *         description: Token inválido
+ *       500:
+ *         description: Error del servidor
+ */
+router.put(
+    '/cancelar',
+    verificarToken,
+    cancelarMiMembresia
 );
 
 export default router;

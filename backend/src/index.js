@@ -21,8 +21,11 @@ import likesRoutes from './routes/likes.routes.js';
 import progresoRoutes from './routes/progreso.routes.js';
 import mercadoPagoRoutes from './routes/mercadoPago.routes.js';
 import infoExtraRoutes from './routes/infoExtra.routes.js';
+import historialPagosRoutes from './routes/historialPagos.routes.js';
 
 import {ejecutarVerificacionDeMembresias} from './jobs/verificarMembresias.job.js';
+import { inicializarSchedulerEmails } from './services/emailScheduler.service.js';
+import { enviarCorreoBienvenida } from './utils/mailer.js'; 
 
 
 // Configurar dotenv
@@ -74,6 +77,7 @@ app.use('/api/v1/mensajes', mensajesRoutes);
 app.use('/api/v1/trabajos', trabajosRoutes);
 app.use('/api/v1/mercadopago', mercadoPagoRoutes);
 app.use('/api/v1/info-extra', infoExtraRoutes);
+app.use('/api/v1/historial-pagos', historialPagosRoutes);
 app.use('/api/v1', membresiasRoutes); 
 app.use('/api/v1', likesRoutes);
 app.use('/api/v1', progresoRoutes);
@@ -85,11 +89,26 @@ app.get('/', (req, res) => {
   res.send('Club Macabras - API funcionando ✅');
 });
 
+// Endpoint de prueba para enviar un correo
+app.get('/test-email', async (req, res) => {
+  try {
+    await enviarCorreoBienvenida('micaela.klosterquintana@gmail.com', 'Test User');
+    res.json({ message: 'Correo de bienvenida enviado exitosamente' });
+  } catch (error) {
+    console.error('Error enviando correo:', error);
+    res.status(500).json({ 
+      error: 'Error enviando correo', 
+      details: error.message 
+    });
+  }
+});
+
 // Servidor
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
   
-  // Ejecutar verificación de membresías al iniciar
+  // Ejecutar verificación de membresías al iniciar y envios de mails
   ejecutarVerificacionDeMembresias();
+  inicializarSchedulerEmails();
 });

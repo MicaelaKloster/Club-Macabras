@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e8f5e8;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      border: 2px solid #4caf50;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .success-icon {
+      text-align: center;
+      font-size: 48px;
+      color: #4caf50;
+      margin-bottom: 20px;
+    }
+    .button {
+      background-color: #ec407a;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      margin: 10px 0;
+    }
+    .highlight {
+      background-color: #f1f8e9;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="success-icon">✅</div>
+    <h2>¡Pago confirmado exitosamente!</h2>
+    <p>Hola {{nombre}},</p>
+    
+    <div class="highlight">
+      <p><strong>¡Tu membresía ya está activa!</strong></p>
+      <p>Ahora puedes acceder a todos los cursos y contenido exclusivo de Club Macabras.</p>
+    </div>
+    
+    <p><strong>Detalles de tu membresía:</strong></p>
+    <ul>
+      <li>Estado: <strong>Activa</strong></li>
+      <li>Vence: <strong>{{fechaVencimiento}}</strong></li>
+      <li>Acceso: <strong>Todos los cursos</strong></li>
+    </ul>
+    
+    <p><a href="${process.env.FRONTEND_URL}/api/v1/dashboard" class="button">Acceder a mis cursos</a></p>
+    
+    <p>¡Disfruta aprendiendo marroquinería!</p>
+    <p><strong>Equipo Club Macabras</strong></p>
+    
+    <hr style="margin: 20px 0; border: 1px solid #eee;">
+    <p style="font-size: 12px; color: #666;">
+      Si tienes alguna consulta, no dudes en contactarnos.
+    </p>
+  </div>
+</body>
+</html>

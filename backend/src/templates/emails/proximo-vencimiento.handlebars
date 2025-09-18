@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff8e1;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      border: 2px solid #ff9800;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .warning-icon {
+      text-align: center;
+      font-size: 48px;
+      color: #ff9800;
+      margin-bottom: 20px;
+    }
+    .button {
+      background-color: #ec407a;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    .highlight {
+      background-color: #fff3e0;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 15px 0;
+      border-left: 4px solid #ff9800;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="warning-icon">⏰</div>
+    <h2>Tu membresía vence pronto</h2>
+    <p>Hola {{nombre}},</p>
+    
+    <div class="highlight">
+      <p><strong>Tu membresía vence en {{diasRestantes}} días</strong></p>
+      <p>Fecha de vencimiento: <strong>{{fechaVencimiento}}</strong></p>
+    </div>
+    
+    <p>Para continuar accediendo a todos los cursos y contenido de Club Macabras, renueva tu membresía antes de que venza.</p>
+    
+    <p><strong>¿Qué sucede si no renuevas?</strong></p>
+    <ul>
+      <li>Perderás acceso a los cursos</li>
+      <li>No podrás participar en los foros de los cursos</li>
+      <li>Se suspenderán tus descargas</li>
+    </ul>
+    
+    <p><a href="{{linkRenovacion}}" class="button">Renovar membresía ahora</a></p>
+    
+    <p>¡No pierdas tu progreso en los cursos!</p>
+    <p><strong>Equipo Club Macabras</strong></p>
+    
+    <hr style="margin: 20px 0; border: 1px solid #eee;">
+    <p style="font-size: 12px; color: #666;">
+      Si ya renovaste, puedes ignorar este mensaje.
+    </p>
+  </div>
+</body>
+</html>

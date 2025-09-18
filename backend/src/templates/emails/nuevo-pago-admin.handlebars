@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3e5f5;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      background-color: #ffffff;
+      border: 2px solid #ec407a;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .admin-header {
+      text-align: center;
+      background-color: #ec407a;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .payment-details {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
+      border-left: 4px solid #4caf50;
+    }
+    .button {
+      background-color: #ec407a;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="admin-header">
+      <h2>Nuevo pago recibido</h2>
+    </div>
+    
+    <p>Se ha registrado un nuevo pago en Club Macabras:</p>
+    
+    <div class="payment-details">
+      <h3>Detalles del pago:</h3>
+      <ul>
+        <li><strong>Usuario:</strong> {{nombreUsuario}}</li>
+        <li><strong>Email:</strong> {{email}}</li>
+        <li><strong>Monto:</strong> ${{monto}} ARS</li>
+        <li><strong>Fecha:</strong> {{fecha}}</li>
+        <li><strong>Estado:</strong> Membresía activada automáticamente</li>
+      </ul>
+    </div>
+    
+    <p><a href="${process.env.FRONTEND_URL}/api/v1/admin/usuarios" class="button">Ver panel de usuarios</a></p>
+    
+    <p>Este es un correo automático del sistema.</p>
+    <p><strong>Sistema Club Macabras</strong></p>
+  </div>
+</body>
+</html>

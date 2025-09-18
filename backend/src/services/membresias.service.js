@@ -46,3 +46,41 @@ export const obtenerMembresiaPorId = async (id) => {
     );
     return result.rows[0] || null;
 };
+
+// Cancelación de membresía
+export const obtenerMembresiaCompletaPorUsuario = async (usuarioId) => {
+    const result = await db.query(
+        `SELECT * FROM membresias 
+         WHERE usuario_id = $1 AND estado = 1 
+         ORDER BY fecha_vencimiento DESC LIMIT 1`,
+        [usuarioId]
+    );
+    return result.rows[0] || null;
+};
+
+
+// Obtener membresías que vencen en X días
+export const obtenerMembresiasPorVencer = async (diasAnticipacion = 7) => {
+    const result = await db.query(
+        `SELECT m.*, u.nombre, u.email
+         FROM membresias m
+         JOIN usuarios u ON m.usuario_id = u.id
+         WHERE m.estado = 1
+         AND m.fecha_vencimiento BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '${diasAnticipacion} days'`,
+        []
+    );
+    return result.rows;
+};
+
+// Obtener membresías vencidas hace X días o menos
+export const obtenerMembresiaVencidas = async (diasMaximoVencimiento = 3) => {
+    const result = await db.query(
+        `SELECT m.*, u.nombre, u.email
+         FROM membresias m
+         JOIN usuarios u ON m.usuario_id = u.id
+         WHERE m.estado = 1
+         AND m.fecha_vencimiento BETWEEN CURRENT_DATE - INTERVAL '${diasMaximoVencimiento} days' AND CURRENT_DATE - INTERVAL '1 day'`,
+        []
+    );
+    return result.rows;
+};

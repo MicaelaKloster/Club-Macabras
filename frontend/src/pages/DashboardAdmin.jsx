@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Users, BookOpen, MessageCircleQuestion, Settings, ArrowRight, Eye, MessageSquare, ArrowLeft } from "lucide-react";
+import { Users, BookOpen, MessageCircleQuestion, Settings, ArrowRight, Eye, MessageSquare, ArrowLeft, DollarSign } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -31,6 +31,14 @@ const DashboardAdmin = () => {
             description: "Responder consultas de estudiantes", 
             icon: MessageCircleQuestion,
             route: "/admin/preguntas",
+            color: "bg-pink-600 hover:bg-pink-700",
+            textColor: "text-pink-100"
+        },
+        {
+            title: "Historial de Pagos", 
+            description: "Ver ingresos y transacciones",
+            icon: DollarSign,
+            route: "/admin/historial-pagos",
             color: "bg-pink-600 hover:bg-pink-700",
             textColor: "text-pink-100"
         },

@@ -2,9 +2,11 @@ import {
     crearMembresia, 
     obtenerMembresiaActivaPorUsuario,
     actualizarEstadoMembresia,
-    obtenerMembresiaPorId
+    obtenerMembresiaPorId,
+    obtenerMembresiaCompletaPorUsuario
 } from "../services/membresias.service.js";
 import { verificarYActualizarEstadoUsuario } from "../services/usuarios.service.js";
+import { enviarCorreoCancelacionMembresia } from '../utils/mailer.js';
 
 export const registrarMembresia = async (req, res) => {
     try{
@@ -90,7 +92,7 @@ export const crearMembresiaManual = async (req, res) => {
     }
 };
 
-// Nuevo: Cambiar estado de membresía
+// Cambiar estado de membresía
 export const cambiarEstadoMembresiaAdmin = async (req, res) => {
     try {
         const { id } = req.params;
@@ -118,5 +120,50 @@ export const cambiarEstadoMembresiaAdmin = async (req, res) => {
     } catch (error) {
         console.error('Error al cambiar estado de membresía:', error);
         res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+// Cancelación de membresía
+export const cancelarMiMembresia = async (req, res) => {
+    try {
+        const usuarioId = req.usuario.id; // Viene del middleware verificarToken
+        
+        // Obtener la membresía activa del usuario
+        const membresia = await obtenerMembresiaCompletaPorUsuario(usuarioId);
+        
+        if (!membresia) {
+            return res.status(404).json({ 
+                error: 'No tienes una membresía activa para cancelar' 
+            });
+        }
+        
+        // Cancelar la membresía (cambiar estado a 0)
+        const cancelada = await actualizarEstadoMembresia(membresia.id, 0);
+        
+        if (!cancelada) {
+            return res.status(500).json({ 
+                error: 'No se pudo cancelar la membresía' 
+            });
+        }
+        
+        // Enviar email de confirmación de cancelación
+        await enviarCorreoCancelacionMembresia(req.usuario.email, req.usuario.nombre);
+        
+        console.log(`🚫 Usuario ${usuarioId} canceló su membresía`);
+        
+        res.json({
+            mensaje: 'Membresía cancelada exitosamente',
+            fecha_cancelacion: new Date().toISOString(),
+            membresia_cancelada: {
+                id: membresia.id,
+                fecha_vencimiento_original: membresia.fecha_vencimiento
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error al cancelar membresía:', error);
+        res.status(500).json({ 
+            error: 'Error interno del servidor' 
+        });
     }
 };
