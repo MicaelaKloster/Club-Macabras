@@ -34,7 +34,7 @@ import InfoExtraAdmin from "../pages/admin/InfoExtraAdmin";
 import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 import RecuperarPassword from '../pages/RecuperarPassword';
 import ReestablecerPassword from '../pages/ReestablecerPassword';
-import AdminHistorialPagos from '../pages/AdminHistorialPagos';
+import AdminHistorialPagos from '../pages/admin/AdminHistorialPagos';
 
 import RutaPrivada from './RutaPrivada';
 
