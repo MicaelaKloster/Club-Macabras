@@ -7,13 +7,14 @@ import { Input } from "@/components/ui/Input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Label } from "@/components/ui/Label";
 import { Alert, AlertDescription } from "@/components/ui/Alert";
-import { Mail, Lock, LogIn, AlertCircle, ArrowLeft } from "lucide-react";
+import { Mail, Lock, LogIn, AlertCircle, ArrowLeft, Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [mostrarContraseña, setMostrarContraseña] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -38,6 +39,10 @@ const Login = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleMostrarContraseña = () => {
+    setMostrarContraseña(!mostrarContraseña);
   };
 
   return (
@@ -104,14 +109,27 @@ const Login = () => {
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
                     id="password"
-                    type="password"
+                    type={mostrarContraseña ? "text" : "password"}
                     value={contraseña}
                     onChange={(e) => setContraseña(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 pr-10"
                     placeholder="••••••••"
                     required
                     disabled={isLoading}
                   />
+                  <button
+                    type="button"
+                    onClick={toggleMostrarContraseña}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    disabled={isLoading}
+                    tabIndex={-1}
+                  >
+                    {mostrarContraseña ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
               </div>
 

@@ -11,13 +11,25 @@ import {
   ArrowLeft,
   Eye,
   Clock,
-  Hash
+  Hash,
+  MoreVertical,
+  Edit3,
+  Trash2,
+  Save,
+  X,
+  Loader2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Textarea";
 import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { Badge } from "@/components/ui/Badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
 
 const AdminPreguntas = () => {
   const { usuario } = useAuth();
@@ -26,6 +38,9 @@ const AdminPreguntas = () => {
   const [respuestas, setRespuestas] = useState({});
   const [mensaje, setMensaje] = useState("");
   const [enviandoRespuesta, setEnviandoRespuesta] = useState(null);
+  const [editandoRespuesta, setEditandoRespuesta] = useState(null);
+  const [respuestaEditable, setRespuestaEditable] = useState("");
+  const [procesandoAccion, setProcesandoAccion] = useState(null);
 
   useEffect(() => {
     const fetchPreguntas = async () => {
@@ -57,12 +72,17 @@ const AdminPreguntas = () => {
       return;
     }
 
+    if (respuesta.length < 5 || respuesta.length > 2000) {
+      setMensaje("⚠️ La respuesta debe tener entre 5 y 2000 caracteres.");
+      return;
+    }
+
     setEnviandoRespuesta(preguntaId);
 
     try {
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/preguntas/${preguntaId}`,
-        { respuesta },
+        `${import.meta.env.VITE_API_URL}/preguntas/${preguntaId}/responder`,
+        { respuesta: respuesta.trim() },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -71,7 +91,7 @@ const AdminPreguntas = () => {
       setRespuestas((prev) => ({ ...prev, [preguntaId]: "" }));
       setPreguntas((prev) =>
         prev.map((p) =>
-          p.id === preguntaId ? { ...p, respuesta, respondida: true } : p
+          p.id === preguntaId ? { ...p, respuesta: respuesta.trim(), respondida: true } : p
         )
       );
     } catch (error) {
@@ -81,6 +101,81 @@ const AdminPreguntas = () => {
       setEnviandoRespuesta(null);
     }
   };
+
+  const iniciarEdicionRespuesta = (pregunta) => {
+    setEditandoRespuesta(pregunta.id);
+    setRespuestaEditable(pregunta.respuesta);
+  };
+
+  const cancelarEdicionRespuesta = () => {
+    setEditandoRespuesta(null);
+    setRespuestaEditable("");
+  };
+
+  const guardarEdicionRespuesta = async (preguntaId) => {
+    if (!respuestaEditable.trim() || respuestaEditable.length < 5 || respuestaEditable.length > 2000) {
+      setMensaje("⚠️ La respuesta debe tener entre 5 y 2000 caracteres.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    setProcesandoAccion(preguntaId);
+
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/preguntas/${preguntaId}/editar-respuesta`,
+        { respuesta: respuestaEditable.trim() },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setMensaje("✅ Respuesta actualizada con éxito");
+      setEditandoRespuesta(null);
+      setRespuestaEditable("");
+      
+      setPreguntas((prev) =>
+        prev.map((p) =>
+          p.id === preguntaId ? { ...p, respuesta: respuestaEditable.trim() } : p
+        )
+      );
+    } catch (error) {
+      console.error("⚠ Error al editar respuesta:", error);
+      setMensaje("❌ Error al actualizar la respuesta.");
+    } finally {
+      setProcesandoAccion(null);
+    }
+  };
+
+  const eliminarPregunta = async (preguntaId) => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta pregunta? Esta acción no se puede deshacer.")) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    setProcesandoAccion(preguntaId);
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/preguntas/${preguntaId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setMensaje("✅ Pregunta eliminada exitosamente");
+      setPreguntas((prev) => prev.filter(p => p.id !== preguntaId));
+    } catch (error) {
+      console.error("⚠ Error al eliminar pregunta:", error);
+      setMensaje("❌ Error al eliminar la pregunta.");
+    } finally {
+      setProcesandoAccion(null);
+    }
+  };
+
+  // Limpiar mensaje después de 5 segundos
+  useEffect(() => {
+    if (mensaje) {
+      const timer = setTimeout(() => setMensaje(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [mensaje]);
 
   // Agrupar preguntas por curso_id
   const preguntasPorCurso = preguntas.reduce((acc, p) => {
@@ -111,10 +206,10 @@ const AdminPreguntas = () => {
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-pink-600 flex items-center justify-center">
           <MessageCircleQuestion className="h-8 w-8 mr-3" />
-          Panel de Preguntas Pendientes
+          Panel de Preguntas
         </h1>
         <p className="text-muted-foreground">
-          Responde a las preguntas de los estudiantes
+          Responde, edita y gestiona las preguntas de los estudiantes
         </p>
       </div>
 
@@ -159,8 +254,8 @@ const AdminPreguntas = () => {
 
       {/* Success/Error Message */}
       {mensaje && (
-        <Alert className={mensaje.includes('éxito') ? "border-green-200 bg-green-50" : "border-orange-200 bg-orange-50"}>
-          <AlertDescription className={mensaje.includes('éxito') ? "text-green-700" : "text-orange-700"}>
+        <Alert className={mensaje.includes('éxito') || mensaje.includes('exitosamente') ? "border-green-200 bg-green-50" : "border-orange-200 bg-orange-50"}>
+          <AlertDescription className={mensaje.includes('éxito') || mensaje.includes('exitosamente') ? "text-green-700" : "text-orange-700"}>
             {mensaje}
           </AlertDescription>
         </Alert>
@@ -219,25 +314,60 @@ const AdminPreguntas = () => {
                             {p.usuario?.charAt(0).toUpperCase() || "?"}
                           </div>
                           <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <span className="font-semibold text-pink-600">{p.usuario}</span>
-                              <span className="text-sm text-muted-foreground">preguntó:</span>
-                              <Badge 
-                                variant={p.respondida ? "default" : "secondary"}
-                                className={p.respondida ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}
-                              >
-                                {p.respondida ? (
-                                  <>
-                                    <CheckCircle className="h-3 w-3 mr-1" />
-                                    Respondida
-                                  </>
-                                ) : (
-                                  <>
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    Pendiente
-                                  </>
-                                )}
-                              </Badge>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center space-x-2">
+                                <span className="font-semibold text-pink-600">{p.usuario}</span>
+                                <span className="text-sm text-muted-foreground">preguntó:</span>
+                                <Badge 
+                                  variant={p.respondida ? "default" : "secondary"}
+                                  className={p.respondida ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}
+                                >
+                                  {p.respondida ? (
+                                    <>
+                                      <CheckCircle className="h-3 w-3 mr-1" />
+                                      Respondida
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Clock className="h-3 w-3 mr-1" />
+                                      Pendiente
+                                    </>
+                                  )}
+                                </Badge>
+                              </div>
+                              
+                              {/* Menu de opciones */}
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                    disabled={procesandoAccion === p.id}
+                                  >
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  {p.respondida && (
+                                    <DropdownMenuItem
+                                      onClick={() => iniciarEdicionRespuesta(p)}
+                                      disabled={procesandoAccion === p.id}
+                                    >
+                                      <Edit3 className="h-4 w-4 mr-2" />
+                                      Editar respuesta
+                                    </DropdownMenuItem>
+                                  )}
+                                  <DropdownMenuItem
+                                    onClick={() => eliminarPregunta(p.id)}
+                                    disabled={procesandoAccion === p.id}
+                                    className="text-red-600 hover:text-red-700"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Eliminar pregunta
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
                             <p className="text-gray-800 leading-relaxed">{p.pregunta}</p>
                           </div>
@@ -246,11 +376,51 @@ const AdminPreguntas = () => {
                         {/* Response Section */}
                         {p.respondida ? (
                           <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-r-lg">
-                            <div className="flex items-center mb-2">
-                              <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-                              <span className="font-semibold text-green-700">Tu respuesta:</span>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center">
+                                <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
+                                <span className="font-semibold text-green-700">Tu respuesta:</span>
+                              </div>
                             </div>
-                            <p className="text-green-800 leading-relaxed">{p.respuesta}</p>
+                            
+                            {editandoRespuesta === p.id ? (
+                              <div className="space-y-3">
+                                <Textarea
+                                  value={respuestaEditable}
+                                  onChange={(e) => setRespuestaEditable(e.target.value)}
+                                  className="min-h-[100px] text-sm"
+                                  maxLength={2000}
+                                />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                  <span>Editando respuesta (5-2000 caracteres)</span>
+                                  <span>{2000 - respuestaEditable.length} caracteres restantes</span>
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => guardarEdicionRespuesta(p.id)}
+                                    disabled={procesandoAccion === p.id || respuestaEditable.length < 5}
+                                    className="bg-green-600 hover:bg-green-700 text-white flex-1"
+                                  >
+                                    {procesandoAccion === p.id ? (
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                    ) : (
+                                      <Save className="h-3 w-3" />
+                                    )}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={cancelarEdicionRespuesta}
+                                    disabled={procesandoAccion === p.id}
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <p className="text-green-800 leading-relaxed">{p.respuesta}</p>
+                            )}
                           </div>
                         ) : (
                           <div className="space-y-3 pt-4 border-t border-gray-200">
@@ -261,6 +431,7 @@ const AdminPreguntas = () => {
                             <Textarea
                               placeholder="Escribe una respuesta clara y útil para el estudiante..."
                               className="min-h-[100px] resize-none"
+                              maxLength={2000}
                               value={respuestas[p.id] || ""}
                               onChange={(e) =>
                                 setRespuestas((prev) => ({
@@ -269,15 +440,21 @@ const AdminPreguntas = () => {
                                 }))
                               }
                             />
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">Mínimo 5 caracteres, máximo 2000</span>
+                              <span className="text-muted-foreground">
+                                {2000 - (respuestas[p.id]?.length || 0)} caracteres restantes
+                              </span>
+                            </div>
                             <div className="flex justify-end">
                               <Button
                                 onClick={() => handleResponder(p.id)}
-                                disabled={enviandoRespuesta === p.id || !respuestas[p.id]?.trim()}
+                                disabled={enviandoRespuesta === p.id || !(respuestas[p.id]?.trim()) || respuestas[p.id]?.length < 5}
                                 className="bg-green-600 hover:bg-green-700 text-white"
                               >
                                 {enviandoRespuesta === p.id ? (
                                   <>
-                                    <Clock className="h-4 w-4 mr-2 animate-spin" />
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                     Enviando...
                                   </>
                                 ) : (
@@ -288,6 +465,13 @@ const AdminPreguntas = () => {
                                 )}
                               </Button>
                             </div>
+                          </div>
+                        )}
+
+                        {procesandoAccion === p.id && (
+                          <div className="flex items-center justify-center mt-4 p-2">
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            <span className="text-sm text-muted-foreground">Procesando...</span>
                           </div>
                         )}
                       </CardContent>

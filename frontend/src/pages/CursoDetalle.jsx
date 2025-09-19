@@ -7,6 +7,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/Badge";
 import { Textarea } from "@/components/ui/Textarea";
 import { Alert, AlertDescription } from "@/components/ui/Alert";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
 import { 
   ArrowLeft, 
   Play, 
@@ -22,7 +28,12 @@ import {
   Loader2,
   ExternalLink,
   AlertCircle,
-  CreditCard
+  CreditCard,
+  Edit3, 
+  Trash2, 
+  X, 
+  Check, 
+  MoreVertical
 } from "lucide-react";
 
 const CursoDetalle = () => {
@@ -40,6 +51,10 @@ const CursoDetalle = () => {
   const [preguntas, setPreguntas] = useState([]);
   const [nuevaPregunta, setNuevaPregunta] = useState("");
   const [precioMembresia, setPrecioMembresia] = useState(2000);
+  const [editandoPregunta, setEditandoPregunta] = useState(null);
+  const [preguntaEditada, setPreguntaEditada] = useState("");
+  const [editandoRespuesta, setEditandoRespuesta] = useState(null);
+  const [respuestaEditada, setRespuestaEditada] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -181,7 +196,7 @@ const CursoDetalle = () => {
 
     try{
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/preguntas/${id}`,
+        `${import.meta.env.VITE_API_URL}/preguntas/curso/${id}`,
         {
           headers: { 
             Authorization: `Bearer ${token}` 
@@ -216,6 +231,94 @@ const CursoDetalle = () => {
       fetchPreguntas();
     } catch (error){
       console.error("Error al enviar pregunta: ", error.response?.data || error.message);
+    }
+  };
+
+  const handleEditarPregunta = async (preguntaId) => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/preguntas/${preguntaId}/editar`,
+        { pregunta: preguntaEditada },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setEditandoPregunta(null);
+      setPreguntaEditada("");
+      await fetchPreguntas();
+    } catch (err) {
+      console.error("Error al editar pregunta:", err);
+      alert(err.response?.data?.error || "No se pudo editar la pregunta.");
+    }
+  };
+
+  const handleEliminarPregunta = async (preguntaId) => {
+    if (!window.confirm('¿Estás seguro de que deseas eliminar esta pregunta?')) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/preguntas/${preguntaId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      await fetchPreguntas();
+    } catch (err) {
+      console.error("Error al eliminar pregunta:", err);
+      alert(err.response?.data?.error || "No se pudo eliminar la pregunta.");
+    }
+  };
+
+  const handleEditarRespuesta = async (preguntaId) => {
+    const token = localStorage.getItem("token");
+    
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/preguntas/${preguntaId}/editar-respuesta`,
+        { respuesta: respuestaEditada },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setEditandoRespuesta(null);
+      setRespuestaEditada("");
+      await fetchPreguntas();
+    } catch (err) {
+      console.error("Error al editar respuesta:", err);
+      alert(err.response?.data?.error || "No se pudo editar la respuesta.");
+    }
+  };
+
+  const iniciarEdicionPregunta = (pregunta) => {
+    setEditandoPregunta(pregunta.id);
+    setPreguntaEditada(pregunta.pregunta);
+  };
+
+  const iniciarEdicionRespuesta = (pregunta) => {
+    setEditandoRespuesta(pregunta.id);
+    setRespuestaEditada(pregunta.respuesta || "");
+  };
+
+  const responderPregunta = async (preguntaId, respuesta) => {
+    const token = localStorage.getItem("token");
+    
+    try{
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/preguntas/${preguntaId}/responder`,
+        { respuesta },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      fetchPreguntas();
+    }catch (error){
+      console.error("Error al responder pregunta: ", error);
     }
   };
 
@@ -511,74 +614,167 @@ const CursoDetalle = () => {
             {preguntas.length === 0 ? (
               <p className="text-muted-foreground italic">Todavía no hay preguntas.</p>
             ) : (
-              preguntas.map((pregunta) => (
-                <Card key={pregunta.id}>
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <User className="h-4 w-4" />
-                        <strong>{pregunta.usuario}</strong>
-                        <Calendar className="h-4 w-4" />
-                        {new Date(pregunta.fecha).toLocaleDateString()}
-                      </div>
-                      
-                      <p className="font-medium">{pregunta.pregunta}</p>
+              preguntas.map((pregunta) => {
+                const puedeEditarPregunta = usuario && pregunta.usuario_id === usuario.id && !pregunta.respuesta;  
+                const puedeEliminarPregunta = usuario && (pregunta.usuario_id === usuario.id || usuario.rol === 'admin');
+                const puedeEditarRespuesta = usuario && usuario.rol === 'admin' && pregunta.respuesta;
 
-                      {pregunta.respuesta ? (
-                        <div className="p-3 bg-green-50 border-l-4 border-green-500 rounded">
-                          <p className="text-sm">
-                            <strong>Respuesta:</strong> {pregunta.respuesta}
-                          </p>
+                return (
+                  <Card key={pregunta.id}>
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <User className="h-4 w-4" />
+                            <strong>{pregunta.usuario}</strong>
+                            <Calendar className="h-4 w-4" />
+                            {new Date(pregunta.fecha).toLocaleDateString()}
+                          </div>
+                          
+                          {(puedeEditarPregunta || puedeEliminarPregunta) && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm">
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {puedeEditarPregunta && (
+                                  <DropdownMenuItem onClick={() => {
+                                    iniciarEdicionPregunta(pregunta);
+                                  }}>
+                                    <Edit3 className="h-4 w-4 mr-2" />
+                                    Editar pregunta
+                                  </DropdownMenuItem>
+                                )}
+                                {puedeEliminarPregunta && (
+                                  <DropdownMenuItem 
+                                    onClick={() => {
+                                      handleEliminarPregunta(pregunta.id);
+                                    }}
+                                    className="text-red-600 hover:text-red-700"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Eliminar pregunta
+                                  </DropdownMenuItem>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
                         </div>
-                      ) : (
-                        <p className="text-sm italic text-muted-foreground">
-                          Aún sin respuesta.
-                        </p>
-                      )}
+                        
+                        {editandoPregunta === pregunta.id ? (
+                          <div className="space-y-3">
+                            <Textarea
+                              value={preguntaEditada}
+                              onChange={(e) => setPreguntaEditada(e.target.value)}
+                              className="min-h-[80px]"
+                            />
+                            <div className="flex space-x-2">
+                              <Button size="sm" onClick={() => handleEditarPregunta(pregunta.id)}>
+                                <Check className="h-4 w-4 mr-2" />
+                                Guardar
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                onClick={() => {
+                                  setEditandoPregunta(null);
+                                  setPreguntaEditada("");
+                                }}
+                              >
+                                <X className="h-4 w-4 mr-2" />
+                                Cancelar
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="font-medium">{pregunta.pregunta}</p>
+                        )}
 
-                      {usuario?.rol === 'admin' && !pregunta.respuesta && (
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            const form = e.target;
-                            const respuesta = form.respuesta.value.trim();
-                            if (!respuesta) return;
+                        {pregunta.respuesta ? (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="p-3 bg-green-50 border-l-4 border-green-500 rounded flex-1">
+                                {editandoRespuesta === pregunta.id ? (
+                                  <div className="space-y-3">
+                                    <Textarea
+                                      value={respuestaEditada}
+                                      onChange={(e) => setRespuestaEditada(e.target.value)}
+                                      className="min-h-[80px] bg-white"
+                                    />
+                                    <div className="flex space-x-2">
+                                      <Button size="sm" onClick={() => handleEditarRespuesta(pregunta.id)}>
+                                        <Check className="h-4 w-4 mr-2" />
+                                        Guardar
+                                      </Button>
+                                      <Button 
+                                        size="sm" 
+                                        variant="outline" 
+                                        onClick={() => {
+                                          setEditandoRespuesta(null);
+                                          setRespuestaEditada("");
+                                        }}
+                                      >
+                                        <X className="h-4 w-4 mr-2" />
+                                        Cancelar
+                                      </Button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <p className="text-sm">
+                                    <strong>Respuesta:</strong> {pregunta.respuesta}
+                                  </p>
+                                )}
+                              </div>
+                              
+                              {puedeEditarRespuesta && editandoRespuesta !== pregunta.id && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => iniciarEdicionRespuesta(pregunta)}
+                                  className="ml-2"
+                                >
+                                  <Edit3 className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-sm italic text-muted-foreground">
+                            Aún sin respuesta.
+                          </p>
+                        )}
 
-                            const responder = async () => {
-                              try{
-                                const token = localStorage.getItem("token");
-                                await axios.put(
-                                  `${import.meta.env.VITE_API_URL}/preguntas/${pregunta.id}`,
-                                  { respuesta },
-                                  {
-                                    headers: { Authorization: `Bearer ${token}` },
-                                  }
-                                );
-                                form.reset();
-                                fetchPreguntas();
-                              }catch (error){
-                                console.error("Error al responder pregunta: ", error);
-                              }
-                            };
+                        {usuario?.rol === 'admin' && !pregunta.respuesta && (
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              const form = e.target;
+                              const respuesta = form.respuesta.value.trim();
+                              if (!respuesta) return;
 
-                            responder();
-                          }}
-                          className="space-y-3"
-                        >
-                          <Textarea
-                            name="respuesta"
-                            placeholder="Escribí tu respuesta..."
-                            className="min-h-[80px]"
-                          />
-                          <Button type="submit" size="sm">
-                            Responder
-                          </Button>
-                        </form>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                              responderPregunta(pregunta.id, respuesta);
+                              form.reset();
+                            }}
+                            className="space-y-3"
+                          >
+                            <Textarea
+                              name="respuesta"
+                              placeholder="Escribí tu respuesta..."
+                              className="min-h-[80px]"
+                            />
+                            <Button type="submit" size="sm">
+                              Responder
+                            </Button>
+                          </form>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+
+                })
             )}
           </div>
 

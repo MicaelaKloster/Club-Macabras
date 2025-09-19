@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { 
   ArrowLeft, 
@@ -11,7 +12,13 @@ import {
   Loader2,
   MessageSquarePlus,
   Clock,
-  Hash
+  Hash,
+  MoreVertical,
+  Edit3,
+  Trash2,
+  Save,
+  X,
+  Crown
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -20,14 +27,24 @@ import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Separator } from "@/components/ui/Separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
 
 const TemaDetalle = () => {
   const { id } = useParams();
+  const { usuario } = useAuth();
   const [tema, setTema] = useState(null);
   const [respuesta, setRespuesta] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [enviandoRespuesta, setEnviandoRespuesta] = useState(false);
+  const [editandoRespuesta, setEditandoRespuesta] = useState(null);
+  const [respuestaEditable, setRespuestaEditable] = useState("");
+  const [procesandoAccion, setProcesandoAccion] = useState(null);
   const navigate = useNavigate();
 
   const fetchTema = async () => {
@@ -56,14 +73,19 @@ const TemaDetalle = () => {
   const handleRespuestaSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    
+    if (respuesta.length < 5 || respuesta.length > 2000) {
+      setError("La respuesta debe tener entre 5 y 2000 caracteres");
+      return;
+    }
+    
     setEnviandoRespuesta(true);
-
     const token = localStorage.getItem("token");
 
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/temas-foro/${id}/respuestas`,
-        { contenido: respuesta },
+        { contenido: respuesta.trim() },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -81,6 +103,82 @@ const TemaDetalle = () => {
     }
   };
 
+  const iniciarEdicionRespuesta = (resp) => {
+    setEditandoRespuesta(resp.id);
+    setRespuestaEditable(resp.contenido);
+  };
+
+  const cancelarEdicionRespuesta = () => {
+    setEditandoRespuesta(null);
+    setRespuestaEditable("");
+  };
+
+  const guardarEdicionRespuesta = async (respuestaId) => {
+    if (respuestaEditable.length < 5 || respuestaEditable.length > 2000) {
+      setError("La respuesta debe tener entre 5 y 2000 caracteres");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    setProcesandoAccion(respuestaId);
+
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/respuestas/${respuestaId}`,
+        { contenido: respuestaEditable.trim() },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setEditandoRespuesta(null);
+      setRespuestaEditable("");
+      await fetchTema();
+    } catch (error) {
+      console.error("⚠ Error al editar respuesta:", error);
+      setError("Error al actualizar la respuesta");
+    } finally {
+      setProcesandoAccion(null);
+    }
+  };
+
+  const eliminarRespuesta = async (respuestaId) => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta respuesta? Esta acción no se puede deshacer.")) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    setProcesandoAccion(respuestaId);
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/respuestas/${respuestaId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      await fetchTema();
+    } catch (error) {
+      console.error("⚠ Error al eliminar respuesta:", error);
+      setError("Error al eliminar la respuesta");
+    } finally {
+      setProcesandoAccion(null);
+    }
+  };
+
+  const puedeModificarRespuesta = (respuesta) => {
+    return usuario?.id === respuesta.usuario_id || usuario?.rol === 'admin';
+  };
+
+  const puedeModificarTema = (tema) => {
+    return usuario?.id === tema.usuario_id || usuario?.rol === 'admin';
+  };
+
   const formatearFecha = (fecha) => {
     return new Date(fecha).toLocaleDateString('es-ES', {
       year: 'numeric',
@@ -91,7 +189,8 @@ const TemaDetalle = () => {
     });
   };
 
-  const caracteresRestantes = 1000 - respuesta.length;
+  const caracteresRestantes = 2000 - respuesta.length;
+  const caracteresEditables = respuestaEditable ? 2000 - respuestaEditable.length : 2000;
 
   if (loading) {
     return (
@@ -169,13 +268,13 @@ const TemaDetalle = () => {
       {/* Back Button */}
       <div className="flex items-center">
         <Button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/foro")}
           variant="ghost"
           size="sm"
           className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 p-2"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Volver atrás
+          Volver al foro
         </Button>
       </div>
 
@@ -191,6 +290,14 @@ const TemaDetalle = () => {
                 <div className="flex items-center">
                   <User className="h-4 w-4 mr-1" />
                   {tema.nombre || "Desconocido"}
+                  {usuario?.id === tema.usuario_id && (
+                    <Badge variant="outline" className="ml-2 text-xs">
+                      Tuyo
+                    </Badge>
+                  )}
+                  {usuario?.rol === 'admin' && usuario?.id !== tema.usuario_id && (
+                    <Crown className="h-3 w-3 ml-1 text-yellow-600" title="Puedes moderar" />
+                  )}
                 </div>
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-1" />
@@ -202,10 +309,35 @@ const TemaDetalle = () => {
                 </div>
               </div>
             </div>
-            <Badge variant="secondary" className="bg-pink-100 text-pink-600">
-              <MessageCircle className="h-3 w-3 mr-1" />
-              {tema.respuestas?.length || 0} respuestas
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="bg-pink-100 text-pink-600">
+                <MessageCircle className="h-3 w-3 mr-1" />
+                {tema.respuestas?.length || 0} respuestas
+              </Badge>
+
+              {/* Menu de opciones para el tema */}
+              {puedeModificarTema(tema) && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => navigate(`/foro/${tema.id}/editar`)}
+                    >
+                      <Edit3 className="h-4 w-4 mr-2" />
+                      Editar tema
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+            </div>
           </div>
         </CardHeader>
 
@@ -248,20 +380,108 @@ const TemaDetalle = () => {
                             {resp.nombre?.charAt(0).toUpperCase() || "?"}
                           </div>
                           <div>
-                            <p className="font-medium text-gray-800">{resp.nombre || "Usuario"}</p>
+                            <p className="font-medium text-gray-800">
+                              {resp.nombre || "Usuario"}
+                              {usuario?.id === resp.usuario_id && (
+                                <Badge variant="outline" className="ml-2 text-xs">
+                                  Tuyo
+                                </Badge>
+                              )}
+                            </p>
                             <div className="flex items-center text-xs text-gray-500">
                               <Clock className="h-3 w-3 mr-1" />
                               {formatearFecha(resp.fecha)}
                             </div>
                           </div>
                         </div>
-                        <Badge variant="outline" className="text-xs">
-                          #{index + 1}
-                        </Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">
+                            #{index + 1}
+                          </Badge>
+                          
+                          {/* Menu de opciones para respuestas */}
+                          {puedeModificarRespuesta(resp) && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  disabled={procesandoAccion === resp.id}
+                                >
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => iniciarEdicionRespuesta(resp)}
+                                  disabled={procesandoAccion === resp.id}
+                                >
+                                  <Edit3 className="h-4 w-4 mr-2" />
+                                  Editar respuesta
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => eliminarRespuesta(resp.id)}
+                                  disabled={procesandoAccion === resp.id}
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Eliminar respuesta
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+                        </div>
                       </div>
-                      <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-                        {resp.contenido}
-                      </p>
+                      
+                      {/* Contenido de respuesta o formulario de edición */}
+                      {editandoRespuesta === resp.id ? (
+                        <div className="space-y-3">
+                          <Textarea
+                            value={respuestaEditable}
+                            onChange={(e) => setRespuestaEditable(e.target.value)}
+                            className="min-h-[80px] text-sm"
+                            maxLength={2000}
+                          />
+                          <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>Editando respuesta</span>
+                            <span>{caracteresEditables} caracteres restantes</span>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              onClick={() => guardarEdicionRespuesta(resp.id)}
+                              disabled={procesandoAccion === resp.id || respuestaEditable.length < 5}
+                              className="flex-1"
+                            >
+                              {procesandoAccion === resp.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <Save className="h-3 w-3" />
+                              )}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={cancelarEdicionRespuesta}
+                              disabled={procesandoAccion === resp.id}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+                          {resp.contenido}
+                        </p>
+                      )}
+                      
+                      {procesandoAccion === resp.id && (
+                        <div className="flex items-center justify-center mt-2 p-2">
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          <span className="text-sm text-muted-foreground">Procesando...</span>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>
@@ -296,14 +516,14 @@ const TemaDetalle = () => {
                 onChange={(e) => setRespuesta(e.target.value)}
                 placeholder="Escribe tu respuesta aquí. Sé respetuoso y constructivo..."
                 className="min-h-[120px] resize-none"
-                maxLength={1000}
+                maxLength={2000}
                 required
               />
               <div className="flex justify-between text-sm">
                 <p className="text-muted-foreground">
-                  Participa de forma constructiva y respetuosa
+                  Participa de forma constructiva y respetuosa (mínimo 5 caracteres)
                 </p>
-                <span className={`${caracteresRestantes < 50 ? 'text-orange-600' : 'text-muted-foreground'}`}>
+                <span className={`${caracteresRestantes < 100 ? 'text-orange-600' : 'text-muted-foreground'}`}>
                   {caracteresRestantes} caracteres restantes
                 </span>
               </div>
@@ -312,7 +532,7 @@ const TemaDetalle = () => {
             <div className="flex justify-end">
               <Button
                 type="submit"
-                disabled={enviandoRespuesta || !respuesta.trim()}
+                disabled={enviandoRespuesta || respuesta.length < 5}
                 className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white"
               >
                 {enviandoRespuesta ? (

@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { crearTrabajo, listarTrabajosPorCurso } from '../controllers/trabajos.controller.js';
+import { body } from 'express-validator';
+import { crearTrabajo, listarTrabajosPorCurso, editarTrabajo, borrarTrabajo } from '../controllers/trabajos.controller.js';
 import { validarTrabajo } from '../validations/trabajos.validation.js';
 import { verificarToken } from '../middlewares/auth.middleware.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
@@ -75,5 +76,70 @@ router.post(
  *         description: Error del servidor
  */
 router.get('/:cursoId', listarTrabajosPorCurso);
+
+// PUT /trabajos/:id - Editar trabajo
+/**
+ * @swagger
+ * /trabajos/{id}:
+ *   put:
+ *     summary: Editar un trabajo (propietario o admin)
+ *     tags: [Trabajos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               descripcion:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Trabajo actualizado
+ *       403:
+ *         description: Sin permisos
+ *       404:
+ *         description: Trabajo no encontrado
+ */
+router.put(
+  '/:id',
+  verificarToken,
+  [body('descripcion').optional().isString().withMessage('La descripción debe ser texto')],
+  validarCampos,
+  editarTrabajo
+);
+
+// DELETE /trabajos/:id - Eliminar trabajo
+/**
+ * @swagger
+ * /trabajos/{id}:
+ *   delete:
+ *     summary: Eliminar un trabajo (propietario o admin)
+ *     tags: [Trabajos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Trabajo eliminado
+ *       403:
+ *         description: Sin permisos
+ *       404:
+ *         description: Trabajo no encontrado
+ */
+router.delete('/:id', verificarToken, borrarTrabajo);
 
 export default router;

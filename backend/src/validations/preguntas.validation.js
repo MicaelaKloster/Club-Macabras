@@ -15,3 +15,11 @@ export const validarRespuesta = [
     .notEmpty().withMessage('La respuesta no puede estar vacía')
     .isString().withMessage('Debe ser texto válido')
 ];
+
+export const validarEdicionPregunta = [
+  body('pregunta')
+    .notEmpty()
+    .withMessage('La pregunta es obligatoria')
+    .isLength({ min: 5, max: 500 })
+    .withMessage('La pregunta debe tener entre 5 y 500 caracteres')
+]

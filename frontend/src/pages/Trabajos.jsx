@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { 
   Heart, 
@@ -10,19 +11,36 @@ import {
   Calendar,
   Loader2,
   Upload,
-  Eye
+  Eye,
+  MoreVertical,
+  Edit3,
+  Trash2,
+  Save,
+  X
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Textarea } from "@/components/ui/Textarea";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/DropdownMenu";
 
 const Trabajos = () => {
   const { cursoId } = useParams(); 
   const navigate = useNavigate();
+  const { usuario } = useAuth();
   const [trabajos, setTrabajos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [procesandoLike, setProcesandoLike] = useState(null);
+  const [editando, setEditando] = useState(null);
+  const [descripcionEditable, setDescripcionEditable] = useState("");
+  const [procesandoAccion, setProcesandoAccion] = useState(null);
 
   useEffect(() => {
     const obtenerTrabajos = async () => {
@@ -83,6 +101,84 @@ const Trabajos = () => {
     } finally {
       setProcesandoLike(null);
     }
+  };
+
+  const iniciarEdicion = (trabajo) => {
+    setEditando(trabajo.id);
+    setDescripcionEditable(trabajo.descripcion);
+  };
+
+  const cancelarEdicion = () => {
+    setEditando(null);
+    setDescripcionEditable("");
+  };
+
+  const guardarEdicion = async (trabajoId) => {
+    if (!descripcionEditable.trim()) return;
+
+    const token = localStorage.getItem("token");
+    setProcesandoAccion(trabajoId);
+
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/trabajos/${trabajoId}`,
+        { descripcion: descripcionEditable.trim() },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Actualizar estado local
+      setTrabajos((prev) =>
+        prev.map((t) =>
+          t.id === trabajoId
+            ? { ...t, descripcion: descripcionEditable.trim() }
+            : t
+        )
+      );
+
+      setEditando(null);
+      setDescripcionEditable("");
+    } catch (error) {
+      console.error("⚠ Error al editar trabajo:", error);
+      alert("Error al actualizar el trabajo");
+    } finally {
+      setProcesandoAccion(null);
+    }
+  };
+
+  const eliminarTrabajo = async (trabajoId) => {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar este trabajo? Esta acción no se puede deshacer.")) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    setProcesandoAccion(trabajoId);
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/trabajos/${trabajoId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Remover del estado local
+      setTrabajos((prev) => prev.filter((t) => t.id !== trabajoId));
+    } catch (error) {
+      console.error("⚠ Error al eliminar trabajo:", error);
+      alert("Error al eliminar el trabajo");
+    } finally {
+      setProcesandoAccion(null);
+    }
+  };
+
+  const puedeModificar = (trabajo) => {
+    return usuario?.id === trabajo.usuario_id || usuario?.rol === 'admin';
   };
 
   const formatearFecha = (fecha) => {
@@ -215,6 +311,40 @@ const Trabajos = () => {
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
                     <Eye className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   </div>
+
+                  {/* Menu de opciones */}
+                  {puedeModificar(trabajo) && (
+                    <div className="absolute top-2 right-2">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 bg-white/80 hover:bg-white/90 backdrop-blur-sm"
+                          >
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => iniciarEdicion(trabajo)}
+                            disabled={procesandoAccion === trabajo.id}
+                          >
+                            <Edit3 className="h-4 w-4 mr-2" />
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => eliminarTrabajo(trabajo.id)}
+                            disabled={procesandoAccion === trabajo.id}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  )}
                 </div>
 
                 {/* Content */}
@@ -228,6 +358,11 @@ const Trabajos = () => {
                       <span className="text-sm font-medium text-gray-700 truncate">
                         {trabajo.autor}
                       </span>
+                      {usuario?.id === trabajo.usuario_id && (
+                        <Badge variant="outline" className="text-xs">
+                          Tuyo
+                        </Badge>
+                      )}
                     </div>
                     {trabajo.fecha && (
                       <div className="flex items-center text-xs text-muted-foreground">
@@ -238,9 +373,42 @@ const Trabajos = () => {
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
-                    {trabajo.descripcion}
-                  </p>
+                  {editando === trabajo.id ? (
+                    <div className="space-y-2 mb-3">
+                      <Textarea
+                        value={descripcionEditable}
+                        onChange={(e) => setDescripcionEditable(e.target.value)}
+                        className="min-h-[60px] text-sm"
+                        maxLength={500}
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => guardarEdicion(trabajo.id)}
+                          disabled={procesandoAccion === trabajo.id || !descripcionEditable.trim()}
+                          className="flex-1"
+                        >
+                          {procesandoAccion === trabajo.id ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <Save className="h-3 w-3" />
+                          )}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={cancelarEdicion}
+                          disabled={procesandoAccion === trabajo.id}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2 leading-relaxed">
+                      {trabajo.descripcion}
+                    </p>
+                  )}
 
                   {/* Like Button */}
                   <div className="flex items-center justify-between">

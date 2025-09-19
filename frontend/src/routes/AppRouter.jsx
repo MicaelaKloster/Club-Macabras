@@ -35,6 +35,7 @@ import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 import RecuperarPassword from '../pages/RecuperarPassword';
 import ReestablecerPassword from '../pages/ReestablecerPassword';
 import AdminHistorialPagos from '../pages/admin/AdminHistorialPagos';
+import EditarTema from '../pages/EditarTema'
 
 import RutaPrivada from './RutaPrivada';
 
@@ -66,6 +67,7 @@ const AppRouter = () => {
           <Route path="/cursos/:cursoId/trabajos" element={<Trabajos />} />
           <Route path="/cursos/:cursoId/trabajos/nuevo" element={<SubirTrabajo />} />
           <Route path="/info-extra" element={<InfoExtra />} />
+          <Route path="/foro/:id/editar" element={<EditarTema />} />
 
           {usuario && (
             <>

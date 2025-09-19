@@ -12,6 +12,7 @@ export const obtenerTrabajosDeCurso = async (cursoId, usuarioLogueadoId) => {
     `
     SELECT 
       t.id,
+      t.usuario_id,
       t.imagen_url,
       t.descripcion,
       t.fecha,
@@ -39,4 +40,32 @@ export const obtenerTrabajosDeCurso = async (cursoId, usuarioLogueadoId) => {
     ...trabajo,
     dado_like: !!trabajo.dado_like
   }));
+};
+
+export const obtenerTrabajoPorId = async (trabajoId) => {
+  const result = await db.query(
+    'SELECT * FROM trabajos_usuarios WHERE id = $1',
+    [trabajoId]
+  );
+  return result.rows[0];
+};
+
+export const actualizarTrabajo = async (trabajoId, descripcion) => {
+  const result = await db.query(
+    'UPDATE trabajos_usuarios SET descripcion = $1 WHERE id = $2',
+    [descripcion, trabajoId]
+  );
+  return result.rowCount > 0;
+};
+
+export const eliminarTrabajo = async (trabajoId) => {
+  // Primero eliminar likes relacionados
+  await db.query('DELETE FROM likes_trabajos WHERE trabajo_id = $1', [trabajoId]);
+  
+  // Luego eliminar el trabajo
+  const result = await db.query(
+    'DELETE FROM trabajos_usuarios WHERE id = $1',
+    [trabajoId]
+  );
+  return result.rowCount > 0;
 };
