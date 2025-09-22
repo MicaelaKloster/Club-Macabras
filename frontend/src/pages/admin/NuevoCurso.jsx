@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Textarea } from "@/components/ui/Textarea";
 import { Alert, AlertDescription } from "@/components/ui/Alert";
+import ImageUploader from '@/components/ImageUploader';
 
 const NuevoCurso = () => {
     const [titulo, setTitulo] = useState("");
@@ -25,6 +26,7 @@ const NuevoCurso = () => {
     const [error, setError] = useState("");
     const [mensaje, setMensaje] = useState("");
     const [cargando, setCargando] = useState(false);
+    const [imagenPortada, setImagenPortada] = useState("");
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -38,7 +40,7 @@ const NuevoCurso = () => {
         try {
             const { data } = await axios.post(
                 `${import.meta.env.VITE_API_URL}/cursos`,
-                { titulo, descripcion, categoria },
+                { titulo, descripcion, categoria, imagen_portada: imagenPortada },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -187,6 +189,40 @@ const NuevoCurso = () => {
                                     {caracteresCategoria} caracteres restantes
                                 </span>
                             </div>
+                        </div>
+
+                        {/* Imagen portada Field */}
+                        <div className="space-y-2">
+                            <Label htmlFor="imagen_portada" className="text-base font-semibold flex items-center">
+                                <FileText className="h-4 w-4 mr-1" />
+                                Imagen de portada (opcional)
+                            </Label>
+                            <ImageUploader
+                                currentImageUrl={imagenPortada}
+                                onImageChange={setImagenPortada}
+                                label="Imagen de portada del curso"
+                            />
+                            <p className="text-sm text-muted-foreground">
+                                URL de una imagen que represente tu curso. Recomendado: 16:9 (ej: 800x450px)
+                            </p>
+                            
+                            {/* Preview de imagen */}
+                            {imagenPortada && (
+                                <div className="mt-2 border rounded-lg overflow-hidden">
+                                    <img 
+                                        src={imagenPortada} 
+                                        alt="Preview"
+                                        className="w-full h-32 object-cover"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'block';
+                                        }}
+                                    />
+                                    <div className="hidden p-4 text-center text-red-600 text-sm">
+                                        Error al cargar la imagen. Verifica que la URL sea correcta.
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Preview Section */}

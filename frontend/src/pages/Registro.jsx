@@ -83,6 +83,16 @@ const Registro = () => {
                             </Alert>
                         )}
 
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                            <div className="flex items-center gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                            <p className="text-sm text-green-800">
+                                <strong>Sitio 100% seguro:</strong> Club Macabras es una plataforma educativa legítima 
+                                especializada en marroquinería profesional.
+                            </p>
+                            </div>
+                        </div>
+
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="nombre">Nombre completo</Label>

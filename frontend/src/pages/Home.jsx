@@ -246,19 +246,24 @@ const Home = () => {
       </section>
 
       {/* Footer */}
+{/* Footer actualizado */}
       <footer className="border-t bg-background py-12 px-4">
         <div className="container max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="space-y-4">
               <h3 className="text-2xl font-bold text-primary">Club Macabras</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Tu academia online de marroquinería. Aprende, crea y forma parte 
-                de nuestra comunidad de artesanos.
+                Plataforma educativa especializada en marroquinería profesional. 
+                Sitio 100% seguro y confiable.
               </p>
+              <div className="flex items-center gap-2 text-sm text-green-600">
+                <CheckCircle size={16} />
+                <span>Certificado SSL A+</span>
+              </div>
             </div>
             
             <div className="space-y-4">
-              <h4 className="text-lg font-semibold">Enlaces Rápidos</h4>
+              <h4 className="text-lg font-semibold">Plataforma</h4>
               <nav className="flex flex-col space-y-2">
                 <Button variant="ghost" className="justify-start p-0 h-auto" asChild>
                   <Link to="/registro">Registrarme</Link>
@@ -266,12 +271,30 @@ const Home = () => {
                 <Button variant="ghost" className="justify-start p-0 h-auto" asChild>
                   <Link to="/login">Iniciar Sesión</Link>
                 </Button>
+                <Button variant="ghost" className="justify-start p-0 h-auto" asChild>
+                  <Link to="/cursos">Ver Cursos</Link>
+                </Button>
                 <Button 
                   variant="ghost" 
                   className="justify-start p-0 h-auto"
                   onClick={() => scrollToSection('sobre-nosotros')}
                 >
                   Sobre Nosotros
+                </Button>
+              </nav>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold">Información Legal</h4>
+              <nav className="flex flex-col space-y-2">
+                <Button variant="ghost" className="justify-start p-0 h-auto" asChild>
+                  <Link to="/acerca-de">Acerca de</Link>
+                </Button>
+                <Button variant="ghost" className="justify-start p-0 h-auto" asChild>
+                  <Link to="/politica-de-privacidad">Política de Privacidad</Link>
+                </Button>
+                <Button variant="ghost" className="justify-start p-0 h-auto" asChild>
+                  <Link to="/terminos-de-servicio">Términos de Servicio</Link>
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -317,12 +340,20 @@ const Home = () => {
                   </svg>
                 </Button>
               </div>
+              <div className="space-y-2 text-sm">
+                <p className="text-muted-foreground">Contáctanos:</p>
+                <p className="text-muted-foreground">clubmacabras@gmail.com</p>
+                <p className="text-muted-foreground">Santa Fe, Argentina</p>
+              </div>
             </div>
           </div>
           
-          <div className="border-t pt-8 text-center">
+          <div className="border-t pt-8 text-center space-y-2">
             <p className="text-muted-foreground">
-              © 2025 Club Macabras. Todos los derechos reservados.
+              © 2025 Club Macabras. Plataforma educativa de marroquinería profesional.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Sitio seguro y confiable • Certificado SSL A+ • Todos los derechos reservados
             </p>
           </div>
         </div>

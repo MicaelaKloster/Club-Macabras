@@ -22,6 +22,8 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Alert, AlertDescription } from "@/components/ui/Alert";
+import ImageUploader from '@/components/ImageUploader';
+
 
 const CursosAdmin = () => {
   const [cursos, setCursos] = useState([]);
@@ -32,7 +34,8 @@ const CursosAdmin = () => {
   const [formData, setFormData] = useState({
     titulo: '',
     descripcion: '',
-    categoria: ''
+    categoria: '',
+    imagen_portada: ''
   });
   const navigate = useNavigate();
 
@@ -64,7 +67,8 @@ const CursosAdmin = () => {
     setFormData({
       titulo: curso.titulo,
       descripcion: curso.descripcion || '',
-      categoria: curso.categoria || ''
+      categoria: curso.categoria || '',
+      imagen_portada: curso.imagen_portada || ''
     });
   };
 
@@ -289,6 +293,15 @@ const CursosAdmin = () => {
                         className="mt-1"
                       />
                     </div>
+
+                    <div>
+                      <Label htmlFor="imagen_portada" className="text-base font-semibold">Imagen de portada</Label>
+                      <ImageUploader
+                        currentImageUrl={formData.imagen_portada}
+                        onImageChange={(url) => setFormData({...formData, imagen_portada: url})}
+                        label="Imagen de portada"
+                      />
+                  </div>
                     
                     <div className="flex gap-3 pt-4">
                       <Button
@@ -322,6 +335,25 @@ const CursosAdmin = () => {
               ) : (
                 // Modo visualización
                 <CardContent className="p-6">
+                    {curso.imagen_portada && (
+                      <div className="w-full h-48 mb-4 overflow-hidden rounded-lg border">
+                        <img 
+                          src={curso.imagen_portada}
+                          alt={curso.titulo}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'flex';
+                          }}
+                        />
+                        {/* Fallback si no carga la imagen */}
+                        <div 
+                          className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center hidden"
+                        >
+                          <BookOpen className="h-12 w-12 text-gray-400" />
+                        </div>
+                      </div>
+                    )}
                   <div className="space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">

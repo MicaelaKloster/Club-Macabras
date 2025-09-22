@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Label } from "@/components/ui/Label";
 import { Alert, AlertDescription } from "@/components/ui/Alert";
-import { Mail, Lock, LogIn, AlertCircle, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, LogIn, AlertCircle, ArrowLeft, Eye, EyeOff, CheckCircle } from "lucide-react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -73,6 +73,15 @@ const Login = () => {
               </Alert>
             )}
 
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <p className="text-sm text-green-800">
+                  <strong>Sitio 100% seguro:</strong> Club Macabras es una plataforma educativa legítima 
+                  especializada en marroquinería profesional.
+                </p>
+              </div>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">

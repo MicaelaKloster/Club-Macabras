@@ -11,5 +11,10 @@ export const validarCreacionCurso = [
     
     body('categoria')
         .optional()
-        .isString().withMessage('La categoría debe ser texto')
+        .isString().withMessage('La categoría debe ser texto'),
+    
+    body('imagen_portada')
+        .optional()
+        .isURL()
+        .withMessage('La imagen de portada debe ser una URL válida')
 ];

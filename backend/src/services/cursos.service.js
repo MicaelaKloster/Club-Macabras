@@ -2,14 +2,14 @@ import db from '../config/db.js';
 
 export const crearCurso = async (titulo, descripcion, categoria) => {
     await db.query(
-        'INSERT INTO cursos (titulo, descripcion, categoria) VALUES ($1, $2, $3)',
+        'INSERT INTO cursos (titulo, descripcion, categoria, imagen_portada) VALUES ($1, $2, $3)',
         [titulo, descripcion, categoria]
     );
 };
 
 export const obtenerCursosPaginados = async (limite, offset) => {
     const cursosResult = await db.query(
-        'SELECT * FROM cursos WHERE estado = 1 ORDER BY creado_en DESC LIMIT $1 OFFSET $2',
+        'SELECT id, titulo, descripcion, categoria, imagen_portada, creado_en FROM cursos WHERE estado = 1 ORDER BY creado_en DESC LIMIT $1 OFFSET $2',
         [limite, offset]
     );
     
@@ -42,7 +42,7 @@ export const obtenerMaterialesDelCurso = async (cursoId) => {
 
 export const buscarCursoPorId = async (id) => {
   const result = await db.query(
-    'SELECT id, titulo, descripcion, categoria FROM cursos WHERE id = $1',
+    'SELECT id, titulo, descripcion, categoria, imagen_portada FROM cursos WHERE id = $1',
     [id]
   );
   return result.rows[0];
@@ -50,7 +50,7 @@ export const buscarCursoPorId = async (id) => {
 
 export const actualizarCurso = async (id, titulo, descripcion, categoria) => {
     const result = await db.query(
-        'UPDATE cursos SET titulo = $1, descripcion = $2, categoria = $3 WHERE id = $4',
+        'UPDATE cursos SET titulo = $1, descripcion = $2, categoria = $3, imagen_portada = $4 WHERE id = $4',
         [titulo, descripcion, categoria, id]
     );
     return result.rowCount > 0;

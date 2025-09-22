@@ -3,9 +3,9 @@ import { crearCurso, obtenerCursosPaginados, obtenerMaterialesDelCurso, buscarCu
 // Función para crear nuevo curso
 export const crearNuevoCurso = async (req, res) => {
     try{
-        const { titulo, descripcion, categoria } = req.body;
+        const { titulo, descripcion, categoria, imagen_portada } = req.body;
 
-        await crearCurso(titulo, descripcion, categoria);
+        await crearCurso(titulo, descripcion, categoria, imagen_portada);
         console.log(`✅ Curso creado: ${titulo}`);
 
         res.status(201).json({ mensaje: 'Curso creado exitosamente', titulo });
@@ -79,9 +79,9 @@ export const obtenerCursoPorId = async (req, res) => {
 export const editarCurso = async (req, res) => {
     try {
         const { id } = req.params;
-        const { titulo, descripcion, categoria } = req.body;
+        const { titulo, descripcion, categoria, imagen_portada } = req.body;
 
-        const actualizado = await actualizarCurso(id, titulo, descripcion, categoria);
+        const actualizado = await actualizarCurso(id, titulo, descripcion, categoria, imagen_portada);
 
         if (!actualizado) {
             return res.status(404).json({ error: 'Curso no encontrado' });

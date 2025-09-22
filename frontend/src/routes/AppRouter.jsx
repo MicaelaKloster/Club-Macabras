@@ -35,7 +35,10 @@ import PaginaNoEncontrada from '../pages/PaginaNoEncontrada';
 import RecuperarPassword from '../pages/RecuperarPassword';
 import ReestablecerPassword from '../pages/ReestablecerPassword';
 import AdminHistorialPagos from '../pages/admin/AdminHistorialPagos';
-import EditarTema from '../pages/EditarTema'
+import EditarTema from '../pages/EditarTema';
+import AcercaDe from '@/components/AcercaDe';
+import PoliticaPrivacidad from '@/components/PoliticaPrivacidad';
+import TerminosServicio from '@/components/TerminosServicio';
 
 import RutaPrivada from './RutaPrivada';
 
@@ -55,6 +58,9 @@ const AppRouter = () => {
           <Route path="/pago-pendiente" element={<PagoPendiente />} />
           <Route path="/recuperar-password" element={<RecuperarPassword />} />
           <Route path="/reestablecer-password" element={<ReestablecerPassword />} />
+          <Route path="/acerca-de" element={<AcercaDe />} />
+          <Route path="/politica-de-privacidad" element={<PoliticaPrivacidad />} />
+          <Route path="/terminos-de-servicio" element={<TerminosServicio />} />
         </Route>
 
         {/* Rutas privadas */}
