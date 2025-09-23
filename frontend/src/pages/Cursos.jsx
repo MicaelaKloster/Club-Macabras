@@ -75,26 +75,40 @@ const Cursos = () => {
                         key={curso.id} 
                         className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-border/50 hover:border-primary/20 overflow-hidden"
                     >
-                        {/* Imagen de portada */}
-                        <div className="relative overflow-hidden">
-                            {curso.imagen_portada ? (
+                    {/* Imagen de portada */}
+                    <div className="relative overflow-hidden h-48">
+                        {curso.imagen_portada ? (
+                            <>
                                 <img 
                                     src={curso.imagen_portada} 
                                     alt={curso.titulo}
-                                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    onLoad={(e) => {
+                                        e.target.style.display = 'block';
+                                        // Ocultar el fallback
+                                        const fallback = e.target.nextSibling;
+                                        if (fallback) fallback.style.display = 'none';
+                                    }}
                                     onError={(e) => {
+                                        console.error('Error cargando imagen:', curso.imagen_portada);
                                         e.target.style.display = 'none';
-                                        e.target.nextSibling.style.display = 'flex';
+                                        // Mostrar el fallback
+                                        const fallback = e.target.nextSibling;
+                                        if (fallback) fallback.style.display = 'flex';
                                     }}
                                 />
-                            ) : null}
-                            {/* Fallback cuando no hay imagen o no carga */}
-                            <div 
-                                className={`w-full h-48 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center ${curso.imagen_portada ? 'hidden' : 'flex'}`}
-                            >
+                                {/* Fallback cuando hay error de imagen */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center hidden">
+                                    <BookOpen className="h-16 w-16 text-pink-400" />
+                                </div>
+                            </>
+                        ) : (
+                            /* Fallback cuando no hay imagen */
+                            <div className="w-full h-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center">
                                 <BookOpen className="h-16 w-16 text-pink-400" />
                             </div>
-                        </div>
+                        )}
+                    </div>
 
                         <CardHeader className="space-y-3">
                             <div className="flex items-center justify-between">
@@ -124,6 +138,7 @@ const Cursos = () => {
                         
                         <CardContent>
                             <div className="space-y-4">
+                                {/* Stats del curso */}
                                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                                     <div className="flex items-center gap-1">
                                         <BookOpen className="h-4 w-4" />
@@ -139,6 +154,7 @@ const Cursos = () => {
                                     </div>
                                 </div>
 
+                                {/* Botón de acción */}
                                 <Button 
                                     asChild 
                                     className="w-full group-hover:bg-primary/90 transition-colors"

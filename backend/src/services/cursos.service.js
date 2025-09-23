@@ -13,6 +13,9 @@ export const obtenerCursosPaginados = async (limite, offset) => {
         [limite, offset]
     );
     
+    // Debug: verifica qué está devolviendo la base de datos
+    console.log('Datos de cursos desde DB:', cursosResult.rows);
+    
     const totalResult = await db.query(
         'SELECT COUNT(*) as total FROM cursos WHERE estado = 1'
     );
@@ -48,10 +51,13 @@ export const buscarCursoPorId = async (id) => {
   return result.rows[0];
 };
 
-export const actualizarCurso = async (id, titulo, descripcion, categoria) => {
+export const actualizarCurso = async (id, titulo, descripcion, categoria, imagen_portada = null) => {
+    // Debug: verifica qué valor llega
+    console.log('Actualizando curso con imagen_portada:', imagen_portada);
+    
     const result = await db.query(
-        'UPDATE cursos SET titulo = $1, descripcion = $2, categoria = $3, imagen_portada = $4 WHERE id = $4',
-        [titulo, descripcion, categoria, id]
+        'UPDATE cursos SET titulo = $1, descripcion = $2, categoria = $3, imagen_portada = $4 WHERE id = $5',
+        [titulo, descripcion, categoria, imagen_portada, id]
     );
     return result.rowCount > 0;
 };

@@ -81,6 +81,11 @@ export const editarCurso = async (req, res) => {
         const { id } = req.params;
         const { titulo, descripcion, categoria, imagen_portada } = req.body;
 
+        // Debug: verifica qué datos llegan
+        console.log('Datos recibidos para edición:', {
+            id, titulo, descripcion, categoria, imagen_portada
+        });
+
         const actualizado = await actualizarCurso(id, titulo, descripcion, categoria, imagen_portada);
 
         if (!actualizado) {
