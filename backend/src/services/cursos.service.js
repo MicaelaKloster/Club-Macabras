@@ -1,9 +1,9 @@
 import db from '../config/db.js';
 
-export const crearCurso = async (titulo, descripcion, categoria) => {
+export const crearCurso = async (titulo, descripcion, categoria, imagen_portada) => {
     await db.query(
-        'INSERT INTO cursos (titulo, descripcion, categoria, imagen_portada) VALUES ($1, $2, $3)',
-        [titulo, descripcion, categoria]
+        'INSERT INTO cursos (titulo, descripcion, categoria, imagen_portada) VALUES ($1, $2, $3, $4)',
+        [titulo, descripcion, categoria, imagen_portada]
     );
 };
 
