@@ -5,7 +5,8 @@ import {
     obtenerMembresiaUsuarioAdmin,
     crearMembresiaManual,
     cambiarEstadoMembresiaAdmin,
-    cancelarMiMembresia
+    cancelarMiMembresia,
+    listarTodasLasMembresias
 } from "../controllers/membresias.controller.js";
 import { validarCreacionMembresia } from "../validations/membresias.validation.js";
 import { validarCampos } from "../middlewares/validarCampos.middleware.js";
@@ -71,6 +72,14 @@ router.post(
     registrarMembresia
 );
 
+
+router.get(
+  '/todas',
+  verificarToken,
+  permitirSoloRol('admin'),
+  listarTodasLasMembresias
+);
+
 /**
  * @swagger
  * /membresias/{usuarioId}:
@@ -100,6 +109,7 @@ router.get(
   verificarToken,
   obtenerMembresiaDeUsuario
 );
+
 
 // Nuevas rutas para administración
 router.get(
@@ -146,5 +156,7 @@ router.put(
     verificarToken,
     cancelarMiMembresia
 );
+
+
 
 export default router;

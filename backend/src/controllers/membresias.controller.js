@@ -3,7 +3,8 @@ import {
     obtenerMembresiaActivaPorUsuario,
     actualizarEstadoMembresia,
     obtenerMembresiaPorId,
-    obtenerMembresiaCompletaPorUsuario
+    obtenerMembresiaCompletaPorUsuario,
+    obtenerTodasLasMembresias
 } from "../services/membresias.service.js";
 import { verificarYActualizarEstadoUsuario } from "../services/usuarios.service.js";
 import { enviarCorreoCancelacionMembresia } from '../utils/mailer.js';
@@ -166,4 +167,14 @@ export const cancelarMiMembresia = async (req, res) => {
             error: 'Error interno del servidor' 
         });
     }
+};
+
+export const listarTodasLasMembresias = async (req, res) => {
+  try {
+    const membresias = await obtenerTodasLasMembresias();
+    res.status(200).json(membresias);
+  } catch (error) {
+    console.error('Error al obtener membresías:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
 };

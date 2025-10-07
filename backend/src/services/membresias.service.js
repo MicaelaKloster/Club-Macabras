@@ -84,3 +84,21 @@ export const obtenerMembresiaVencidas = async (diasMaximoVencimiento = 3) => {
     );
     return result.rows;
 };
+
+export const obtenerTodasLasMembresias = async () => {
+  const result = await db.query(
+    `SELECT 
+      m.id,
+      m.usuario_id,
+      m.estado,
+      m.fecha_inicio,
+      m.fecha_vencimiento,
+      m.metodo_pago,
+      u.nombre,
+      u.email
+    FROM membresias m
+    JOIN usuarios u ON m.usuario_id = u.id
+    ORDER BY m.fecha_vencimiento ASC`
+  );
+  return result.rows;
+};

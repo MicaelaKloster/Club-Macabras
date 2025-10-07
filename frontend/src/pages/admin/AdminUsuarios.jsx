@@ -40,50 +40,54 @@ const AdminUsuarios = () => {
     const [cargandoEstado, setCargandoEstado] = useState(null);
     const [cargandoMembresia, setCargandoMembresia] = useState(null);
 
-    const obtenerUsuarios = async () => {
-        const token = localStorage.getItem("token");
+    const obtenerMembresiasUsuarios = async (usuarios) => {
+       const token = localStorage.getItem("token");
+        
         try {
             const { data } = await axios.get(
-                `${import.meta.env.VITE_API_URL}/usuarios`,
+                `${import.meta.env.VITE_API_URL}/membresias/todas`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            setUsuarios(data || []);
             
-            // Obtener membresías para cada usuario
-            await obtenerMembresiasUsuarios(data || []);
+            // Convertir array a objeto para búsqueda rápida por usuario_id
+            const membresiasPorUsuario = {};
+            data.forEach(m => {
+                membresiasPorUsuario[m.usuario_id] = m;
+            });
+            
+            return membresiasPorUsuario;
+            
+        } catch (error) {
+            console.error("Error al obtener membresías:", error);
+            return {};
+        }
+    };
+
+    const obtenerUsuarios = async () => {
+        const token = localStorage.getItem("token");
+        setLoading(true);
+        
+        try {
+            // Cargar usuarios y membresías en PARALELO
+            const [usuariosRes, membresiasData] = await Promise.all([
+                axios.get(`${import.meta.env.VITE_API_URL}/usuarios`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }),
+                obtenerMembresiasUsuarios()
+            ]);
+            
+            setUsuarios(usuariosRes.data || []);
+            setMembresias(membresiasData);
+            
         } catch (error) {
             console.error("⚠️ Error al obtener usuarios: ", error);
         } finally {
             setLoading(false);
         }
-    };
-
-    const obtenerMembresiasUsuarios = async (usuarios) => {
-        const token = localStorage.getItem("token");
-        const membresiasPorUsuario = {};
-
-        for (const usuario of usuarios) {
-            try {
-                const { data } = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/usuarios/${usuario.id}/membresias`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-                membresiasPorUsuario[usuario.id] = data;
-            } catch (error) {
-                console.error(`Error al obtener membresías del usuario ${usuario.id}:`, error);
-                membresiasPorUsuario[usuario.id] = null;
-            }
-        }
-        
-        setMembresias(membresiasPorUsuario);
     };
 
     const cambiarRolUsuario = async (usuarioId, nuevoRol) => {
@@ -411,19 +415,16 @@ const AdminUsuarios = () => {
         
         if (!membresia) {
             return (
-                <div className="space-y-2 min-w-[140px]">
-                    <Badge variant="outline" className="bg-gray-100 text-gray-700">
+                <div className="space-y-1.5">
+                    <Badge variant="outline" className="bg-gray-50 text-gray-600 text-xs">
                         <XCircle className="h-3 w-3 mr-1" />
                         Sin membresía
                     </Badge>
-                    <div className="text-xs text-gray-500">
-                        No tiene membresía activa
-                    </div>
                     <Button
                         size="sm"
                         onClick={() => crearMembresia(usuario.id)}
                         disabled={cargandoMembresia === usuario.id}
-                        className="h-7 text-xs bg-green-600 hover:bg-green-700 text-white w-full"
+                        className="h-6 text-xs bg-green-600 hover:bg-green-700 text-white w-full px-2"
                     >
                         <Plus className="h-3 w-3 mr-1" />
                         Crear
@@ -434,20 +435,17 @@ const AdminUsuarios = () => {
 
         const estaActiva = membresia.estado === 1;
         const fechaVencimiento = new Date(membresia.fecha_vencimiento);
-        const fechaInicio = new Date(membresia.fecha_inicio);
         const hoy = new Date();
         const estaVencida = fechaVencimiento < hoy;
-        
-        // Calcular días restantes
         const diasRestantes = Math.ceil((fechaVencimiento - hoy) / (1000 * 60 * 60 * 24));
         const estaProximaAVencer = diasRestantes <= 7 && diasRestantes > 0;
 
         return (
-            <div className="space-y-2 min-w-[140px]">
-                {/* Estado de la membresía */}
+            <div className="space-y-1.5">
+                {/* Estado compacto */}
                 <Badge 
                     variant={estaActiva ? 'default' : 'secondary'}
-                    className={
+                    className={`text-xs ${
                         estaActiva && !estaVencida && !estaProximaAVencer
                             ? 'bg-green-100 text-green-700' 
                             : estaProximaAVencer
@@ -455,78 +453,46 @@ const AdminUsuarios = () => {
                             : estaVencida 
                             ? 'bg-red-100 text-red-700'
                             : 'bg-gray-100 text-gray-700'
-                    }
+                    }`}
                 >
                     <CreditCard className="h-3 w-3 mr-1" />
                     {estaActiva && !estaVencida && !estaProximaAVencer ? 'Activa' : 
-                     estaProximaAVencer ? 'Por vencer' :
-                     estaVencida ? 'Vencida' : 'Inactiva'}
+                    estaProximaAVencer ? 'Por vencer' :
+                    estaVencida ? 'Vencida' : 'Inactiva'}
                 </Badge>
                 
-                {/* Fechas */}
-                <div className="text-xs text-gray-600 space-y-1">
-                    <div className="flex items-center">
-                        <Calendar className="h-3 w-3 mr-1 text-blue-500" />
-                        <span className="font-medium">Inicio:</span>
-                        <span className="ml-1">{fechaInicio.toLocaleDateString('es-AR', { 
+                {/* Fecha de vencimiento compacta */}
+                <div className="text-xs text-gray-600">
+                    <span className={`font-medium ${
+                        estaVencida ? 'text-red-600' : 
+                        estaProximaAVencer ? 'text-yellow-600' : 
+                        'text-gray-600'
+                    }`}>
+                        {fechaVencimiento.toLocaleDateString('es-AR', { 
                             day: '2-digit', 
-                            month: '2-digit', 
-                            year: '2-digit' 
-                        })}</span>
-                    </div>
-                    
-                    <div className="flex items-center">
-                        <Calendar className="h-3 w-3 mr-1 text-red-500" />
-                        <span className="font-medium">Vence:</span>
-                        <span className={`ml-1 ${
-                            estaVencida ? 'text-red-600 font-semibold' : 
-                            estaProximaAVencer ? 'text-yellow-600 font-semibold' : 
-                            'text-gray-600'
-                        }`}>
-                            {fechaVencimiento.toLocaleDateString('es-AR', { 
-                                day: '2-digit', 
-                                month: '2-digit', 
-                                year: '2-digit' 
-                            })}
-                        </span>
-                    </div>
-                    
-                    {/* Días restantes */}
+                            month: '2-digit'
+                        })}
+                    </span>
                     {!estaVencida && estaActiva && (
-                        <div className={`text-xs font-medium ${
-                            estaProximaAVencer ? 'text-yellow-600' : 'text-green-600'
-                        }`}>
-                            {diasRestantes > 0 ? `${diasRestantes} días restantes` : 'Vence hoy'}
-                        </div>
-                    )}
-                    
-                    {estaVencida && (
-                        <div className="text-xs font-medium text-red-600">
-                            Vencida hace {Math.abs(diasRestantes)} días
-                        </div>
+                        <span className={`ml-1 ${estaProximaAVencer ? 'text-yellow-600' : 'text-green-600'}`}>
+                            ({diasRestantes}d)
+                        </span>
                     )}
                 </div>
 
-                {/* Método de pago */}
-                <div className="text-xs text-gray-500">
-                    <span className="font-medium">Método:</span> {membresia.metodo_pago || 'N/A'}
-                </div>
-
-                {/* Botones de acción */}
-                <div className="flex space-x-1">
-                    <Button
-                        size="sm"
-                        onClick={() => cambiarEstadoMembresia(usuario.id, membresia.id, estaActiva ? 0 : 1)}
-                        disabled={cargandoMembresia === usuario.id}
-                        className={`h-7 text-xs flex-1 ${
-                            estaActiva 
-                                ? 'bg-red-600 hover:bg-red-700' 
-                                : 'bg-green-600 hover:bg-green-700'
-                        } text-white`}
-                    >
-                        {estaActiva ? 'Desactivar' : 'Activar'}
-                    </Button>
-                </div>
+                {/* Botón de acción compacto */}
+                <Button
+                    size="sm"
+                    onClick={() => cambiarEstadoMembresia(usuario.id, membresia.id, estaActiva ? 0 : 1)}
+                    disabled={cargandoMembresia === usuario.id}
+                    className={`h-6 text-xs w-full px-2 ${
+                        estaActiva 
+                            ? 'bg-red-600 hover:bg-red-700' 
+                            : 'bg-green-600 hover:bg-green-700'
+                    } text-white`}
+                >
+                    {estaActiva ? 'Desactivar' : 'Activar'}
+                </Button>
             </div>
         );
     };
@@ -762,22 +728,22 @@ const AdminUsuarios = () => {
                 </CardHeader>
 
                 <CardContent className="p-0">
-                    <div className="overflow-x-auto">
+                    <div className="overflow-x-auto max-w-full">
                         <table className="w-full">
                             <thead className="bg-gradient-to-r from-pink-50 to-purple-50">
                                 <tr className="text-left border-b">
-                                    <th className="px-6 py-4 font-semibold text-pink-600">Usuario</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-600">Contacto</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-600">Ubicación</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-600">Rol</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-600">Estado Usuario</th>
-                                    <th className="px-6 py-4 font-semibold text-pink-600">Membresía</th>
+                                    <th className="px-4 py-3 font-semibold text-pink-600 min-w-[180px]">Usuario</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600 min-w-[200px]">Contacto</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600 min-w-[120px]">Ubicación</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600 min-w-[100px]">Rol</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600 min-w-[120px]">Estado Usuario</th>
+                                    <th className="px-6 py-4 font-semibold text-pink-600 min-w-[180px]">Membresía</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {usuariosFiltrados.map((u) => (
                                     <tr key={u.id} className="hover:bg-gray-50 border-b transition-colors">
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3">
                                             <div className="flex items-center space-x-3">
                                                 <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
                                                     {u.nombre?.charAt(0).toUpperCase() || "?"}
@@ -789,14 +755,14 @@ const AdminUsuarios = () => {
                                             </div>
                                         </td>
 
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3">
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <Mail className="h-4 w-4 mr-2" />
                                                 {u.email}
                                             </div>
                                         </td>
 
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3">
                                             <div className="flex items-center text-sm text-gray-600">
                                                 <MapPin className="h-4 w-4 mr-2" />
                                                 <div>
@@ -806,15 +772,15 @@ const AdminUsuarios = () => {
                                             </div>
                                         </td>
 
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3">
                                             <SelectorRol usuario={u} />
                                         </td>
 
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3">
                                             <SelectorEstadoUsuario usuario={u} />
                                         </td>
 
-                                        <td className="px-6 py-4">
+                                        <td className="px-4 py-3">
                                             <GestionMembresia usuario={u} />
                                         </td>
                                     </tr>
