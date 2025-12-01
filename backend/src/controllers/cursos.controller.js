@@ -43,18 +43,36 @@ export const listarCursos = async (req, res) => {
 export const listarMaterialesDelCurso = async (req, res) => {
     try {
         const cursoId = req.params.id;
+        const filtroVideos = req.filtroVideos; // Viene del middleware
 
+        // Obtener materiales
         const { videos, documentos } = await obtenerMaterialesDelCurso(cursoId);
+
+        // Si hay filtro (usuario sin membresía), filtrar videos
+        let videosAccessibles = videos;
+        
+        if (filtroVideos) {
+            videosAccessibles = videos.filter(v => v.es_gratuito === 1);
+            console.log(`📹 ${videos.length} videos totales → ${videosAccessibles.length} gratuitos accesibles`);
+        } else {
+            console.log(`📹 ${videos.length} videos accesibles`);
+        }
 
         res.status(200).json({
             cursoId: cursoId,
-            videos,
-            documentos
+            videos: videosAccessibles,
+            documentos: documentos,
+            info: filtroVideos ? {
+                mensaje: 'Mostrando solo videos gratuitos',
+                sugerencia: 'Adquiere una membresía para acceder a todos los videos'
+            } : {
+                mensaje: 'Mostrando todos los videos'
+            }
         });
 
-    }catch (error){
+    } catch (error) {
         console.error('❌ Error al listar materiales:', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 

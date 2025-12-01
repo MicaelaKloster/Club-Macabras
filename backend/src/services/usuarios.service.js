@@ -50,7 +50,7 @@ export const actualizarRolUsuario = async (id, nuevoRol) => {
     return result;
 };
 
-// Cambiar estado del usuario
+// Cambiar estado del usuario (SOLO para admin)
 export const actualizarEstadoUsuario = async (id, estado) => {
     const result = await db.query(
         'UPDATE usuarios SET estado = $1 WHERE id = $2',
@@ -161,4 +161,22 @@ export const obtenerUsuariosDesactualizados = async () => {
     `);
     
     return result.rows;
+};
+
+// Obtener info de membresía (solo lectura)
+export const obtenerInfoMembresia = async (usuarioId) => {
+    const result = await db.query(
+        `SELECT 
+            id,
+            usuario_id,
+            estado,
+            fecha_inicio,
+            fecha_vencimiento
+         FROM membresias 
+         WHERE usuario_id = $1 
+         ORDER BY fecha_vencimiento DESC 
+         LIMIT 1`,
+        [usuarioId]
+    );
+    return result.rows[0] || null;
 };

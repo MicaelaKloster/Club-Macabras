@@ -4,9 +4,9 @@ import {
   listarUsuarios, 
   cambiarRolUsuario, 
   cambiarEstadoUsuario,
-  sincronizarEstados,
-  verificarEstadoUsuario,
-  obtenerEstadosDesactualizados
+  // sincronizarEstados,
+  // verificarEstadoUsuario,
+  // obtenerEstadosDesactualizados
 } from '../controllers/usuarios.controller.js';
 import { validarRegistroUsuario, validarCambioRol, validarCambioEstado } from '../validations/usuarios.validation.js';
 import { validarCampos } from '../middlewares/validarCampos.middleware.js';
@@ -220,12 +220,12 @@ router.put(
  *       500:
  *         description: Error del servidor
  */
-router.post(
-  '/sincronizar',
-  verificarToken,
-  permitirSoloRol('admin'),
-  sincronizarEstados
-);
+// router.post(
+//   '/sincronizar',
+//   verificarToken,
+//   permitirSoloRol('admin'),
+//   // sincronizarEstados
+// );
 
 // GET /usuarios/:id/verificar-estado
 /**
@@ -251,12 +251,12 @@ router.post(
  *       500:
  *         description: Error del servidor
  */
-router.get(
-  '/:id/verificar-estado',
-  verificarToken,
-  permitirSoloRol('admin'),
-  verificarEstadoUsuario
-);
+// router.get(
+//   '/:id/verificar-estado',
+//   verificarToken,
+//   permitirSoloRol('admin'),
+//   // verificarEstadoUsuario
+// );
 
 // GET /usuarios/estados-desactualizados
 /**
@@ -275,11 +275,11 @@ router.get(
  *       500:
  *         description: Error del servidor
  */
-router.get(
-  '/estados-desactualizados',
-  verificarToken,
-  permitirSoloRol('admin'),
-  obtenerEstadosDesactualizados
-);
+// router.get(
+//   '/estados-desactualizados',
+//   verificarToken,
+//   permitirSoloRol('admin'),
+//   // obtenerEstadosDesactualizados
+// );
 
 export default router;

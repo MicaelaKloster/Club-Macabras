@@ -2,7 +2,7 @@ import { Router } from "express";
 import { 
     registrarMembresia, 
     obtenerMembresiaDeUsuario,
-    obtenerMembresiaUsuarioAdmin,
+    // obtenerMembresiaUsuarioAdmin,
     crearMembresiaManual,
     cambiarEstadoMembresiaAdmin,
     cancelarMiMembresia,
@@ -116,7 +116,7 @@ router.get(
     '/usuarios/:id/membresias',
     verificarToken,
     permitirSoloRol('admin'),
-    obtenerMembresiaUsuarioAdmin
+    // obtenerMembresiaUsuarioAdmin
 );
 
 router.post(
