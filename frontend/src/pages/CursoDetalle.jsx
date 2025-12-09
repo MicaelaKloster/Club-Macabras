@@ -336,7 +336,7 @@ const CursoDetalle = () => {
         }
       );
       
-      window.location.href = `https://www.mercadopago.com/checkout/v1/redirect?pref_id=${res.data.id}`;
+      window.location.href = `https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=${res.data.id}`;
     } catch (error) {
       console.error("Error al iniciar pago:", error.response?.data || error.message);
       alert("Ocurrió un error al iniciar el pago. Intenta nuevamente.");
