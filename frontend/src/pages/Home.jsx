@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { ArrowRight, CheckCircle, Mail, Phone, MapPin, Clock, Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
+import { ArrowRight, CheckCircle, Mail, Phone, MapPin, Clock, Gift, Video, Scissors } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
 const Home = () => {
@@ -78,13 +78,13 @@ const Home = () => {
           </Badge>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-            Aprende el Arte de la{' '}
-            <span className="text-primary-foreground">Marroquinería</span>
+            Aprende Marroquinería desde cero
+            {/* <span className="text-primary-foreground">Marroquinería</span> */}
           </h1>
           
           <p className="text-xl md:text-2xl mb-8 leading-relaxed text-white/90">
-            Descubre técnicas tradicionales y modernas para crear piezas únicas en cuero. 
-            Únete a nuestra comunidad de artesanos apasionados.
+            Crea tus propios productos y convertí tu pasión en tu nuevo negocio. 
+            Unite a nuestra comunidad.
           </p>
           
           <Button asChild size="lg" className="text-lg shadow-lg">
@@ -106,6 +106,166 @@ const Home = () => {
               }`}
             />
           ))}
+        </div>
+      </section>
+
+      {/* ===== SECCIÓN: Bienvenida al Club ===== */}
+      <section className="py-20 px-4">
+        <div className="container max-w-5xl mx-auto">
+
+          {/* Encabezado bienvenida */}
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-4">Club Macabras</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Bienvenidas al Club Macabras
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              Taller &amp; tutoriales de confección de carteras
+            </p>
+            <div className="mt-6">
+              <Button asChild size="lg">
+                <Link to="/login">
+                  Ver Tutoriales
+                  <ArrowRight className="ml-2" size={18} />
+                </Link>
+              </Button>
+            </div>
+          </div>
+
+          {/* Objetivo: regalar 1 máquina por mes */}
+          <Card className="bg-primary/5 border-primary/20">
+            <CardContent className="py-12 px-8 text-center">
+              <p className="text-lg text-muted-foreground mb-2">Nuestro objetivo:</p>
+              <h3 className="text-4xl md:text-5xl font-extrabold text-primary uppercase leading-tight mb-4">
+                Regalar 1 Máquina por Mes
+              </h3>
+              <p className="text-muted-foreground text-base md:text-lg">
+                Participas siendo parte del club
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* ===== SECCIÓN: ¿Qué vas a crear? ===== */}
+      <section className="py-20 px-4 bg-muted/50">
+        <div className="container max-w-5xl mx-auto">
+
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4">Nuestros Proyectos</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              ¿Qué vas a crear?
+            </h2>
+          </div>
+
+          {/* Grid de creaciones */}
+          <div className="grid md:grid-cols-3 gap-6 mb-16">
+            {[
+              {
+                title: 'Bolsos / Carteras',
+                image: '/images/bolso.jpg',
+                alt: 'Bolsos y carteras artesanales',
+              },
+              {
+                title: 'Mochilas',
+                image: '/images/mochila.jpg',
+                alt: 'Mochilas artesanales',
+              },
+              {
+                title: 'Materos',
+                image: '/images/matero.jpg',
+                alt: 'Materos artesanales',
+              },
+            ].map((item) => (
+              <Card key={item.title} className="overflow-hidden">
+                <div className="aspect-square overflow-hidden">
+                  <img
+                    src={item.image}
+                    alt={item.alt}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+                <CardHeader className="py-4">
+                  <CardTitle className="text-center text-primary text-lg">
+                    {item.title}
+                  </CardTitle>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+
+          {/* Vas a lograr */}
+          <div className="text-center mb-8">
+            <h3 className="text-2xl md:text-3xl font-bold mb-8">Vas a lograr:</h3>
+            <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+              {[
+                { text: 'Crear tu fuente de ingreso', icon: <CheckCircle size={22} /> },
+                { text: 'Tener tus propias molderia', icon: <CheckCircle size={22} /> },
+                { text: 'Aprender siendo parte de una comunidad', icon: <CheckCircle size={22} /> },
+              ].map((logro) => (
+                <div
+                  key={logro.text}
+                  className="flex flex-col items-center gap-3 bg-primary text-primary-foreground rounded-2xl py-5 px-4 text-center font-semibold text-sm md:text-base shadow"
+                >
+                  {logro.icon}
+                  {logro.text}
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ===== SECCIÓN: Con la membresía obtienes ===== */}
+      <section className="py-20 px-4">
+        <div className="container max-w-4xl mx-auto">
+
+          <div className="text-center mb-12">
+            <Badge variant="outline" className="mb-4">Membresía</Badge>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Con la membresía obtienes:
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: <Video size={28} />,
+                title: 'Acceso inmediato a todo el material (video)',
+              },
+              {
+                icon: <Gift size={28} />,
+                title: 'Participas por el sorteo de una máquina',
+              },
+              {
+                icon: <Scissors size={28} />,
+                title: 'Molderia y paso a paso',
+              },
+            ].map((beneficio) => (
+              <Card key={beneficio.title} className="bg-primary/5 border-primary/20 text-center">
+                <CardHeader className="pb-2">
+                  <div className="flex justify-center text-primary mb-2">
+                    {beneficio.icon}
+                  </div>
+                  <CardTitle className="text-primary text-base font-semibold leading-snug">
+                    {beneficio.title}
+                  </CardTitle>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Button asChild size="lg" className="text-lg shadow-lg px-10">
+              <Link to="/registro">
+                ¡Quiero unirme al club!
+                <ArrowRight className="ml-2" size={20} />
+              </Link>
+            </Button>
+          </div>
+
         </div>
       </section>
 
@@ -246,7 +406,6 @@ const Home = () => {
       </section>
 
       {/* Footer */}
-{/* Footer actualizado */}
       <footer className="border-t bg-background py-12 px-4">
         <div className="container max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
@@ -350,7 +509,7 @@ const Home = () => {
           
           <div className="border-t pt-8 text-center space-y-2">
             <p className="text-muted-foreground">
-              © 2025 Club Macabras. Plataforma educativa de marroquinería profesional.
+              © 2026 Club Macabras. Plataforma educativa de marroquinería profesional. Desarrollado por <a href="https://lasgurit.netlify.app" target="_blank">GurIT</a>.
             </p>
             <p className="text-sm text-muted-foreground">
               Sitio seguro y confiable • Certificado SSL A+ • Todos los derechos reservados
